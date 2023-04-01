@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.6.5
+Created-By: 1.6.0_03-b05 (Sun Microsystems Inc.)
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Name: Diamond Rush
+MIDlet-Icon: /icon.png
+MIDlet-Vendor: Nokia
+MIDlet-1: Diamond Rush, /icon.png, GloftDIRU
+MIDlet-Data-Size: 1200
+MIDlet-Version: 1.1.7
+Nokia-MIDlet-Category: Game
+MicroEdition-Profile: MIDP-2.0
+APP-RUNNING-ON-PLATFORMREQUEST: 0
+Nokia-Platform: *
+
