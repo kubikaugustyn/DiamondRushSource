@@ -625,7 +625,7 @@ public final class c
         try {
             final String bClassString = c.bClassString;
             c.aClassi.getClass();
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(i.aByteArr(bClassString, 0));
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(i.readChunk(bClassString, 0));
             byte[] array = new byte[4];
             byteArrayInputStream.read(array, 0, 2);
             boolean b = false;

@@ -1733,7 +1733,7 @@ public final class i extends Canvas implements Runnable {
                         this.aRInt = 1;
                     }
                     case 1: {
-                        i.sByteArr = aByteArr("/cr.f", 0);
+                        i.sByteArr = readChunk("/cr.f", 0);
                         int n37 = 0;
                         while (n37 < i.sByteArr.length) {
                             if (i.sByteArr[n37] == 92 && i.sByteArr[n37 + 1] == 110) {
@@ -2230,7 +2230,9 @@ public final class i extends Canvas implements Runnable {
                 i.ahInt = 0;
             }
             case 0: {
+                System.out.println("Set value to i.aClassbArr[0]. new b(<TEXTURES /ui.f 0>, 0, 0, null)");
                 (i.aClassbArr[0] = new b(aClassf("/ui.f", 0), 0, 0, null)).aVoid(0);
+                System.out.println(i.aClassbArr[0]);
                 i.bByte = 6;
                 this.eVoid();
             }
@@ -2363,7 +2365,7 @@ public final class i extends Canvas implements Runnable {
                         i.ahInt = 0;
                     }
                 } else {
-                    this.jVoid();
+                    this.jVoid(); // Sets i.bByte to 1
                 }
                 this.eVoid();
             }
@@ -4521,6 +4523,7 @@ public final class i extends Canvas implements Runnable {
                                 i.fByteArr = null;
                                 System.gc();
                                 this.aClassj.bVoid(16 + this.aAInt);
+                                System.out.println("Move to crash.");
                                 i.bByte = 1;
                                 break;
                             }
@@ -4591,6 +4594,7 @@ public final class i extends Canvas implements Runnable {
             f.aVoid(this.cuInt = i.iByteArr[8] - 4, 0, -1, -1);
             f.aInt = this.cuInt;
             f.dByteArr = null;
+            System.out.println("Set value to i.aClassbArr[0]. new b(f==<TEXTURES /o.f 0>, 0, 0, null)");
             i.aClassbArr[0] = new b(f, 0, 0, null);
             System.gc();
             if (b) {
@@ -4768,9 +4772,11 @@ public final class i extends Canvas implements Runnable {
                 if (i.aClassbArr[n] != null) {
                     aVoid(i.aClassbArr[n].aClassf, true);
                     i.aClassbArr[n].aClassf = null;
+                    if (n == 0) System.out.println("Set value to i.aClassbArr[0]. null");
                     i.aClassbArr[n] = null;
                 }
             }
+            new Exception("Oh no").printStackTrace();
         }
         i.bIntArrArr = null;
         i.aIntArrArr = null;
@@ -10628,6 +10634,7 @@ public final class i extends Canvas implements Runnable {
                     case 0: {
                         this.kInt &= 0xFFFFFFF7;
                         boolean b12 = false;
+                        System.out.println(i.aClassbArr[0]);
                         switch (i.aClassbArr[0].dInt) {
                             case 0:
                             case 2:
@@ -15597,11 +15604,18 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private static f aClassf(final String s, final int n, final int aInt, final int n2) {
+    private static f aClassf(final String fileName, final int chunkI, final int aInt, final int n2) {
         f f = null;
         try {
             f = new f();
-            f.aVoid(aByteArr(s, n), 0);
+            byte[] chunk = readChunk(fileName, chunkI);
+            System.out.print("Get" + ((chunk[0] == (byte) 223 && chunk[1] == (byte) 3) ? "" : " broken") + " textures: ");
+            System.out.print(fileName);
+            System.out.print(", chunk #");
+            System.out.println(chunkI);
+            // DesktopLauncher.printByteArr(chunk, "Chunk data");
+            // f.aVoid(aByteArr(fileName, chunkI), 0);
+            f.aVoid(chunk, 0);
             for (int i = aInt; i <= n2; ++i) {
                 f.aVoid(i, 0, -1, -1);
             }
@@ -15628,7 +15642,7 @@ public final class i extends Canvas implements Runnable {
         f f = null;
         try {
             f = new f();
-            f.aVoid(aByteArr(s, n), 0);
+            f.aVoid(readChunk(s, n), 0);
             f.aVoid(n2, 0, -1, -1);
             aVoid(f, false);
             System.gc();
@@ -15640,7 +15654,7 @@ public final class i extends Canvas implements Runnable {
     private static Image aClassImage(final String s, final int n) {
         Image image = null;
         try {
-            final byte[] aByteArr = aByteArr(s, n);
+            final byte[] aByteArr = readChunk(s, n);
             image = Image.createImage(aByteArr, 0, aByteArr.length);
             System.gc();
         } catch (Exception ex) {
@@ -15648,19 +15662,26 @@ public final class i extends Canvas implements Runnable {
         return image;
     }
 
-    public static byte[] aByteArr(final String name, int bInt) {
+    public static byte[] readChunk(final String fileName, int chunkI) {
+        System.out.println("Read chunk of file: " + fileName + ", chunk #" + chunkI);
         byte[] array = null;
-        final InputStream resourceAsStream = name.getClass().getResourceAsStream(name);
+        final InputStream file = i.class.getResourceAsStream(fileName);
         try {
-            array = new byte[resourceAsStream.read() << 3];
-            resourceAsStream.read(array);
-            final int bInt2 = bInt(array, bInt << 3);
-            bInt = bInt(array, (bInt << 3) + 4);
-            resourceAsStream.skip(bInt2);
-            array = new byte[bInt];
-            resourceAsStream.read(array);
-            resourceAsStream.close();
+            array = new byte[file.read() << 3];
+            file.read(array);
+            // DesktopLauncher.printByteArr(array, "Header: ");
+            final int address = bInt(array, chunkI << 3);
+            chunkI = bInt(array, (chunkI << 3) + 4); // Chunk index is overwritten to store length of the chunk
+            // System.out.println("Skip to " + address + " with length: " + chunkI);
+            file.skipNBytes(address); // Replaced original file.skip(address)
+            // As shown here: https://bugs.openjdk.org/browse/JDK-6204246#:~:text=However%2C%20BufferedInputStream.skip(long)%20can%20decide%20to%20skip%20less%20than%0Athe%20number%0Aof%20bytes%20that%20were%20reported%20as%20being%20available%20to%20skip.
+            // It was skipping 8151 instead of 16073 bytes
+            array = new byte[chunkI];
+            file.read(array);
+            file.close();
         } catch (Exception ex) {
+            // System.out.println("nullllllll for file: " + name + ", chunk #" + chunkI);
+            ex.printStackTrace();
         }
         return array;
     }
