@@ -237,8 +237,8 @@ public final class i extends Canvas implements Runnable {
     private static Image aClassImage;
     private static Image bClassImage;
     private static Image cClassImage;
-    private static Image[][] bClassImageArrArr;
-    public static Image[][] aClassImageArrArr;
+    private static Image[][] textures;
+    public static Image[][] demoUITextures;
     public static f[] aClassfArr;
     private static h bClassh;
     public static h aClassh;
@@ -651,8 +651,8 @@ public final class i extends Canvas implements Runnable {
             } catch (Exception ex) {
             }
         }
-        i.bClassImageArrArr = new Image[33][];
-        i.aClassImageArrArr = new Image[2][];
+        i.textures = new Image[33][];
+        i.demoUITextures = new Image[2][];
         i.aClassGloftDIRU = aClassGloftDIRU;
         this.aClassj = new j();
         this.setFullScreenMode(true);
@@ -1856,9 +1856,9 @@ public final class i extends Canvas implements Runnable {
                                     i.aClassfArr[46] = null;
                                     aVoid(i.aClassfArr[55], true);
                                     i.aClassfArr[55] = null;
-                                    i.bClassImageArrArr[8] = null;
+                                    i.textures[8] = null;
                                     aVoid(i.aClassfArr[59], true);
-                                    i.bClassImageArrArr[3] = null;
+                                    i.textures[3] = null;
                                     aVoid(i.aClassfArr[17], true);
                                     i.aClassfArr[17] = null;
                                     System.gc();
@@ -1896,8 +1896,8 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             case 5: {
-                                i.aClassfArr[17] = aClassf("/ms.f", 0);
-                                i.aClassfArr[23] = aClassf("/ms.f", 1);
+                                i.aClassfArr[17] = importTexturesWithPalettes("/ms.f", 0);
+                                i.aClassfArr[23] = importTexturesWithPalettes("/ms.f", 1);
                                 break;
                             }
                             case 6: {
@@ -1932,13 +1932,13 @@ public final class i extends Canvas implements Runnable {
                                             break Label_5670;
                                         }
                                     }
-                                    array4[n44] = aClassf(s, n45);
+                                    array4[n44] = importTexturesWithPalettes(s, n45);
                                     continue;
                                 }
                             }
                             case 7: {
                                 if (i.aClassfArr[54] == null) {
-                                    i.aClassfArr[54] = aClassf("/mmv.f", 1);
+                                    i.aClassfArr[54] = importTexturesWithPalettes("/mmv.f", 1);
                                 }
                                 this.GInt = cInt(i.aClassfArr[54], 0) >> 1;
                                 this.HInt = bInt(i.aClassfArr[54], 0) >> 1;
@@ -1946,14 +1946,14 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 8: {
                                 if (i.aClassfArr[53] == null) {
-                                    i.aClassfArr[53] = aClassf("/mmv.f", 2);
+                                    i.aClassfArr[53] = importTexturesWithPalettes("/mmv.f", 2);
                                     break;
                                 }
                                 break;
                             }
                             case 9: {
                                 if (i.aClassfArr[52] == null) {
-                                    i.aClassfArr[52] = aClassf("/mmv.f", 3);
+                                    i.aClassfArr[52] = importTexturesWithPalettes("/mmv.f", 3);
                                     break;
                                 }
                                 break;
@@ -2077,7 +2077,7 @@ public final class i extends Canvas implements Runnable {
                         }
                         case 6: {
                             try {
-                                i.bClassImageArrArr[28] = aClassImageArr("/ui.f", 4, 0);
+                                i.textures[28] = importTexturesWithPalette("/ui.f", 4, 0);
                             } catch (Exception ex3) {
                             }
                             break;
@@ -2231,7 +2231,7 @@ public final class i extends Canvas implements Runnable {
             }
             case 0: {
                 System.out.println("Set value to i.aClassbArr[0]. new b(<TEXTURES /ui.f 0>, 0, 0, null)");
-                (i.aClassbArr[0] = new b(aClassf("/ui.f", 0), 0, 0, null)).aVoid(0);
+                (i.aClassbArr[0] = new b(importTexturesWithPalettes("/ui.f", 0), 0, 0, null)).aVoid(0);
                 System.out.println(i.aClassbArr[0]);
                 i.bByte = 6;
                 this.eVoid();
@@ -2251,7 +2251,7 @@ public final class i extends Canvas implements Runnable {
                     i.bBoolean = false;
                 }
                 aAVoid();
-                i.aClassfArr[18] = aClassf("/ui.f", 3);
+                i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3);
                 this.pVoid();
                 j.aBoolean = true;
                 i.bByte = 8;
@@ -2312,7 +2312,7 @@ public final class i extends Canvas implements Runnable {
                         }
                         case 7: {
                             if (i.aClassfArr[18] == null) {
-                                i.aClassfArr[18] = aClassf("/ui.f", 3);
+                                i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3);
                                 break;
                             }
                             break;
@@ -2383,16 +2383,16 @@ public final class i extends Canvas implements Runnable {
                 } else {
                     switch (n64) {
                         case 21: {
-                            i.aClassfArr[9] = aClassf("/cm.f", 7);
+                            i.aClassfArr[9] = importTexturesWithPalettes("/cm.f", 7);
                             break;
                         }
                         case 22: {
-                            i.aClassfArr[0] = aClassf("/ui.f", 2);
+                            i.aClassfArr[0] = importTexturesWithPalettes("/ui.f", 2);
                             break;
                         }
                         case 23: {
-                            i.aClassImageArrArr[0] = aClassImageArr("/demoui.f", 0, 0);
-                            i.aClassImageArrArr[1] = aClassImageArr("/demoui.f", 0, 1);
+                            i.demoUITextures[0] = importTexturesWithPalette("/demoui.f", 0, 0);
+                            i.demoUITextures[1] = importTexturesWithPalette("/demoui.f", 0, 1);
                             break;
                         }
                         case 24: {
@@ -2667,7 +2667,7 @@ public final class i extends Canvas implements Runnable {
                     final String s = "/mmv.f";
                     final int n3 = 0;
                     n = 0;
-                    aClassfArr[n2] = aClassf(s, n3, 0, 0);
+                    aClassfArr[n2] = importTexturesWithPalettes(s, n3, 0, 0);
                 }
                 if (i.aClassfArr[46] == null) {
                     final f[] aClassfArr2 = i.aClassfArr;
@@ -2675,7 +2675,7 @@ public final class i extends Canvas implements Runnable {
                     final String s2 = "/mmv.f";
                     final int n5 = 5;
                     n = 0;
-                    aClassfArr2[n4] = aClassf(s2, n5, 0, 0);
+                    aClassfArr2[n4] = importTexturesWithPalettes(s2, n5, 0, 0);
                 }
                 this.zInt = 240 - cInt(i.aClassfArr[10], 0) >> 1;
                 this.AInt = 320 - bInt(i.aClassfArr[10], 0) - 48 >> 1;
@@ -2687,7 +2687,7 @@ public final class i extends Canvas implements Runnable {
                     final String s3 = "/mmv.f";
                     final int n7 = 4;
                     n = 0;
-                    aClassfArr3[n6] = aClassf(s3, n7, 0, 0);
+                    aClassfArr3[n6] = importTexturesWithPalettes(s3, n7, 0, 0);
                     this.xInt = aInt(i.aClassfArr[55], 0);
                     i.bClassf = i.aClassfArr[55];
                 }
@@ -2697,7 +2697,7 @@ public final class i extends Canvas implements Runnable {
                     final String s4 = "/ui.f";
                     final int n9 = 3;
                     n = 0;
-                    aClassfArr4[n8] = aClassf(s4, n9, 0, 0);
+                    aClassfArr4[n8] = importTexturesWithPalettes(s4, n9, 0, 0);
                     return;
                 }
                 break;
@@ -2709,7 +2709,7 @@ public final class i extends Canvas implements Runnable {
                     final String s5 = "/mmv.f";
                     final int n11 = 1;
                     n = 0;
-                    aClassfArr5[n10] = aClassf(s5, n11, 0, 0);
+                    aClassfArr5[n10] = importTexturesWithPalettes(s5, n11, 0, 0);
                 }
                 this.GInt = cInt(i.aClassfArr[54], 0) >> 1;
                 this.HInt = bInt(i.aClassfArr[54], 0) >> 1;
@@ -2721,7 +2721,7 @@ public final class i extends Canvas implements Runnable {
                     final String s6 = "/mmv.f";
                     final int n13 = 2;
                     n = 0;
-                    aClassfArr6[n12] = aClassf(s6, n13, 0, 0);
+                    aClassfArr6[n12] = importTexturesWithPalettes(s6, n13, 0, 0);
                     return;
                 }
                 break;
@@ -2733,7 +2733,7 @@ public final class i extends Canvas implements Runnable {
                     final String s7 = "/mmv.f";
                     final int n15 = 3;
                     n = 0;
-                    aClassfArr7[n14] = aClassf(s7, n15, 0, 0);
+                    aClassfArr7[n14] = importTexturesWithPalettes(s7, n15, 0, 0);
                     return;
                 }
                 break;
@@ -2743,12 +2743,12 @@ public final class i extends Canvas implements Runnable {
                     final String string = "/" + 0 + ".f";
                     final int n16 = 3;
                     n = 0;
-                    i.bClassImageArrArr[8] = aClassf(string, n16, 0, 0).aClassImageArrArr[0];
+                    i.textures[8] = importTexturesWithPalettes(string, n16, 0, 0).aClassImageArrArr[0];
                     final String s8 = "/cm.f";
                     final int n17 = 2;
                     n = 0;
                     final f aClassf;
-                    (aClassf = aClassf(s8, n17, 0, 0)).aVoid(0, 0, -1, -1);
+                    (aClassf = importTexturesWithPalettes(s8, n17, 0, 0)).aVoid(0, 0, -1, -1);
                     aClassf.aVoid(1, 0, 0, -1);
                     i.aClassfArr[59] = aClassf;
                     g.aInt = aClassf.aClassImageArrArr[0].length;
@@ -2759,7 +2759,7 @@ public final class i extends Canvas implements Runnable {
                         final String s9 = "/ms.f";
                         final int n19 = 0;
                         n = 0;
-                        aClassfArr8[n18] = aClassf(s9, n19, 0, 0);
+                        aClassfArr8[n18] = importTexturesWithPalettes(s9, n19, 0, 0);
                     }
                 } catch (Exception ex) {
                 }
@@ -2771,7 +2771,7 @@ public final class i extends Canvas implements Runnable {
                     final String s10 = "/cm.f";
                     final int n21 = 7;
                     n = 0;
-                    aClassfArr9[n20] = aClassf(s10, n21, 0, 0);
+                    aClassfArr9[n20] = importTexturesWithPalettes(s10, n21, 0, 0);
                 }
                 this.JInt = aInt(i.aClassfArr[9], 5);
                 n = i.iByteArr[2];
@@ -4117,12 +4117,12 @@ public final class i extends Canvas implements Runnable {
                                     break Label_5745;
                                 }
                                 case 2: {
-                                    i.bClassImageArrArr[0] = null;
+                                    i.textures[0] = null;
                                     i.aClassfArr[42] = f;
                                     break;
                                 }
                                 case 3: {
-                                    i.bClassImageArrArr[8] = f.aClassImageArrArr[0];
+                                    i.textures[8] = f.aClassImageArrArr[0];
                                     break;
                                 }
                             }
@@ -4242,11 +4242,11 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 2: {
                                             if (this.agBoolean) {
-                                                i.bClassImageArrArr[24] = dClassf.aClassImageArrArr[0];
+                                                i.textures[24] = dClassf.aClassImageArrArr[0];
                                             }
                                             if (this.ahBoolean) {
                                                 dClassf.aVoid(1, 0, -1, -1);
-                                                i.bClassImageArrArr[25] = dClassf.aClassImageArrArr[1];
+                                                i.textures[25] = dClassf.aClassImageArrArr[1];
                                             }
                                             break Label_6692;
                                         }
@@ -4283,10 +4283,10 @@ public final class i extends Canvas implements Runnable {
                                             break Label_6692;
                                         }
                                         case 24: {
-                                            i.bClassImageArrArr[15] = null;
+                                            i.textures[15] = null;
                                             dClassf.aVoid(1, 0, -1, -1);
                                             n61 = 57;
-                                            i.bClassImageArrArr[14] = null;
+                                            i.textures[14] = null;
                                             break Label_6692;
                                         }
                                         case 22: {
@@ -4366,7 +4366,7 @@ public final class i extends Canvas implements Runnable {
                                     i.aClassfArr[n61] = dClassf;
                                 }
                                 if (n62 != -1) {
-                                    i.bClassImageArrArr[n62] = dClassf.aClassImageArrArr[0];
+                                    i.textures[n62] = dClassf.aClassImageArrArr[0];
                                 }
                                 dClassf.dByteArr = null;
                                 return;
@@ -4402,11 +4402,11 @@ public final class i extends Canvas implements Runnable {
                                     switch (n64) {
                                         case 6: {
                                             i.aClassfArr[43] = f2;
-                                            i.bClassImageArrArr[20] = null;
+                                            i.textures[20] = null;
                                             break Label_7074;
                                         }
                                         case 5: {
-                                            i.bClassImageArrArr[18] = f2.aClassImageArrArr[0];
+                                            i.textures[18] = f2.aClassImageArrArr[0];
                                             break;
                                         }
                                         case 2: {
@@ -4436,11 +4436,11 @@ public final class i extends Canvas implements Runnable {
                                             break Label_7075;
                                         }
                                         case 0: {
-                                            i.bClassImageArrArr[11] = f2.aClassImageArrArr[0];
+                                            i.textures[11] = f2.aClassImageArrArr[0];
                                             break;
                                         }
                                         case 4: {
-                                            i.bClassImageArrArr[5] = f2.aClassImageArrArr[0];
+                                            i.textures[5] = f2.aClassImageArrArr[0];
                                             break;
                                         }
                                     }
@@ -4474,7 +4474,7 @@ public final class i extends Canvas implements Runnable {
                         switch (n57) {
                             case 0: {
                                 i.nByteArr = null;
-                                this.aVoid(i.aClassfArr[12] != null || i.bClassImageArrArr[6] != null || i.aClassfArr[58] != null || this.kByte == 1 || this.kByte == 4 || this.kByte == 5);
+                                this.aVoid(i.aClassfArr[12] != null || i.textures[6] != null || i.aClassfArr[58] != null || this.kByte == 1 || this.kByte == 4 || this.kByte == 5);
                             }
                             case 1: {
                                 this.cLong = 0L;
@@ -4543,8 +4543,8 @@ public final class i extends Canvas implements Runnable {
                             if (n57 > 0) {
                                 return;
                             }
-                            i.bClassImageArrArr[31] = aClassf("/mmv.f", 1, 0).aClassImageArrArr[0];
-                            (i.aClassbArr[5] = new b(aClassf("/mm1.f", 0), 0, 0, null)).aVoid(0);
+                            i.textures[31] = importTexturesWithPalettes("/mmv.f", 1, 0).aClassImageArrArr[0];
+                            (i.aClassbArr[5] = new b(importTexturesWithPalettes("/mm1.f", 0), 0, 0, null)).aVoid(0);
                             return;
                         }
                         case 4: {
@@ -4552,8 +4552,8 @@ public final class i extends Canvas implements Runnable {
                                 return;
                             }
                             this.cVoid(n57);
-                            i.bClassImageArrArr[32] = aClassf("/mmv.f", 3, 0).aClassImageArrArr[0];
-                            i.aClassfArr[20] = aClassf("/gen0.f", 7, 0);
+                            i.textures[32] = importTexturesWithPalettes("/mmv.f", 3, 0).aClassImageArrArr[0];
+                            i.aClassfArr[20] = importTexturesWithPalettes("/gen0.f", 7, 0);
                             if (n57 == 1) {
                                 this.aClassInputStream.close();
                                 this.aClassInputStream = null;
@@ -4561,9 +4561,9 @@ public final class i extends Canvas implements Runnable {
                             return;
                         }
                         case 5: {
-                            i.bClassImageArrArr[30] = aClassf("/mmv.f", 2, 0).aClassImageArrArr[0];
-                            i.aClassfArr[20] = aClassf("/gen0.f", 7, 0);
-                            (i.aClassbArr[5] = new b(aClassf("/b1.f", 0), 0, 0, null)).aVoid(10);
+                            i.textures[30] = importTexturesWithPalettes("/mmv.f", 2, 0).aClassImageArrArr[0];
+                            i.aClassfArr[20] = importTexturesWithPalettes("/gen0.f", 7, 0);
+                            (i.aClassbArr[5] = new b(importTexturesWithPalettes("/b1.f", 0), 0, 0, null)).aVoid(10);
                             return;
                         }
                         default: {
@@ -4747,13 +4747,13 @@ public final class i extends Canvas implements Runnable {
             aVoid(this.aClassc);
             this.aClassc = null;
         }
-        if (i.bClassImageArrArr != null) {
+        if (i.textures != null) {
             for (int j = 0; j < 33; ++j) {
-                if (i.bClassImageArrArr[j] != null) {
-                    for (int length2 = i.bClassImageArrArr[j].length, k = 0; k < length2; ++k) {
-                        i.bClassImageArrArr[j][k] = null;
+                if (i.textures[j] != null) {
+                    for (int length2 = i.textures[j].length, k = 0; k < length2; ++k) {
+                        i.textures[j][k] = null;
                     }
-                    i.bClassImageArrArr[j] = null;
+                    i.textures[j] = null;
                 }
             }
         }
@@ -4880,7 +4880,7 @@ public final class i extends Canvas implements Runnable {
             f.dByteArr = null;
             switch (n) {
                 case 2: {
-                    i.bClassImageArrArr[27] = f.aClassImageArrArr[0];
+                    i.textures[27] = f.aClassImageArrArr[0];
                 }
                 case 1: {
                     (i.aClassbArr[2] = new b(f, 0, 0, null)).aVoid(0);
@@ -5449,13 +5449,13 @@ public final class i extends Canvas implements Runnable {
                             case 5: {
                                 if (this.bdInt == 0) {
                                     if ((this.uByte & 0x20) != 0x0) {
-                                        aClassGraphics2.drawImage(i.bClassImageArrArr[5][0], 200, 237, 0);
+                                        aClassGraphics2.drawImage(i.textures[5][0], 200, 237, 0);
                                         final f f;
                                         if (arInt == 5 && i.aSInt < (f = i.aClassfArr[9]).aInt(0) << 1) {
                                             f.aVoid(aClassGraphics2, 0, i.aSInt << 1, 200, 237, 0, 0, 0);
                                         }
                                     }
-                                    aClassGraphics2.drawImage(i.bClassImageArrArr[28][0], 180, 254, 0);
+                                    aClassGraphics2.drawImage(i.textures[28][0], 180, 254, 0);
                                 }
                             }
                             case 4: {
@@ -5468,13 +5468,13 @@ public final class i extends Canvas implements Runnable {
                                 aClassh3.aVoid(aClassGraphics2, String.valueOf(this.bdInt), 120, 259, 17);
                                 if (this.bcInt == 0) {
                                     if ((this.uByte & 0x10) != 0x0) {
-                                        aClassGraphics2.drawImage(i.bClassImageArrArr[5][0], 200, 181, 0);
+                                        aClassGraphics2.drawImage(i.textures[5][0], 200, 181, 0);
                                         final f f2;
                                         if (arInt == 4 && i.aSInt < (f2 = i.aClassfArr[9]).aInt(0) << 1) {
                                             f2.aVoid(aClassGraphics2, 0, i.aSInt >> 1, 200, 181, 0, 0, 0);
                                         }
                                     }
-                                    aClassGraphics2.drawImage(i.bClassImageArrArr[28][0], 180, 198, 0);
+                                    aClassGraphics2.drawImage(i.textures[28][0], 180, 198, 0);
                                 }
                             }
                             case 3: {
@@ -5487,13 +5487,13 @@ public final class i extends Canvas implements Runnable {
                                 aClassh3.aVoid(aClassGraphics2, String.valueOf(this.bcInt), 120, 203, 17);
                                 if (this.bbInt == this.baInt) {
                                     if ((this.uByte & 0x8) != 0x0) {
-                                        aClassGraphics2.drawImage(i.bClassImageArrArr[5][0], 200, 125, 0);
+                                        aClassGraphics2.drawImage(i.textures[5][0], 200, 125, 0);
                                         final f f3;
                                         if (arInt == 3 && i.aSInt < (f3 = i.aClassfArr[9]).aInt(0) << 1) {
                                             f3.aVoid(aClassGraphics2, 0, i.aSInt >> 1, 200, 125, 0, 0, 0);
                                         }
                                     }
-                                    aClassGraphics2.drawImage(i.bClassImageArrArr[28][0], 180, 142, 0);
+                                    aClassGraphics2.drawImage(i.textures[28][0], 180, 142, 0);
                                 }
                             }
                             case 2: {
@@ -5506,13 +5506,13 @@ public final class i extends Canvas implements Runnable {
                                 aClassh3.aVoid(aClassGraphics2, this.bbInt + "/" + this.baInt, 120, 147, 17);
                                 if (this.aZInt == this.aYInt) {
                                     if ((this.uByte & 0x4) != 0x0) {
-                                        aClassGraphics2.drawImage(i.bClassImageArrArr[5][0], 200, 69, 0);
+                                        aClassGraphics2.drawImage(i.textures[5][0], 200, 69, 0);
                                         final f f4;
                                         if (arInt == 2 && i.aSInt < (f4 = i.aClassfArr[9]).aInt(0) >> 1) {
                                             f4.aVoid(aClassGraphics2, 0, i.aSInt << 1, 200, 69, 0, 0, 0);
                                         }
                                     }
-                                    aClassGraphics2.drawImage(i.bClassImageArrArr[28][0], 180, 86, 0);
+                                    aClassGraphics2.drawImage(i.textures[28][0], 180, 86, 0);
                                 }
                             }
                             case 1: {
@@ -5987,7 +5987,7 @@ public final class i extends Canvas implements Runnable {
                         break;
                     }
                     case 18: {
-                        i.aClassfArr[17] = aClassf("/ms.f", 0, 0, 0);
+                        i.aClassfArr[17] = importTexturesWithPalettes("/ms.f", 0, 0, 0);
                         this.PVoid();
                         this.avBoolean = true;
                         i.bByte = 25;
@@ -6062,7 +6062,7 @@ public final class i extends Canvas implements Runnable {
         }
         for (int iInteger = n4; iInteger < 320; iInteger += 24) {
             for (int j = n3; j < 240; j += 24) {
-                graphics.drawImage(i.bClassImageArrArr[8][0], j + n, iInteger + n2, 0);
+                graphics.drawImage(i.textures[8][0], j + n, iInteger + n2, 0);
             }
         }
         i.aClassfArr[10].aVoid(graphics, 0, this.zInt + n, this.AInt + n2, 0);
@@ -6306,7 +6306,7 @@ public final class i extends Canvas implements Runnable {
                     this.cVoid(n, n2);
                     return;
                 }
-                i.bClassGraphics.drawImage(i.bClassImageArrArr[8][0], n7 % i.cCInt, n8 % i.cDInt, 0);
+                i.bClassGraphics.drawImage(i.textures[8][0], n7 % i.cCInt, n8 % i.cDInt, 0);
             }
         }
     }
@@ -6406,7 +6406,7 @@ public final class i extends Canvas implements Runnable {
                     this.bIInt = i.aByteArrArr[this.bGInt][this.bHInt];
                     this.bJInt = (i.aIntArrArr[this.bGInt][this.bHInt] & 0xFF);
                     if (this.bIInt < 80) {
-                        bClassGraphics.drawImage(i.bClassImageArrArr[8][0], this.bxInt, this.byInt, 0);
+                        bClassGraphics.drawImage(i.textures[8][0], this.bxInt, this.byInt, 0);
                     }
                     Label_0439:
                     {
@@ -6455,10 +6455,10 @@ public final class i extends Canvas implements Runnable {
                         }
                     }
                     if (this.aJInt != -1) {
-                        if (i.bClassImageArrArr[this.aJInt] == null) {
+                        if (i.textures[this.aJInt] == null) {
                             i.aClassfArr[aInt(this.aJInt)].aVoid(bClassGraphics, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                         } else {
-                            bClassGraphics.drawImage(i.bClassImageArrArr[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                            bClassGraphics.drawImage(i.textures[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                         }
                         this.bPInt = 0;
                         this.aJInt = -1;
@@ -6520,10 +6520,10 @@ public final class i extends Canvas implements Runnable {
                             l.aMInt = amInt;
                         }
                         if (this.aLInt != -1) {
-                            if (i.bClassImageArrArr[this.aLInt] == null) {
+                            if (i.textures[this.aLInt] == null) {
                                 i.aClassfArr[aInt(this.aLInt)].aVoid(bClassGraphics, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             } else {
-                                bClassGraphics.drawImage(i.bClassImageArrArr[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                bClassGraphics.drawImage(i.textures[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             }
                             this.aLInt = -1;
                             this.bPInt = 0;
@@ -6535,7 +6535,7 @@ public final class i extends Canvas implements Runnable {
                     if (this.kByte == 2) {
                         graphics = bClassGraphics;
                         if (i.aClassfArr[10] == null) {
-                            i.aClassfArr[10] = aClassf("/mmv.f", 0, 0, 0);
+                            i.aClassfArr[10] = importTexturesWithPalettes("/mmv.f", 0, 0, 0);
                         }
                         if (this.bGInt >= 60 && this.bGInt < 65 && this.bHInt >= 2 && this.bHInt < 7) {
                             i.aClassfArr[10].aVoid(graphics, 4 + (this.bHInt - 2) * 5 + this.bGInt - 60, this.bxInt, this.byInt, 0);
@@ -6937,10 +6937,10 @@ public final class i extends Canvas implements Runnable {
                                 i3.bLInt = aInt(i.bClassf, 1, i.aSInt % aInt(i.bClassf, 1));
                             }
                             if (this.aJInt != -1) {
-                                if (i.bClassImageArrArr[this.aJInt] == null) {
+                                if (i.textures[this.aJInt] == null) {
                                     i.aClassfArr[aInt(this.aJInt)].aVoid(graphics3, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                                 } else {
-                                    graphics3.drawImage(i.bClassImageArrArr[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                    graphics3.drawImage(i.textures[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                                 }
                                 this.bPInt = 0;
                                 this.aJInt = -1;
@@ -7163,7 +7163,7 @@ public final class i extends Canvas implements Runnable {
                                             bxInt = this.bxInt;
                                             byInt = this.byInt;
                                             n38 = bxInt;
-                                            array = i.bClassImageArrArr[18];
+                                            array = i.textures[18];
                                             this.aClassGraphics.drawImage(array[1], n38 + 6, byInt, 0);
                                             this.aClassGraphics.drawImage(array[0], n38 + 3, byInt + 7, 0);
                                             n39 = 0;
@@ -7279,14 +7279,14 @@ public final class i extends Canvas implements Runnable {
                                                 this.aMInt = (asInt2 >> 1) % 3;
                                                 if (n55 != 3) {
                                                     n56 = (asInt2 >> 1) % 5;
-                                                    this.aClassGraphics.drawImage(i.bClassImageArrArr[10][n56 + 3], this.bxInt + this.bNInt - (n56 << 2), this.byInt + (this.bOInt + 24), 36);
+                                                    this.aClassGraphics.drawImage(i.textures[10][n56 + 3], this.bxInt + this.bNInt - (n56 << 2), this.byInt + (this.bOInt + 24), 36);
                                                 }
                                             } else {
                                                 this.aLInt = 10;
                                                 this.aMInt = 2 - (asInt2 >> 1) % 3;
                                                 if (n55 != 3) {
                                                     n57 = (asInt2 >> 1) % 5;
-                                                    this.aClassGraphics.drawImage(i.bClassImageArrArr[10][n57 + 8], this.bxInt + 24 - 12 + this.bNInt + n57 * 3, this.byInt + (this.bOInt + 24), 36);
+                                                    this.aClassGraphics.drawImage(i.textures[10][n57 + 8], this.bxInt + 24 - 12 + this.bNInt + n57 * 3, this.byInt + (this.bOInt + 24), 36);
                                                     if ((asInt2 >> 1 & 0x1) == 0x0 && i.aByteArrArr[this.bGInt - 1][this.bHInt] >= 0) {
                                                         --this.bNInt;
                                                         ++this.bOInt;
@@ -7472,10 +7472,10 @@ public final class i extends Canvas implements Runnable {
                             }
                         }
                         if (this.aLInt != -1) {
-                            if (i.bClassImageArrArr[this.aLInt] == null) {
+                            if (i.textures[this.aLInt] == null) {
                                 i.aClassfArr[aInt(this.aLInt)].aVoid(graphics3, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             } else {
-                                graphics3.drawImage(i.bClassImageArrArr[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                graphics3.drawImage(i.textures[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             }
                             this.aLInt = -1;
                             this.bPInt = 0;
@@ -7697,8 +7697,8 @@ public final class i extends Canvas implements Runnable {
             this.ABoolean = false;
         }
         if (this.aDInt != -1) {
-            aClassGraphics.drawImage(i.bClassImageArrArr[13][0], this.bvInt - 12, this.bwInt - 24 + 2, 3);
-            aClassGraphics.drawImage(i.bClassImageArrArr[this.aDInt][this.aEInt], this.bvInt - 12, this.bwInt - 24, 3);
+            aClassGraphics.drawImage(i.textures[13][0], this.bvInt - 12, this.bwInt - 24 + 2, 3);
+            aClassGraphics.drawImage(i.textures[this.aDInt][this.aEInt], this.bvInt - 12, this.bwInt - 24, 3);
         }
         if (this.adInt != this.aeInt) {
             int adInt2;
@@ -8468,7 +8468,7 @@ public final class i extends Canvas implements Runnable {
                 }
                 if (this.aInt + 240 > 1440 && this.bInt + 320 > 48) {
                     if (i.aClassfArr[10] == null) {
-                        i.aClassfArr[10] = aClassf("/mmv.f", 0, 0, 0);
+                        i.aClassfArr[10] = importTexturesWithPalettes("/mmv.f", 0, 0, 0);
                     }
                     final f f = i.aClassfArr[10];
                     if (this.cBoolean(60, 3) || this.cBoolean(61, 3)) {
@@ -8496,7 +8496,7 @@ public final class i extends Canvas implements Runnable {
                 if (this.bjInt > 10) {
                     for (int iInteger = 3; iInteger < 13; iInteger += 2) {
                         final int n;
-                        this.aClassGraphics.drawImage(i.bClassImageArrArr[27][iInteger & 0x1], ((n = 10 * (iInteger * 2 / 5 + 1)) + i.aSInt / n) * iInteger % 240, 320 / n * i.aSInt % 320, 0);
+                        this.aClassGraphics.drawImage(i.textures[27][iInteger & 0x1], ((n = 10 * (iInteger * 2 / 5 + 1)) + i.aSInt / n) * iInteger % 240, 320 / n * i.aSInt % 320, 0);
                     }
                 }
                 final int bInt = this.fInt * 24 - this.alInt - this.bInt;
@@ -8735,10 +8735,10 @@ public final class i extends Canvas implements Runnable {
                         if (this.aFInt == 30 || this.aFInt == 31 || this.aFInt == 32) {
                             n5 = -2;
                         }
-                        if (i.bClassImageArrArr[this.aFInt] == null) {
+                        if (i.textures[this.aFInt] == null) {
                             i.aClassfArr[aInt(this.aFInt)].aVoid(this.aClassGraphics, this.aGInt, b.aInt + n5, b.bInt - 24, 0);
                         } else {
-                            this.aClassGraphics.drawImage(i.bClassImageArrArr[this.aFInt][this.aGInt], b.aInt + n5, b.bInt - 24, 0);
+                            this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.aInt + n5, b.bInt - 24, 0);
                         }
                     } catch (Exception x) {
                         System.out.println(x);
@@ -8752,7 +8752,7 @@ public final class i extends Canvas implements Runnable {
                 case 17:
                 case 18: {
                     if (b.eInt == 0) {
-                        this.aClassGraphics.drawImage(i.bClassImageArrArr[this.aFInt][this.aGInt], b.aInt, b.bInt - 12, 0);
+                        this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.aInt, b.bInt - 12, 0);
                         break;
                     }
                     break;
@@ -12360,7 +12360,7 @@ public final class i extends Canvas implements Runnable {
         this.aVoid(1);
         this.oBoolean = true;
         if (i.aClassfArr[18] == null) {
-            i.aClassfArr[18] = aClassf("/ui.f", 3, 0, 0);
+            i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3, 0, 0);
         }
     }
 
@@ -15604,51 +15604,57 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private static f aClassf(final String fileName, final int chunkI, final int aInt, final int n2) {
-        f f = null;
+    private static f importTexturesWithPalettes(final String fileName, final int chunkI, final int offsetPalettes, final int countPalettes) {
+        f textures = null;
         try {
-            f = new f();
+            textures = new f();
             byte[] chunk = readChunk(fileName, chunkI);
             System.out.print("Get" + ((chunk[0] == (byte) 223 && chunk[1] == (byte) 3) ? "" : " broken") + " textures: ");
             System.out.print(fileName);
             System.out.print(", chunk #");
             System.out.println(chunkI);
             // DesktopLauncher.printByteArr(chunk, "Chunk data");
-            // f.aVoid(aByteArr(fileName, chunkI), 0);
-            f.aVoid(chunk, 0);
-            for (int i = aInt; i <= n2; ++i) {
-                f.aVoid(i, 0, -1, -1);
+            // textures.aVoid(aByteArr(fileName, chunkI), 0);
+            textures.aVoid(chunk, 0);
+            for (int i = offsetPalettes; i <= countPalettes; ++i) {
+                textures.aVoid(i, 0, -1, -1);
             }
-            f.aInt = aInt;
-            f.dByteArr = null;
+            textures.aInt = offsetPalettes;
+            textures.dByteArr = null;
             System.gc();
         } catch (Exception ex) {
         }
-        return f;
+        return textures;
     }
 
-    private static f aClassf(String s, int n) {
+    private static f importTexturesWithPalettes(String s, int n) {
         final String s2 = s;
         n = n;
         s = s2;
-        return aClassf(s2, n, 0, 0);
+        return importTexturesWithPalettes(s2, n, 0, 0);
     }
 
-    private static f aClassf(final String s, final int n, final int n2) {
-        return aClassf(s, n, 0, 0);
+    private static f importTexturesWithPalettes(final String s, final int n, final int n2) {
+        return importTexturesWithPalettes(s, n, 0, 0);
     }
 
-    private static Image[] aClassImageArr(final String s, final int n, final int n2) {
-        f f = null;
+    private static Image[] importTexturesWithPalette(final String fileName, final int chunkI, final int paletteI) {
+        f textures = null;
         try {
-            f = new f();
-            f.aVoid(readChunk(s, n), 0);
-            f.aVoid(n2, 0, -1, -1);
-            aVoid(f, false);
+            System.out.print("Other get textures with palette: ");
+            System.out.print(fileName);
+            System.out.print(", chunk #");
+            System.out.println(chunkI);
+            System.out.print(", palette #");
+            System.out.println(paletteI);
+            textures = new f();
+            textures.aVoid(readChunk(fileName, chunkI), 0);
+            textures.aVoid(paletteI, 0, -1, -1);
+            aVoid(textures, false);
             System.gc();
         } catch (Exception ex) {
         }
-        return f.aClassImageArrArr[n2];
+        return textures.aClassImageArrArr[paletteI];
     }
 
     private static Image aClassImage(final String s, final int n) {
@@ -16768,7 +16774,7 @@ public final class i extends Canvas implements Runnable {
             n %= 8;
             i.fClassString = d.aClassString(n + 69);
             if (n <= 4) {
-                i.aClassf = aClassf("/tips.f", n);
+                i.aClassf = importTexturesWithPalettes("/tips.f", n);
                 return;
             }
             i.aClassf = null;
@@ -16798,7 +16804,7 @@ public final class i extends Canvas implements Runnable {
             final int n4 = n3;
             if (n2 >= 0) {
                 if (i.aClassf == null) {
-                    i.aClassf = aClassf("/tips.f", this.agInt);
+                    i.aClassf = importTexturesWithPalettes("/tips.f", this.agInt);
                 }
                 if (i.aClassf != null) {
                     try {
@@ -17332,19 +17338,19 @@ public final class i extends Canvas implements Runnable {
         graphics.fillRect(n, n2, n3, n4);
         graphics.setClip(n - 3, n2, n3 + 6, n4);
         for (iInteger = n2; iInteger <= n2 + n4; iInteger += 8) {
-            graphics.drawImage(i.aClassImageArrArr[n5][7], n, iInteger, 24);
-            graphics.drawImage(i.aClassImageArrArr[n5][5], n + n3, iInteger, 20);
+            graphics.drawImage(i.demoUITextures[n5][7], n, iInteger, 24);
+            graphics.drawImage(i.demoUITextures[n5][5], n + n3, iInteger, 20);
         }
         graphics.setClip(n, n2 - 3, n3, n4 + 6);
         for (iInteger = n; iInteger <= n + n3; iInteger += 8) {
-            graphics.drawImage(i.aClassImageArrArr[n5][4], iInteger, n2, 36);
-            graphics.drawImage(i.aClassImageArrArr[n5][6], iInteger, n2 + n4, 20);
+            graphics.drawImage(i.demoUITextures[n5][4], iInteger, n2, 36);
+            graphics.drawImage(i.demoUITextures[n5][6], iInteger, n2 + n4, 20);
         }
         graphics.setClip(n - 3, n2 - 3, n3 + 6, n4 + 6);
-        graphics.drawImage(i.aClassImageArrArr[n5][0], n, n2, 40);
-        graphics.drawImage(i.aClassImageArrArr[n5][1], n + n3, n2, 36);
-        graphics.drawImage(i.aClassImageArrArr[n5][2], n, n2 + n4, 24);
-        graphics.drawImage(i.aClassImageArrArr[n5][3], n + n3, n2 + n4, 20);
+        graphics.drawImage(i.demoUITextures[n5][0], n, n2, 40);
+        graphics.drawImage(i.demoUITextures[n5][1], n + n3, n2, 36);
+        graphics.drawImage(i.demoUITextures[n5][2], n, n2 + n4, 24);
+        graphics.drawImage(i.demoUITextures[n5][3], n + n3, n2 + n4, 20);
         graphics.setClip(clipX, clipY, clipWidth, clipHeight);
     }
 
@@ -17358,8 +17364,8 @@ public final class i extends Canvas implements Runnable {
         graphics.setClip(13, 195, n3 + 6, 3);
         graphics.setColor(73);
         graphics.fillRect(13, 195, n3 + 6, 3);
-        graphics.drawImage(i.aClassImageArrArr[1][3], 16, 195, 24);
-        graphics.drawImage(i.aClassImageArrArr[1][2], n3 + 16, 195, 20);
+        graphics.drawImage(i.demoUITextures[1][3], 16, 195, 24);
+        graphics.drawImage(i.demoUITextures[1][2], n3 + 16, 195, 20);
         graphics.setClip(clipX, clipY, clipWidth, clipHeight);
     }
 

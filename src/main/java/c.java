@@ -8,8 +8,7 @@ import javax.microedition.lcdui.Graphics;
 // Decompiled by Procyon v0.5.36
 // 
 
-public final class c
-{
+public final class c {
     private static long aLong;
     private static String aClassString;
     private static String bClassString;
@@ -29,7 +28,7 @@ public final class c
     private static i aClassi;
     private short[] aShortArr;
     private int hInt;
-    
+
     public c(final i aClassi) {
         this.aByteArrArr = null;
         this.aInt = 0;
@@ -44,7 +43,7 @@ public final class c
         this.aShortArr = new short[16];
         c.aClassi = aClassi;
     }
-    
+
     private void aVoid(final Graphics graphics, final byte[] array, int n) {
         if (array == null) {
             return;
@@ -71,34 +70,34 @@ public final class c
             }
             case 1: {
                 int bInt2 = this.bInt;
-                final short n3 = (short)i.aInt(array, n + 2);
-                final short n4 = (short)i.aInt(array, n + 4);
-                final short n5 = (short)i.aInt(array, n + 6);
-                short n6 = (short)i.aInt(array, n + 8);
-                short n7 = (short)i.aInt(array, n + 10);
+                final short n3 = (short) i.aInt(array, n + 2);
+                final short n4 = (short) i.aInt(array, n + 4);
+                final short n5 = (short) i.aInt(array, n + 6);
+                short n6 = (short) i.aInt(array, n + 8);
+                short n7 = (short) i.aInt(array, n + 10);
                 if (n6 == 10000) {
-                    n6 = (short)c.aClassi.cInt;
+                    n6 = (short) c.aClassi.cInt;
                 }
                 if (n7 == 10000) {
-                    n7 = (short)c.aClassi.dInt;
+                    n7 = (short) c.aClassi.dInt;
                 }
                 if (bInt2 > n5) {
                     bInt2 = n5;
                 }
-                final short n8 = (short)(n3 - 108);
-                final short n9 = (short)(n4 - 108);
-                c.aClassi.cInt = (short)((n8 * bInt2 + n6 * (n5 - bInt2)) / n5);
-                c.aClassi.dInt = (short)((n9 * bInt2 + n7 * (n5 - bInt2)) / n5);
+                final short n8 = (short) (n3 - 108);
+                final short n9 = (short) (n4 - 108);
+                c.aClassi.cInt = (short) ((n8 * bInt2 + n6 * (n5 - bInt2)) / n5);
+                c.aClassi.dInt = (short) ((n9 * bInt2 + n7 * (n5 - bInt2)) / n5);
                 final int n10 = c.aClassi.eInt * 24 - 240;
                 final int bInt3 = c.aClassi.fInt * 24 - 320 + 80;
-                Label_0491: {
+                Label_0491:
+                {
                     i i;
                     int cInt;
                     if (c.aClassi.cInt > n10) {
                         i = c.aClassi;
                         cInt = n10;
-                    }
-                    else {
+                    } else {
                         if (c.aClassi.cInt >= 0) {
                             break Label_0491;
                         }
@@ -107,14 +106,14 @@ public final class c
                     }
                     i.cInt = cInt;
                 }
-                Label_0524: {
+                Label_0524:
+                {
                     i j;
                     int dInt;
                     if (c.aClassi.dInt > bInt3) {
                         j = c.aClassi;
                         dInt = bInt3;
-                    }
-                    else {
+                    } else {
                         if (c.aClassi.dInt >= 0) {
                             break Label_0524;
                         }
@@ -140,16 +139,16 @@ public final class c
             }
             case 13: {
                 int bInt4 = this.bInt;
-                final short n11 = (short)i.aInt(array, n + 2);
-                final short n12 = (short)i.aInt(array, n + 4);
-                final short n13 = (short)i.aInt(array, n + 6);
-                final short n14 = (short)i.aInt(array, n + 8);
-                final short n15 = (short)i.aInt(array, n + 10);
+                final short n11 = (short) i.aInt(array, n + 2);
+                final short n12 = (short) i.aInt(array, n + 4);
+                final short n13 = (short) i.aInt(array, n + 6);
+                final short n14 = (short) i.aInt(array, n + 8);
+                final short n15 = (short) i.aInt(array, n + 10);
                 if (bInt4 > n13) {
                     bInt4 = n13;
                 }
-                final short cInt2 = (short)((n11 * bInt4 + n14 * (n13 - bInt4)) / n13);
-                final short dInt2 = (short)((n12 * bInt4 + n15 * (n13 - bInt4)) / n13);
+                final short cInt2 = (short) ((n11 * bInt4 + n14 * (n13 - bInt4)) / n13);
+                final short dInt2 = (short) ((n12 * bInt4 + n15 * (n13 - bInt4)) / n13);
                 if (b == 13) {
                     this.cInt = cInt2;
                     this.dInt = dInt2;
@@ -159,68 +158,68 @@ public final class c
             }
             case 4: {
                 int bInt5 = this.bInt;
-                final short n16 = (short)i.aInt(array, n + 2);
-                final short n17 = (short)i.aInt(array, n + 4);
-                final short n18 = (short)i.aInt(array, n + 6);
-                final short n19 = (short)i.aInt(array, n + 6);
-                final short n20 = (short)i.aInt(array, n + 14);
+                final short n16 = (short) i.aInt(array, n + 2);
+                final short n17 = (short) i.aInt(array, n + 4);
+                final short n18 = (short) i.aInt(array, n + 6);
+                final short n19 = (short) i.aInt(array, n + 6);
+                final short n20 = (short) i.aInt(array, n + 14);
                 if (bInt5 > n20) {
                     bInt5 = n20;
                 }
-                c.aClassfArr[(short)i.aInt(array, n + 10)].aVoid(graphics, (int)(short)i.aInt(array, n + 12), (int)(short)((n18 * bInt5 + n16 * (n20 - bInt5)) / n20), (int)(short)((n19 * bInt5 + n17 * (n20 - bInt5)) / n20), 0);
+                c.aClassfArr[(short) i.aInt(array, n + 10)].aVoid(graphics, (int) (short) i.aInt(array, n + 12), (int) (short) ((n18 * bInt5 + n16 * (n20 - bInt5)) / n20), (int) (short) ((n19 * bInt5 + n17 * (n20 - bInt5)) / n20), 0);
             }
             case 27: {
                 final int n21 = i.aClassh.aClassFont.stringWidth(i.aClassStringArr[30]) + 10;
                 final int n22 = i.aClassh.aClassFont.getHeight() + 4;
                 String s = null;
                 try {
-                    s = new String(array, n + 8, (short)i.aInt(array, n + 2), "ISO-8859-1");
+                    s = new String(array, n + 8, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                } catch (Exception ex) {
                 }
-                catch (Exception ex) {}
                 if (s != null) {
                     try {
                         s = i.bClassStringArr[Integer.parseInt(s.trim())];
+                    } catch (Exception ex2) {
                     }
-                    catch (Exception ex2) {}
                 }
                 i.aVoid(graphics, 6, 197, 226, aClassStringArr(s, 220).length * i.aClassh.aClassFont.getHeight() + 6, 73, 1, n21, n22);
                 aVoid(graphics, s, 8, 210, 220);
                 i.aClassh.bVoid(graphics, i.aClassStringArr[30], 19, 200, 20);
                 if (i.gInt / 2 % 4 < 2) {
-                    graphics.drawImage(i.aClassImageArrArr[0][9], 223, 197, 17);
+                    graphics.drawImage(i.demoUITextures[0][9], 223, 197, 17);
                     return;
                 }
                 break;
             }
             case 2: {
-                final short n23 = (short)i.aInt(array, n + 6);
+                final short n23 = (short) i.aInt(array, n + 6);
                 int n24;
-                if ((n24 = (short)i.aInt(array, n + 4)) == 10000) {
+                if ((n24 = (short) i.aInt(array, n + 4)) == 10000) {
                     n24 = -240;
                 }
                 String s2 = null;
                 try {
-                    s2 = new String(array, n + 11, (short)i.aInt(array, n + 2), "ISO-8859-1");
+                    s2 = new String(array, n + 11, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                } catch (Exception ex3) {
                 }
-                catch (Exception ex3) {}
                 if (s2 != null) {
                     try {
                         s2 = i.bClassStringArr[Integer.parseInt(s2.trim())];
+                    } catch (Exception ex4) {
                     }
-                    catch (Exception ex4) {}
                 }
                 final int n25 = aClassStringArr(s2, 222).length * i.aClassh.aClassFont.getHeight() + 2;
                 i.aVoid(graphics, n24, n23 - 11, 226, n25, 73, 0);
                 aVoid(graphics, s2, n24 + 2, n23 + 2, 222);
                 if (i.gInt / 2 % 4 < 2) {
-                    graphics.drawImage(i.aClassImageArrArr[0][9], n24 + 226 - 10, n23 + n25 + 2, 17);
+                    graphics.drawImage(i.demoUITextures[0][9], n24 + 226 - 10, n23 + n25 + 2, 17);
                 }
                 graphics.setClip(0, 0, 240, 320);
                 break;
             }
         }
     }
-    
+
     private void aVoid(final byte[] array, final int n) {
         switch (array[n]) {
             case 7: {
@@ -232,27 +231,27 @@ public final class c
                 }
                 String s = null;
                 try {
-                    s = new String(array, n + 8, (short)i.aInt(array, n + 2), "ISO-8859-1");
+                    s = new String(array, n + 8, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                } catch (Exception ex) {
                 }
-                catch (Exception ex) {}
                 this.aVoid(s, 196);
-                final short n2 = (short)(array[n + 6] & 0xFF);
-                final short n3 = (short)(array[n + 8] & 0xFF);
+                final short n2 = (short) (array[n + 6] & 0xFF);
+                final short n3 = (short) (array[n + 8] & 0xFF);
                 if (n2 + n3 >= this.hInt) {
                     array[n + 7] = 1;
                     return;
                 }
-                array[n + 6] = (byte)(n2 + n3);
+                array[n + 6] = (byte) (n2 + n3);
             }
             case 2: {
                 String s2 = null;
                 try {
-                    s2 = new String(array, n + 11, (short)i.aInt(array, n + 2), "ISO-8859-1");
+                    s2 = new String(array, n + 11, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                } catch (Exception ex2) {
                 }
-                catch (Exception ex2) {}
                 this.aVoid(s2, 222);
-                final short n4 = (short)(array[n + 9] & 0xFF);
-                final short n5 = (short)(array[n + 8] & 0xFF);
+                final short n4 = (short) (array[n + 9] & 0xFF);
+                final short n5 = (short) (array[n + 8] & 0xFF);
                 byte[] array2;
                 int n6;
                 byte b;
@@ -260,18 +259,17 @@ public final class c
                     array2 = array;
                     n6 = n + 10;
                     b = 1;
-                }
-                else {
+                } else {
                     array2 = array;
                     n6 = n + 9;
-                    b = (byte)(n4 + n5);
+                    b = (byte) (n4 + n5);
                 }
                 array2[n6] = b;
                 break;
             }
         }
     }
-    
+
     public final void aVoid() {
         if (this.aByteArr == null) {
             return;
@@ -287,12 +285,11 @@ public final class c
                 this.aVoid(this.aByteArr, n);
                 n += b3;
             }
-        }
-        else {
+        } else {
             this.aVoid(this.aByteArr, 0);
         }
     }
-    
+
     public final void aVoid(final Graphics graphics) {
         if (this.aBoolean) {
             return;
@@ -321,8 +318,7 @@ public final class c
                 this.aVoid(graphics, this.aByteArr, n);
                 n += b3;
             }
-        }
-        else {
+        } else {
             this.aVoid(graphics, this.aByteArr, 0);
         }
         if (this.bBoolean) {
@@ -341,7 +337,7 @@ public final class c
             }
         }
     }
-    
+
     public final byte[] aByteArr() {
         final byte[][] aByteArrArr = this.aByteArrArr;
         for (int i = 0; i < aByteArrArr.length; ++i) {
@@ -358,7 +354,7 @@ public final class c
         this.bLong = System.currentTimeMillis();
         return this.bByteArr();
     }
-    
+
     private void bVoid(final byte[] array, final int n) {
         if (array[n] != 0) {
             array[n + 1] = 0;
@@ -368,7 +364,7 @@ public final class c
             switch (array[n]) {
                 case 27: {
                     array[n + 6] = 0;
-                    aVoid(array, n + 4, (short)(-240));
+                    aVoid(array, n + 4, (short) (-240));
                     array2 = array;
                     n2 = n;
                     n3 = 7;
@@ -376,7 +372,7 @@ public final class c
                 }
                 case 2: {
                     array[n + 9] = 0;
-                    aVoid(array, n + 4, (short)(-240));
+                    aVoid(array, n + 4, (short) (-240));
                     array2 = array;
                     n2 = n;
                     n3 = 10;
@@ -397,7 +393,7 @@ public final class c
             n4 += b3;
         }
     }
-    
+
     public final byte[] bByteArr() {
         this.bInt = 0;
         c c;
@@ -405,15 +401,14 @@ public final class c
         if (this.aByteArrArr == null || this.aInt >= this.aByteArrArr.length) {
             c = this;
             aByteArr = null;
-        }
-        else {
+        } else {
             c = this;
             aByteArr = this.aByteArrArr[this.aInt++];
         }
         c.aByteArr = aByteArr;
         return this.aByteArr;
     }
-    
+
     public final void bVoid() {
         if (this.aByteArr[0] == 0) {
             final byte b = this.aByteArr[1];
@@ -423,13 +418,12 @@ public final class c
                 this.cVoid(this.aByteArr, n);
                 n += b3;
             }
-        }
-        else {
+        } else {
             this.cVoid(this.aByteArr, 0);
         }
         ++this.bInt;
     }
-    
+
     private void cVoid(final byte[] array, final int n) {
         final short n2 = array[n];
         if (this.aBoolean) {
@@ -460,7 +454,7 @@ public final class c
                 final int n4 = n + ((n2 == 18) ? 7 : 5);
                 int n5 = (array[n4] != 0) ? 1 : 0;
                 if (n2 != 18) {
-                    gInt = (short)i.aInt(array, n + 2);
+                    gInt = (short) i.aInt(array, n + 2);
                 }
                 if (n5 != 0) {
                     n5 = 0;
@@ -471,17 +465,15 @@ public final class c
                             this.gInt = ((n2 == 16) ? gInt : -1);
                         }
                     }
-                }
-                else if (b > 0) {
+                } else if (b > 0) {
                     n5 = 1;
                     if (n2 != 18) {
                         this.gInt = gInt;
                     }
-                }
-                else {
+                } else {
                     array[n + 1] = 1;
                 }
-                array[n4] = (byte)((n5 != 0) ? 1 : 0);
+                array[n4] = (byte) ((n5 != 0) ? 1 : 0);
                 array[n3] = b;
             }
             case 14:
@@ -490,8 +482,8 @@ public final class c
                 array[n + 1] = 1;
             }
             case 12: {
-                final short cInt = (short)i.aInt(array, n + 2);
-                final short dInt = (short)i.aInt(array, n + 4);
+                final short cInt = (short) i.aInt(array, n + 2);
+                final short dInt = (short) i.aInt(array, n + 4);
                 this.cInt = cInt;
                 this.dInt = dInt;
                 if (this.bInt > 5) {
@@ -502,8 +494,8 @@ public final class c
                 break;
             }
             case 11: {
-                this.fInt = (short)i.aInt(array, n + 4);
-                this.eInt = (short)i.aInt(array, n + 2);
+                this.fInt = (short) i.aInt(array, n + 4);
+                this.eInt = (short) i.aInt(array, n + 2);
                 array[n + 1] = 1;
             }
             case 10: {
@@ -511,41 +503,40 @@ public final class c
                 if (this.bInt == 0) {
                     c.aClassi.kInt = ((c.aClassi.kInt & 0xFFFFFFF8) | aByte);
                     c.aClassi.aByte = aByte;
-                }
-                else if (c.aClassi.jInt <= 0) {
+                } else if (c.aClassi.jInt <= 0) {
                     c.aClassi.aByte = 0;
                     array[n + 1] = 1;
                 }
                 c.aClassi.aVoid();
             }
             case 13: {
-                if ((short)i.aInt(array, n + 8) == 10000) {
-                    aVoid(array, n + 8, (short)this.cInt);
+                if ((short) i.aInt(array, n + 8) == 10000) {
+                    aVoid(array, n + 8, (short) this.cInt);
                 }
-                if ((short)i.aInt(array, n + 10) == 10000) {
-                    aVoid(array, n + 10, (short)this.dInt);
+                if ((short) i.aInt(array, n + 10) == 10000) {
+                    aVoid(array, n + 10, (short) this.dInt);
                 }
-                if (this.bInt > (short)i.aInt(array, n + 6)) {
+                if (this.bInt > (short) i.aInt(array, n + 6)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 1: {
-                if ((short)i.aInt(array, n + 8) == 10000) {
-                    aVoid(array, n + 8, (short)c.aClassi.cInt);
+                if ((short) i.aInt(array, n + 8) == 10000) {
+                    aVoid(array, n + 8, (short) c.aClassi.cInt);
                 }
-                if ((short)i.aInt(array, n + 10) == 10000) {
-                    aVoid(array, n + 10, (short)c.aClassi.dInt);
+                if ((short) i.aInt(array, n + 10) == 10000) {
+                    aVoid(array, n + 10, (short) c.aClassi.dInt);
                 }
-                if (this.bInt > (short)i.aInt(array, n + 6)) {
+                if (this.bInt > (short) i.aInt(array, n + 6)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 4: {
-                if (this.bInt > (short)i.aInt(array, n + 14)) {
+                if (this.bInt > (short) i.aInt(array, n + 14)) {
                     array[n + 1] = 1;
                     return;
                 }
@@ -559,20 +550,21 @@ public final class c
                 break;
             }
             case 25: {
-                i.aIntArrArr[(short)i.aInt(array, n + 2)][(short)i.aInt(array, n + 4)] = (array[n + 7] << 8 | array[n + 6]);
+                i.aIntArrArr[(short) i.aInt(array, n + 2)][(short) i.aInt(array, n + 4)] = (array[n + 7] << 8 | array[n + 6]);
                 array[n + 1] = 1;
             }
             case 26: {
-                i.bIntArrArr[(short)i.aInt(array, n + 2)][(short)i.aInt(array, n + 4)] = i.bInt(array, n + 6);
+                i.bIntArrArr[(short) i.aInt(array, n + 2)][(short) i.aInt(array, n + 4)] = i.bInt(array, n + 6);
                 array[n + 1] = 1;
             }
             case 5: {
-                i.aVoid((short)i.aInt(array, n + 2), (short)i.aInt(array, n + 4), array[n + 6], 0);
+                i.aVoid((short) i.aInt(array, n + 2), (short) i.aInt(array, n + 4), array[n + 6], 0);
                 array[n + 1] = 1;
             }
-            case 8: {}
+            case 8: {
+            }
             case 9: {
-                i.aVoid((short)i.aInt(array, n + 2), (short)i.aInt(array, n + 4), (byte)0, (int)(short)i.aInt(array, n + 6));
+                i.aVoid((short) i.aInt(array, n + 2), (short) i.aInt(array, n + 4), (byte) 0, (int) (short) i.aInt(array, n + 6));
                 array[n + 1] = 1;
             }
             case 27: {
@@ -584,16 +576,15 @@ public final class c
             }
             case 2: {
                 int n6;
-                if ((n6 = (short)i.aInt(array, n + 4)) == 10000) {
+                if ((n6 = (short) i.aInt(array, n + 4)) == 10000) {
                     n6 = -226;
                 }
-                short n7 = (short)(n6 + 30);
+                short n7 = (short) (n6 + 30);
                 if (array[n + 10] == 0) {
                     if (n7 > 7) {
                         n7 = 7;
                     }
-                }
-                else if (n7 > 240) {
+                } else if (n7 > 240) {
                     array[n + 1] = 1;
                 }
                 aVoid(array, n + 4, n7);
@@ -601,7 +592,7 @@ public final class c
             }
         }
     }
-    
+
     public final boolean aBoolean() {
         boolean b = true;
         if (this.aByteArr[0] == 0) {
@@ -614,13 +605,12 @@ public final class c
                 }
                 n += b4;
             }
-        }
-        else {
+        } else {
             b = (this.aByteArr[1] == 1);
         }
         return b;
     }
-    
+
     public final void aVoid(final int n) {
         try {
             final String bClassString = c.bClassString;
@@ -631,9 +621,9 @@ public final class c
             boolean b = false;
             do {
                 byteArrayInputStream.read(array, 0, 2);
-                if ((short)i.aInt(array, 0) == n) {
+                if ((short) i.aInt(array, 0) == n) {
                     byteArrayInputStream.read(array, 0, 2);
-                    final short n2 = (short)i.aInt(array, 0);
+                    final short n2 = (short) i.aInt(array, 0);
                     byteArrayInputStream.read(array, 0, 4);
                     array = new byte[i.bInt(array, 0)];
                     byteArrayInputStream.read(array);
@@ -641,12 +631,12 @@ public final class c
                     byteArrayInputStream = null;
                     b = true;
                     int n3 = 0;
-                    final short n4 = (short)i.aInt(array, 0);
+                    final short n4 = (short) i.aInt(array, 0);
                     n3 += 2;
                     if (n4 != 0) {
                         final short[] array2 = new short[n4];
                         for (short n5 = 0; n5 < n4; ++n5) {
-                            array2[n5] = (short)i.aInt(array, n3);
+                            array2[n5] = (short) i.aInt(array, n3);
                             n3 += 2;
                         }
                         for (short n6 = 1; n6 < n4; ++n6) {
@@ -667,7 +657,7 @@ public final class c
                         final InputStream resourceAsStream = this.getClass().getResourceAsStream(c.aClassString);
                         byte[] array3 = new byte[4];
                         resourceAsStream.read(array3, 0, 2);
-                        final short n11 = (short)i.aInt(array3, 0);
+                        final short n11 = (short) i.aInt(array3, 0);
                         if (c.aClassfArr == null) {
                             c.aClassfArr = new f[n11];
                         }
@@ -676,15 +666,14 @@ public final class c
                             int iInteger = 0;
                             while (iInteger == 0) {
                                 resourceAsStream.read(array3, 0, 2);
-                                if (n13 == (short)i.aInt(array3, 0)) {
+                                if (n13 == (short) i.aInt(array3, 0)) {
                                     iInteger = 1;
                                 }
                                 resourceAsStream.read(array3, 0, 4);
                                 final int b2 = i.bInt(array3, 0);
                                 if (iInteger == 0 && c.aClassfArr[n13] != null) {
                                     resourceAsStream.skip(b2);
-                                }
-                                else {
+                                } else {
                                     array3 = new byte[b2];
                                     resourceAsStream.read(array3);
                                     (c.aClassfArr[n13] = new f()).aVoid(array3, 0);
@@ -704,19 +693,19 @@ public final class c
                         byte[][] array5;
                         if (n16 == 0) {
                             array5 = aByteArrArr;
-                        }
-                        else {
+                        } else {
                             array5 = array4;
                             --n16;
                             --n17;
                         }
                         final int n18 = array[n3++] & 0xFF;
                         byte[] array6 = null;
-                        Label_1801: {
+                        Label_1801:
+                        {
                             byte[] array7 = null;
                             switch (n18) {
                                 case 18: {
-                                    final short n19 = (short)(array[n3++] & 0xFF);
+                                    final short n19 = (short) (array[n3++] & 0xFF);
                                     final int n20 = (array[n3++] & 0xFF) + ((array[n3++] & 0xFF) << 8) + ((array[n3++] & 0xFF) << 16);
                                     aVoid(array6 = new byte[8], 2, n19);
                                     aVoid(array6, 3, n20);
@@ -725,44 +714,44 @@ public final class c
                                 }
                                 case 16:
                                 case 17: {
-                                    final short n21 = (short)i.aInt(array, n3);
+                                    final short n21 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n22 = (short)(array[n3++] & 0xFF);
+                                    final short n22 = (short) (array[n3++] & 0xFF);
                                     aVoid(array6 = new byte[6], 2, n21);
                                     aVoid(array6, 4, n22);
                                     array6[5] = 0;
                                     break Label_1801;
                                 }
                                 case 11: {
-                                    final short n23 = (short)i.aInt(array, n3);
+                                    final short n23 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n24 = (short)i.aInt(array, n3);
+                                    final short n24 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[6], 2, n23);
                                     aVoid(array6, 4, n24);
                                     break Label_1801;
                                 }
                                 case 12: {
-                                    final short n25 = (short)i.aInt(array, n3);
+                                    final short n25 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n26 = (short)i.aInt(array, n3);
+                                    final short n26 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[6], 2, n25);
                                     aVoid(array6, 4, n26);
                                     break Label_1801;
                                 }
                                 case 13: {
-                                    final short n27 = (short)i.aInt(array, n3);
+                                    final short n27 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n28 = (short)i.aInt(array, n3);
+                                    final short n28 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n29 = (short)i.aInt(array, n3);
+                                    final short n29 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[12], 2, n27);
                                     aVoid(array6, 4, n28);
                                     aVoid(array6, 6, n29);
-                                    aVoid(array6, 8, (short)10000);
-                                    aVoid(array6, 10, (short)10000);
+                                    aVoid(array6, 8, (short) 10000);
+                                    aVoid(array6, 10, (short) 10000);
                                     break Label_1801;
                                 }
                                 case 14:
@@ -771,19 +760,19 @@ public final class c
                                     break;
                                 }
                                 case 4: {
-                                    final short n30 = (short)i.aInt(array, n3);
+                                    final short n30 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n31 = (short)i.aInt(array, n3);
+                                    final short n31 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n32 = (short)i.aInt(array, n3);
+                                    final short n32 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n33 = (short)i.aInt(array, n3);
+                                    final short n33 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n34 = (short)i.aInt(array, n3);
+                                    final short n34 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n35 = (short)i.aInt(array, n3);
+                                    final short n35 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n36 = (short)i.aInt(array, n3);
+                                    final short n36 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[16], 2, n30);
                                     aVoid(array6, 4, n31);
@@ -799,17 +788,17 @@ public final class c
                                     break;
                                 }
                                 case 1: {
-                                    final short n37 = (short)(i.aInt(array, n3) * 24);
+                                    final short n37 = (short) (i.aInt(array, n3) * 24);
                                     n3 += 2;
-                                    final short n38 = (short)(i.aInt(array, n3) * 24);
+                                    final short n38 = (short) (i.aInt(array, n3) * 24);
                                     n3 += 2;
-                                    final short n39 = (short)i.aInt(array, n3);
+                                    final short n39 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[12], 2, n37);
                                     aVoid(array6, 4, n38);
                                     aVoid(array6, 6, n39);
-                                    aVoid(array6, 8, (short)10000);
-                                    aVoid(array6, 10, (short)10000);
+                                    aVoid(array6, 8, (short) 10000);
+                                    aVoid(array6, 10, (short) 10000);
                                     break Label_1801;
                                 }
                                 case 6: {
@@ -819,9 +808,9 @@ public final class c
                                     break Label_1801;
                                 }
                                 case 26: {
-                                    final short n40 = (short)i.aInt(array, n3);
+                                    final short n40 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n41 = (short)i.aInt(array, n3);
+                                    final short n41 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     final int b4 = i.bInt(array, n3);
                                     n3 += 4;
@@ -831,60 +820,60 @@ public final class c
                                     break Label_1801;
                                 }
                                 case 25: {
-                                    final short n42 = (short)i.aInt(array, n3);
+                                    final short n42 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n43 = (short)i.aInt(array, n3);
+                                    final short n43 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n44 = (short)(array[n3++] & 0xFF);
-                                    final short n45 = (short)(array[n3++] & 0xFF);
+                                    final short n44 = (short) (array[n3++] & 0xFF);
+                                    final short n45 = (short) (array[n3++] & 0xFF);
                                     aVoid(array6 = new byte[8], 2, n42);
                                     aVoid(array6, 4, n43);
-                                    array6[6] = (byte)n44;
-                                    array6[7] = (byte)n45;
+                                    array6[6] = (byte) n44;
+                                    array6[7] = (byte) n45;
                                     break Label_1801;
                                 }
                                 case 5: {
-                                    final short n46 = (short)i.aInt(array, n3);
+                                    final short n46 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n47 = (short)i.aInt(array, n3);
+                                    final short n47 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n48 = (short)(array[n3++] & 0xFF);
+                                    final short n48 = (short) (array[n3++] & 0xFF);
                                     aVoid(array6 = new byte[7], 2, n46);
                                     aVoid(array6, 4, n47);
-                                    array6[6] = (byte)n48;
+                                    array6[6] = (byte) n48;
                                     break Label_1801;
                                 }
                                 case 27: {
-                                    final short n49 = (short)i.aInt(array, n3);
+                                    final short n49 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[n49 + 8], 2, n49);
-                                    aVoid(array6, 4, (short)10000);
+                                    aVoid(array6, 4, (short) 10000);
                                     array6[7] = (array6[6] = 0);
                                     System.arraycopy(array, n3, array6, 8, n49);
                                     n3 += n49;
                                     break Label_1801;
                                 }
                                 case 2: {
-                                    final short n50 = (short)(array[n3++] & 0xFF);
-                                    final short n51 = (short)i.aInt(array, n3);
+                                    final short n50 = (short) (array[n3++] & 0xFF);
+                                    final short n51 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n52 = (short)i.aInt(array, n3);
+                                    final short n52 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[n52 + 11], 2, n52);
-                                    aVoid(array6, 4, (short)10000);
+                                    aVoid(array6, 4, (short) 10000);
                                     aVoid(array6, 6, n51);
-                                    array6[8] = (byte)n50;
+                                    array6[8] = (byte) n50;
                                     array6[10] = (array6[9] = 0);
                                     System.arraycopy(array, n3, array6, 11, n52);
                                     n3 += n52;
                                     break Label_1801;
                                 }
                                 case 9: {
-                                    final short n53 = (short)i.aInt(array, n3);
+                                    final short n53 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n54 = (short)i.aInt(array, n3);
+                                    final short n54 = (short) i.aInt(array, n3);
                                     n3 += 2;
-                                    final short n55 = (short)i.aInt(array, n3);
+                                    final short n55 = (short) i.aInt(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[8], 2, n53);
                                     aVoid(array6, 4, n54);
@@ -892,11 +881,11 @@ public final class c
                                     break Label_1801;
                                 }
                                 case 10: {
-                                    (array6 = new byte[3])[2] = (byte)(array[n3++] & 0xFF);
+                                    (array6 = new byte[3])[2] = (byte) (array[n3++] & 0xFF);
                                     break Label_1801;
                                 }
                                 case 0: {
-                                    array4 = new byte[n16 = (short)(array[n3++] & 0xFF)][];
+                                    array4 = new byte[n16 = (short) (array[n3++] & 0xFF)][];
                                     array7 = null;
                                     break;
                                 }
@@ -904,13 +893,12 @@ public final class c
                             array6 = array7;
                         }
                         if (array6 != null) {
-                            array6[0] = (byte)n18;
+                            array6[0] = (byte) n18;
                             array6[1] = 0;
                             if (array5 == array4) {
                                 array5[n15] = array6;
                                 ++n15;
-                            }
-                            else {
+                            } else {
                                 array5[n14] = array6;
                                 ++n14;
                             }
@@ -922,7 +910,7 @@ public final class c
                             }
                             final byte[] array8;
                             (array8 = new byte[2 + (array4.length << 2) + n56])[0] = 0;
-                            array8[1] = (byte)array4.length;
+                            array8[1] = (byte) array4.length;
                             int n57 = 2 + (array4.length << 2);
                             for (int k = 0; k < array4.length; ++k) {
                                 aVoid(array8, 2 + (k << 2), array4[k].length);
@@ -936,17 +924,16 @@ public final class c
                         }
                     }
                     this.aByteArrArr = aByteArrArr;
-                }
-                else {
+                } else {
                     byteArrayInputStream.skip(2L);
                     byteArrayInputStream.read(array, 0, 4);
                     byteArrayInputStream.skip(i.bInt(array, 0));
                 }
             } while (!b);
+        } catch (Exception ex) {
         }
-        catch (Exception ex) {}
     }
-    
+
     public static int aInt(final Graphics graphics, final String s, final int n, int n2, int iInteger) {
         String[] aClassStringArr;
         for (aClassStringArr = aClassStringArr(s, iInteger), iInteger = 0; iInteger < aClassStringArr.length; ++iInteger) {
@@ -955,7 +942,7 @@ public final class c
         }
         return n2;
     }
-    
+
     private static void aVoid(final Graphics graphics, final String s, final int n, int n2, final int n3) {
         n2 += 14;
         try {
@@ -980,8 +967,7 @@ public final class c
                     n4 = n + n3;
                     n5 = n2;
                     n6 = 8;
-                }
-                else {
+                } else {
                     h = i.aClassh;
                     graphics2 = graphics;
                     s2 = aClassStringArr[iInteger];
@@ -992,12 +978,11 @@ public final class c
                 h.bVoid(graphics2, s2, n4, n5, n6);
                 n2 += i.aClassh.aClassFont.getHeight();
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    
+
     public static String[] aClassStringArr(final String s, final int n) {
         final Vector<String> vector = new Vector<String>();
         String obj = "";
@@ -1023,8 +1008,7 @@ public final class c
                 if (iInteger != aClassStringArr.length - 1 || obj == null || obj.equals("") || obj.equals(" ")) {
                     continue;
                 }
-            }
-            else {
+            } else {
                 StringBuffer sb;
                 if (i.aClassh.aClassFont.stringWidth(obj + str + " ") < n) {
                     final String trim2;
@@ -1038,12 +1022,10 @@ public final class c
                             break;
                         }
                         break;
-                    }
-                    else {
+                    } else {
                         sb = new StringBuffer();
                     }
-                }
-                else {
+                } else {
                     if (obj != null && !obj.equals("") && !obj.equals(" ")) {
                         vector.addElement(obj);
                     }
@@ -1059,7 +1041,7 @@ public final class c
         }
         return aClassStringArr(vector);
     }
-    
+
     private static String[] bClassStringArr(final String s, final int n) {
         final Vector<String> vector = new Vector<String>();
         String string = "";
@@ -1070,8 +1052,7 @@ public final class c
             if (i.aClassh.aClassFont.stringWidth(string + char1) < n) {
                 sb = new StringBuffer();
                 str = string;
-            }
-            else {
+            } else {
                 vector.addElement(string);
                 sb = new StringBuffer();
                 str = "";
@@ -1083,7 +1064,7 @@ public final class c
         }
         return aClassStringArr(vector);
     }
-    
+
     private static String[] aClassStringArr(final Vector vector) {
         final String[] array = new String[vector.size()];
         final Enumeration<String> elements = vector.elements();
@@ -1097,7 +1078,7 @@ public final class c
         }
         return array;
     }
-    
+
     public static String[] aClassStringArr(final String s, final char c) {
         final Vector<String> vector = new Vector<String>();
         String string = "";
@@ -1113,7 +1094,7 @@ public final class c
         }
         return aClassStringArr(vector);
     }
-    
+
     private void aVoid(final String s, final int n) {
         try {
             this.hInt = 0;
@@ -1124,30 +1105,29 @@ public final class c
                 if (s.charAt(length - 1) == '\n') {
                     return;
                 }
-                Label_0276: {
+                Label_0276:
+                {
                     final char char1;
                     if ((char1 = s.charAt(iInteger)) > ' ') {
-                        n2 += i.aClassh.aClassFont.charWidth((char)char1);
-                    }
-                    else if (char1 == ' ' && iInteger + 1 < length && (s.charAt(iInteger + 1) == '?' || s.charAt(iInteger + 1) == '!' || s.charAt(iInteger + 1) == ':')) {
-                        final int n4 = n2 + i.aClassh.aClassFont.charWidth((char)char1);
+                        n2 += i.aClassh.aClassFont.charWidth((char) char1);
+                    } else if (char1 == ' ' && iInteger + 1 < length && (s.charAt(iInteger + 1) == '?' || s.charAt(iInteger + 1) == '!' || s.charAt(iInteger + 1) == ':')) {
+                        final int n4 = n2 + i.aClassh.aClassFont.charWidth((char) char1);
                         s.charAt(iInteger + 1);
-                        n2 = n4 + i.aClassh.aClassFont.charWidth((char)char1);
-                    }
-                    else {
+                        n2 = n4 + i.aClassh.aClassFont.charWidth((char) char1);
+                    } else {
                         if (char1 == ' ') {
-                            n2 += i.aClassh.aClassFont.charWidth((char)char1);
+                            n2 += i.aClassh.aClassFont.charWidth((char) char1);
                             break Label_0276;
                         }
                         if (char1 == '\n') {
                             n2 = 0;
-                            this.aShortArr[this.hInt++] = (short)iInteger;
+                            this.aShortArr[this.hInt++] = (short) iInteger;
                         }
                         continue;
                     }
                     if (n2 > n) {
                         iInteger = n3 - 1;
-                        this.aShortArr[this.hInt++] = (short)iInteger;
+                        this.aShortArr[this.hInt++] = (short) iInteger;
                         n2 = 0;
                     }
                     if (s.charAt(iInteger) != ' ') {
@@ -1156,23 +1136,23 @@ public final class c
                 }
                 n3 = iInteger + 1;
             }
-            this.aShortArr[this.hInt++] = (short)length;
+            this.aShortArr[this.hInt++] = (short) length;
+        } catch (Exception ex) {
         }
-        catch (Exception ex) {}
     }
-    
+
     private static void aVoid(final byte[] array, final int n, final short n2) {
-        array[n] = (byte)n2;
-        array[n + 1] = (byte)(n2 >> 8);
+        array[n] = (byte) n2;
+        array[n + 1] = (byte) (n2 >> 8);
     }
-    
+
     private static void aVoid(final byte[] array, final int n, final int n2) {
-        array[n] = (byte)n2;
-        array[n + 1] = (byte)(n2 >> 8);
-        array[n + 2] = (byte)(n2 >> 16);
-        array[n + 3] = (byte)(n2 >>> 24);
+        array[n] = (byte) n2;
+        array[n + 1] = (byte) (n2 >> 8);
+        array[n + 2] = (byte) (n2 >> 16);
+        array[n + 3] = (byte) (n2 >>> 24);
     }
-    
+
     static {
         c.aLong = 1000L;
         c.aClassString = "/demoSpr.bin";
