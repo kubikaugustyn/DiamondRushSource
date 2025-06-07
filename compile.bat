@@ -1,0 +1,1 @@
+java -cp ecj-4.9.jar org.eclipse.jdt.internal.compiler.batch.Main -1.3 -bootclasspath jsr118-midpapi20.jar:jsr139-cldcapi11.jar -classpath jsr118-midpapi20.jar:jsr139-cldcapi11.jar -encoding UTF-8 -d build/ src/main/java/*.java

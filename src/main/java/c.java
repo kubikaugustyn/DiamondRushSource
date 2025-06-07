@@ -12,7 +12,7 @@ public final class c {
     private static long aLong;
     private static String aClassString;
     private static String bClassString;
-    public static f[] aClassfArr;
+    public static f_Sprite[] aClassfArr;
     public byte[][] aByteArrArr;
     private int aInt;
     private long bLong;
@@ -64,17 +64,17 @@ public final class c {
                 if (bInt > 5) {
                     bInt = 5;
                 }
-                final int n2 = c.aClassi.hInt * 24;
-                n = c.aClassi.iInt * 24;
+                final int n2 = c.aClassi.crtPlayerX * 24;
+                n = c.aClassi.crtPlayerY * 24;
                 graphics.fillRect(((n2 - c.aClassi.aInt) * (5 - bInt) + this.cInt * bInt) / 5, ((n - c.aClassi.bInt) * (5 - bInt) + this.dInt * bInt) / 5, bInt * 102 / 5, bInt * 38 / 5);
             }
             case 1: {
                 int bInt2 = this.bInt;
-                final short n3 = (short) i.aInt(array, n + 2);
-                final short n4 = (short) i.aInt(array, n + 4);
-                final short n5 = (short) i.aInt(array, n + 6);
-                short n6 = (short) i.aInt(array, n + 8);
-                short n7 = (short) i.aInt(array, n + 10);
+                final short n3 = (short) i.unpackUint16(array, n + 2);
+                final short n4 = (short) i.unpackUint16(array, n + 4);
+                final short n5 = (short) i.unpackUint16(array, n + 6);
+                short n6 = (short) i.unpackUint16(array, n + 8);
+                short n7 = (short) i.unpackUint16(array, n + 10);
                 if (n6 == 10000) {
                     n6 = (short) c.aClassi.cInt;
                 }
@@ -88,8 +88,8 @@ public final class c {
                 final short n9 = (short) (n4 - 108);
                 c.aClassi.cInt = (short) ((n8 * bInt2 + n6 * (n5 - bInt2)) / n5);
                 c.aClassi.dInt = (short) ((n9 * bInt2 + n7 * (n5 - bInt2)) / n5);
-                final int n10 = c.aClassi.eInt * 24 - 240;
-                final int bInt3 = c.aClassi.fInt * 24 - 320 + 80;
+                final int n10 = c.aClassi.crtStageWidth * 24 - 240;
+                final int bInt3 = c.aClassi.crtStageHeight * 24 - 320 + 80;
                 Label_0491:
                 {
                     i i;
@@ -139,11 +139,11 @@ public final class c {
             }
             case 13: {
                 int bInt4 = this.bInt;
-                final short n11 = (short) i.aInt(array, n + 2);
-                final short n12 = (short) i.aInt(array, n + 4);
-                final short n13 = (short) i.aInt(array, n + 6);
-                final short n14 = (short) i.aInt(array, n + 8);
-                final short n15 = (short) i.aInt(array, n + 10);
+                final short n11 = (short) i.unpackUint16(array, n + 2);
+                final short n12 = (short) i.unpackUint16(array, n + 4);
+                final short n13 = (short) i.unpackUint16(array, n + 6);
+                final short n14 = (short) i.unpackUint16(array, n + 8);
+                final short n15 = (short) i.unpackUint16(array, n + 10);
                 if (bInt4 > n13) {
                     bInt4 = n13;
                 }
@@ -158,33 +158,33 @@ public final class c {
             }
             case 4: {
                 int bInt5 = this.bInt;
-                final short n16 = (short) i.aInt(array, n + 2);
-                final short n17 = (short) i.aInt(array, n + 4);
-                final short n18 = (short) i.aInt(array, n + 6);
-                final short n19 = (short) i.aInt(array, n + 6);
-                final short n20 = (short) i.aInt(array, n + 14);
+                final short n16 = (short) i.unpackUint16(array, n + 2);
+                final short n17 = (short) i.unpackUint16(array, n + 4);
+                final short n18 = (short) i.unpackUint16(array, n + 6);
+                final short n19 = (short) i.unpackUint16(array, n + 6);
+                final short n20 = (short) i.unpackUint16(array, n + 14);
                 if (bInt5 > n20) {
                     bInt5 = n20;
                 }
-                c.aClassfArr[(short) i.aInt(array, n + 10)].aVoid(graphics, (int) (short) i.aInt(array, n + 12), (int) (short) ((n18 * bInt5 + n16 * (n20 - bInt5)) / n20), (int) (short) ((n19 * bInt5 + n17 * (n20 - bInt5)) / n20), 0);
+                c.aClassfArr[(short) i.unpackUint16(array, n + 10)].drawFrame(graphics, (int) (short) i.unpackUint16(array, n + 12), (int) (short) ((n18 * bInt5 + n16 * (n20 - bInt5)) / n20), (int) (short) ((n19 * bInt5 + n17 * (n20 - bInt5)) / n20), 0);
             }
             case 27: {
-                final int n21 = i.aClassh.aClassFont.stringWidth(i.aClassStringArr[30]) + 10;
-                final int n22 = i.aClassh.aClassFont.getHeight() + 4;
+                final int n21 = i.textSize8.font.stringWidth(i.texts[30]) + 10;
+                final int n22 = i.textSize8.font.getHeight() + 4;
                 String s = null;
                 try {
-                    s = new String(array, n + 8, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                    s = new String(array, n + 8, (short) i.unpackUint16(array, n + 2), "ISO-8859-1");
                 } catch (Exception ex) {
                 }
                 if (s != null) {
                     try {
-                        s = i.bClassStringArr[Integer.parseInt(s.trim())];
+                        s = i.demoTextMapping[Integer.parseInt(s.trim())];
                     } catch (Exception ex2) {
                     }
                 }
-                i.aVoid(graphics, 6, 197, 226, aClassStringArr(s, 220).length * i.aClassh.aClassFont.getHeight() + 6, 73, 1, n21, n22);
+                i.aVoid(graphics, 6, 197, 226, aClassStringArr(s, 220).length * i.textSize8.font.getHeight() + 6, 73, 1, n21, n22);
                 aVoid(graphics, s, 8, 210, 220);
-                i.aClassh.bVoid(graphics, i.aClassStringArr[30], 19, 200, 20);
+                i.textSize8.drawTextWithFlags(graphics, i.texts[30], 19, 200, 20);
                 if (i.gInt / 2 % 4 < 2) {
                     graphics.drawImage(i.demoUITextures[0][9], 223, 197, 17);
                     return;
@@ -192,23 +192,23 @@ public final class c {
                 break;
             }
             case 2: {
-                final short n23 = (short) i.aInt(array, n + 6);
+                final short n23 = (short) i.unpackUint16(array, n + 6);
                 int n24;
-                if ((n24 = (short) i.aInt(array, n + 4)) == 10000) {
+                if ((n24 = (short) i.unpackUint16(array, n + 4)) == 10000) {
                     n24 = -240;
                 }
                 String s2 = null;
                 try {
-                    s2 = new String(array, n + 11, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                    s2 = new String(array, n + 11, (short) i.unpackUint16(array, n + 2), "ISO-8859-1");
                 } catch (Exception ex3) {
                 }
                 if (s2 != null) {
                     try {
-                        s2 = i.bClassStringArr[Integer.parseInt(s2.trim())];
+                        s2 = i.demoTextMapping[Integer.parseInt(s2.trim())];
                     } catch (Exception ex4) {
                     }
                 }
-                final int n25 = aClassStringArr(s2, 222).length * i.aClassh.aClassFont.getHeight() + 2;
+                final int n25 = aClassStringArr(s2, 222).length * i.textSize8.font.getHeight() + 2;
                 i.aVoid(graphics, n24, n23 - 11, 226, n25, 73, 0);
                 aVoid(graphics, s2, n24 + 2, n23 + 2, 222);
                 if (i.gInt / 2 % 4 < 2) {
@@ -231,7 +231,7 @@ public final class c {
                 }
                 String s = null;
                 try {
-                    s = new String(array, n + 8, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                    s = new String(array, n + 8, (short) i.unpackUint16(array, n + 2), "ISO-8859-1");
                 } catch (Exception ex) {
                 }
                 this.aVoid(s, 196);
@@ -246,7 +246,7 @@ public final class c {
             case 2: {
                 String s2 = null;
                 try {
-                    s2 = new String(array, n + 11, (short) i.aInt(array, n + 2), "ISO-8859-1");
+                    s2 = new String(array, n + 11, (short) i.unpackUint16(array, n + 2), "ISO-8859-1");
                 } catch (Exception ex2) {
                 }
                 this.aVoid(s2, 222);
@@ -281,7 +281,7 @@ public final class c {
             final byte b = this.aByteArr[1];
             int n = 2 + (b << 2);
             for (byte b2 = 0; b2 < b; ++b2) {
-                final int b3 = i.bInt(this.aByteArr, 2 + (b2 << 2));
+                final int b3 = i.unpackUint32(this.aByteArr, 2 + (b2 << 2));
                 this.aVoid(this.aByteArr, n);
                 n += b3;
             }
@@ -303,10 +303,12 @@ public final class c {
                 break;
             }
             default: {
+                // Renders the black rectangles behind top and bottom UI in gameplay
                 graphics.setColor(0);
                 graphics.fillRect(0, 0, 240, 42);
                 graphics.fillRect(0, 278, 240, 42);
-                i.aClassh.bVoid(graphics, i.aClassStringArr[65], 2, 320 - (i.aClassh.aClassFont.getHeight() - 10), 36);
+                // Renders the "Skip" animation text
+                i.textSize8.drawTextWithFlags(graphics, i.texts[65], 2, 320 - (i.textSize8.font.getHeight() - 10), 36);
                 break;
             }
         }
@@ -314,7 +316,7 @@ public final class c {
             final byte b = this.aByteArr[1];
             int n = 2 + (b << 2);
             for (byte b2 = 0; b2 < b; ++b2) {
-                final int b3 = i.bInt(this.aByteArr, 2 + (b2 << 2));
+                final int b3 = i.unpackUint32(this.aByteArr, 2 + (b2 << 2));
                 this.aVoid(graphics, this.aByteArr, n);
                 n += b3;
             }
@@ -324,8 +326,8 @@ public final class c {
         if (this.bBoolean) {
             graphics.setColor(0);
             graphics.fillRect(this.cInt - 3, this.dInt - 3, 109, 45);
-            c.aClassfArr[this.fInt].aVoid(graphics, 0, this.bInt % c.aClassfArr[this.fInt].aInt(0), this.cInt, this.dInt, 0, 0, 0);
-            c.aClassfArr[0].aVoid(graphics, this.eInt, this.cInt, this.dInt, 0);
+            c.aClassfArr[this.fInt].drawAnimationFrame(graphics, 0, this.bInt % c.aClassfArr[this.fInt].getAnimationFrameCount(0), this.cInt, this.dInt, 0, 0, 0);
+            c.aClassfArr[0].drawFrame(graphics, this.eInt, this.cInt, this.dInt, 0);
             if (this.gInt >= 0) {
                 if (i.bBoolean && this.gInt == 2) {
                     this.gInt = 7;
@@ -333,7 +335,7 @@ public final class c {
                 if (i.bBoolean && this.gInt == 6) {
                     this.gInt = 8;
                 }
-                c.aClassfArr[1].aVoid(graphics, this.gInt, this.cInt + 90, this.dInt - 6, 0);
+                c.aClassfArr[1].drawFrame(graphics, this.gInt, this.cInt + 90, this.dInt - 6, 0);
             }
         }
     }
@@ -388,7 +390,7 @@ public final class c {
         final byte b = array[n + 1];
         int n4 = n + 2 + (b << 2);
         for (byte b2 = 0; b2 < b; ++b2) {
-            final int b3 = i.bInt(array, n + 2 + (b2 << 2));
+            final int b3 = i.unpackUint32(array, n + 2 + (b2 << 2));
             this.bVoid(array, n4);
             n4 += b3;
         }
@@ -396,17 +398,9 @@ public final class c {
 
     public final byte[] bByteArr() {
         this.bInt = 0;
-        c c;
-        byte[] aByteArr;
-        if (this.aByteArrArr == null || this.aInt >= this.aByteArrArr.length) {
-            c = this;
-            aByteArr = null;
-        } else {
-            c = this;
-            aByteArr = this.aByteArrArr[this.aInt++];
-        }
-        c.aByteArr = aByteArr;
-        return this.aByteArr;
+        if (this.aByteArrArr == null || this.aInt >= this.aByteArrArr.length) aByteArr = null;
+        else aByteArr = this.aByteArrArr[this.aInt++];
+        return aByteArr;
     }
 
     public final void bVoid() {
@@ -414,7 +408,7 @@ public final class c {
             final byte b = this.aByteArr[1];
             int n = 2 + (b << 2);
             for (byte b2 = 0; b2 < b; ++b2) {
-                final int b3 = i.bInt(this.aByteArr, 2 + (b2 << 2));
+                final int b3 = i.unpackUint32(this.aByteArr, 2 + (b2 << 2));
                 this.cVoid(this.aByteArr, n);
                 n += b3;
             }
@@ -454,7 +448,7 @@ public final class c {
                 final int n4 = n + ((n2 == 18) ? 7 : 5);
                 int n5 = (array[n4] != 0) ? 1 : 0;
                 if (n2 != 18) {
-                    gInt = (short) i.aInt(array, n + 2);
+                    gInt = (short) i.unpackUint16(array, n + 2);
                 }
                 if (n5 != 0) {
                     n5 = 0;
@@ -482,8 +476,8 @@ public final class c {
                 array[n + 1] = 1;
             }
             case 12: {
-                final short cInt = (short) i.aInt(array, n + 2);
-                final short dInt = (short) i.aInt(array, n + 4);
+                final short cInt = (short) i.unpackUint16(array, n + 2);
+                final short dInt = (short) i.unpackUint16(array, n + 4);
                 this.cInt = cInt;
                 this.dInt = dInt;
                 if (this.bInt > 5) {
@@ -494,8 +488,8 @@ public final class c {
                 break;
             }
             case 11: {
-                this.fInt = (short) i.aInt(array, n + 4);
-                this.eInt = (short) i.aInt(array, n + 2);
+                this.fInt = (short) i.unpackUint16(array, n + 4);
+                this.eInt = (short) i.unpackUint16(array, n + 2);
                 array[n + 1] = 1;
             }
             case 10: {
@@ -510,61 +504,61 @@ public final class c {
                 c.aClassi.aVoid();
             }
             case 13: {
-                if ((short) i.aInt(array, n + 8) == 10000) {
+                if ((short) i.unpackUint16(array, n + 8) == 10000) {
                     aVoid(array, n + 8, (short) this.cInt);
                 }
-                if ((short) i.aInt(array, n + 10) == 10000) {
+                if ((short) i.unpackUint16(array, n + 10) == 10000) {
                     aVoid(array, n + 10, (short) this.dInt);
                 }
-                if (this.bInt > (short) i.aInt(array, n + 6)) {
+                if (this.bInt > (short) i.unpackUint16(array, n + 6)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 1: {
-                if ((short) i.aInt(array, n + 8) == 10000) {
+                if ((short) i.unpackUint16(array, n + 8) == 10000) {
                     aVoid(array, n + 8, (short) c.aClassi.cInt);
                 }
-                if ((short) i.aInt(array, n + 10) == 10000) {
+                if ((short) i.unpackUint16(array, n + 10) == 10000) {
                     aVoid(array, n + 10, (short) c.aClassi.dInt);
                 }
-                if (this.bInt > (short) i.aInt(array, n + 6)) {
+                if (this.bInt > (short) i.unpackUint16(array, n + 6)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 4: {
-                if (this.bInt > (short) i.aInt(array, n + 14)) {
+                if (this.bInt > (short) i.unpackUint16(array, n + 14)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 6: {
-                if (this.bInt > i.bInt(array, n + 2)) {
+                if (this.bInt > i.unpackUint32(array, n + 2)) {
                     array[n + 1] = 1;
                     return;
                 }
                 break;
             }
             case 25: {
-                i.aIntArrArr[(short) i.aInt(array, n + 2)][(short) i.aInt(array, n + 4)] = (array[n + 7] << 8 | array[n + 6]);
+                i.crtStageForegrondLayer[(short) i.unpackUint16(array, n + 2)][(short) i.unpackUint16(array, n + 4)] = (array[n + 7] << 8 | array[n + 6]);
                 array[n + 1] = 1;
             }
             case 26: {
-                i.bIntArrArr[(short) i.aInt(array, n + 2)][(short) i.aInt(array, n + 4)] = i.bInt(array, n + 6);
+                i.bIntArrArr[(short) i.unpackUint16(array, n + 2)][(short) i.unpackUint16(array, n + 4)] = i.unpackUint32(array, n + 6);
                 array[n + 1] = 1;
             }
             case 5: {
-                i.aVoid((short) i.aInt(array, n + 2), (short) i.aInt(array, n + 4), array[n + 6], 0);
+                i.aVoid((short) i.unpackUint16(array, n + 2), (short) i.unpackUint16(array, n + 4), array[n + 6], 0);
                 array[n + 1] = 1;
             }
             case 8: {
             }
             case 9: {
-                i.aVoid((short) i.aInt(array, n + 2), (short) i.aInt(array, n + 4), (byte) 0, (int) (short) i.aInt(array, n + 6));
+                i.aVoid((short) i.unpackUint16(array, n + 2), (short) i.unpackUint16(array, n + 4), (byte) 0, (int) (short) i.unpackUint16(array, n + 6));
                 array[n + 1] = 1;
             }
             case 27: {
@@ -576,7 +570,7 @@ public final class c {
             }
             case 2: {
                 int n6;
-                if ((n6 = (short) i.aInt(array, n + 4)) == 10000) {
+                if ((n6 = (short) i.unpackUint16(array, n + 4)) == 10000) {
                     n6 = -226;
                 }
                 short n7 = (short) (n6 + 30);
@@ -599,7 +593,7 @@ public final class c {
             final byte b2 = this.aByteArr[1];
             int n = 2 + (b2 << 2);
             for (byte b3 = 0; b3 < b2; ++b3) {
-                final int b4 = i.bInt(this.aByteArr, 2 + (b3 << 2));
+                final int b4 = i.unpackUint32(this.aByteArr, 2 + (b3 << 2));
                 if (!(b = (b && this.aByteArr[n + 1] == 1))) {
                     break;
                 }
@@ -613,30 +607,30 @@ public final class c {
 
     public final void aVoid(final int n) {
         try {
-            final String bClassString = c.bClassString;
+            final String fileNameDemo_f = c.bClassString;
             c.aClassi.getClass();
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(i.readChunk(bClassString, 0));
+            ByteArrayInputStream fileDemo_fChunk0 = new ByteArrayInputStream(i.readChunk(fileNameDemo_f, 0));
             byte[] array = new byte[4];
-            byteArrayInputStream.read(array, 0, 2);
+            fileDemo_fChunk0.read(array, 0, 2);
             boolean b = false;
             do {
-                byteArrayInputStream.read(array, 0, 2);
-                if ((short) i.aInt(array, 0) == n) {
-                    byteArrayInputStream.read(array, 0, 2);
-                    final short n2 = (short) i.aInt(array, 0);
-                    byteArrayInputStream.read(array, 0, 4);
-                    array = new byte[i.bInt(array, 0)];
-                    byteArrayInputStream.read(array);
-                    byteArrayInputStream.close();
-                    byteArrayInputStream = null;
+                fileDemo_fChunk0.read(array, 0, 2);
+                if ((short) i.unpackUint16(array, 0) == n) {
+                    fileDemo_fChunk0.read(array, 0, 2);
+                    final short n2 = (short) i.unpackUint16(array, 0);
+                    fileDemo_fChunk0.read(array, 0, 4);
+                    array = new byte[i.unpackUint32(array, 0)];
+                    fileDemo_fChunk0.read(array);
+                    fileDemo_fChunk0.close();
+                    fileDemo_fChunk0 = null;
                     b = true;
                     int n3 = 0;
-                    final short n4 = (short) i.aInt(array, 0);
+                    final short n4 = (short) i.unpackUint16(array, 0);
                     n3 += 2;
                     if (n4 != 0) {
                         final short[] array2 = new short[n4];
                         for (short n5 = 0; n5 < n4; ++n5) {
-                            array2[n5] = (short) i.aInt(array, n3);
+                            array2[n5] = (short) i.unpackUint16(array, n3);
                             n3 += 2;
                         }
                         for (short n6 = 1; n6 < n4; ++n6) {
@@ -654,35 +648,35 @@ public final class c {
                             }
                             array2[n10] = n7;
                         }
-                        final InputStream resourceAsStream = this.getClass().getResourceAsStream(c.aClassString);
+                        final InputStream fileDemoSpr_bin = this.getClass().getResourceAsStream(c.aClassString);
                         byte[] array3 = new byte[4];
-                        resourceAsStream.read(array3, 0, 2);
-                        final short n11 = (short) i.aInt(array3, 0);
+                        fileDemoSpr_bin.read(array3, 0, 2);
+                        final short n11 = (short) i.unpackUint16(array3, 0);
                         if (c.aClassfArr == null) {
-                            c.aClassfArr = new f[n11];
+                            c.aClassfArr = new f_Sprite[n11];
                         }
                         for (short n12 = 0; n12 < n4; ++n12) {
                             final short n13 = array2[n12];
                             int iInteger = 0;
                             while (iInteger == 0) {
-                                resourceAsStream.read(array3, 0, 2);
-                                if (n13 == (short) i.aInt(array3, 0)) {
+                                fileDemoSpr_bin.read(array3, 0, 2);
+                                if (n13 == (short) i.unpackUint16(array3, 0)) {
                                     iInteger = 1;
                                 }
-                                resourceAsStream.read(array3, 0, 4);
-                                final int b2 = i.bInt(array3, 0);
+                                fileDemoSpr_bin.read(array3, 0, 4);
+                                final int b2 = i.unpackUint32(array3, 0);
                                 if (iInteger == 0 && c.aClassfArr[n13] != null) {
-                                    resourceAsStream.skip(b2);
+                                    fileDemoSpr_bin.skip(b2);
                                 } else {
                                     array3 = new byte[b2];
-                                    resourceAsStream.read(array3);
-                                    (c.aClassfArr[n13] = new f()).aVoid(array3, 0);
-                                    c.aClassfArr[n13].aVoid(0, 0, -1, -1);
-                                    c.aClassfArr[n13].dByteArr = null;
+                                    fileDemoSpr_bin.read(array3);
+                                    (c.aClassfArr[n13] = new f_Sprite()).parseSprite(array3, 0);
+                                    c.aClassfArr[n13].createImages(0, 0, -1, -1);
+                                    c.aClassfArr[n13].moduleData = null;
                                 }
                             }
                         }
-                        resourceAsStream.close();
+                        fileDemoSpr_bin.close();
                     }
                     final byte[][] aByteArrArr = new byte[n2][];
                     int n14 = 0;
@@ -714,7 +708,7 @@ public final class c {
                                 }
                                 case 16:
                                 case 17: {
-                                    final short n21 = (short) i.aInt(array, n3);
+                                    final short n21 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     final short n22 = (short) (array[n3++] & 0xFF);
                                     aVoid(array6 = new byte[6], 2, n21);
@@ -723,29 +717,29 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 11: {
-                                    final short n23 = (short) i.aInt(array, n3);
+                                    final short n23 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n24 = (short) i.aInt(array, n3);
+                                    final short n24 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[6], 2, n23);
                                     aVoid(array6, 4, n24);
                                     break Label_1801;
                                 }
                                 case 12: {
-                                    final short n25 = (short) i.aInt(array, n3);
+                                    final short n25 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n26 = (short) i.aInt(array, n3);
+                                    final short n26 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[6], 2, n25);
                                     aVoid(array6, 4, n26);
                                     break Label_1801;
                                 }
                                 case 13: {
-                                    final short n27 = (short) i.aInt(array, n3);
+                                    final short n27 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n28 = (short) i.aInt(array, n3);
+                                    final short n28 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n29 = (short) i.aInt(array, n3);
+                                    final short n29 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[12], 2, n27);
                                     aVoid(array6, 4, n28);
@@ -760,19 +754,19 @@ public final class c {
                                     break;
                                 }
                                 case 4: {
-                                    final short n30 = (short) i.aInt(array, n3);
+                                    final short n30 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n31 = (short) i.aInt(array, n3);
+                                    final short n31 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n32 = (short) i.aInt(array, n3);
+                                    final short n32 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n33 = (short) i.aInt(array, n3);
+                                    final short n33 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n34 = (short) i.aInt(array, n3);
+                                    final short n34 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n35 = (short) i.aInt(array, n3);
+                                    final short n35 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n36 = (short) i.aInt(array, n3);
+                                    final short n36 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[16], 2, n30);
                                     aVoid(array6, 4, n31);
@@ -788,11 +782,11 @@ public final class c {
                                     break;
                                 }
                                 case 1: {
-                                    final short n37 = (short) (i.aInt(array, n3) * 24);
+                                    final short n37 = (short) (i.unpackUint16(array, n3) * 24);
                                     n3 += 2;
-                                    final short n38 = (short) (i.aInt(array, n3) * 24);
+                                    final short n38 = (short) (i.unpackUint16(array, n3) * 24);
                                     n3 += 2;
-                                    final short n39 = (short) i.aInt(array, n3);
+                                    final short n39 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[12], 2, n37);
                                     aVoid(array6, 4, n38);
@@ -802,17 +796,17 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 6: {
-                                    final int b3 = i.bInt(array, n3);
+                                    final int b3 = i.unpackUint32(array, n3);
                                     n3 += 4;
                                     aVoid(array6 = new byte[6], 2, b3);
                                     break Label_1801;
                                 }
                                 case 26: {
-                                    final short n40 = (short) i.aInt(array, n3);
+                                    final short n40 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n41 = (short) i.aInt(array, n3);
+                                    final short n41 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final int b4 = i.bInt(array, n3);
+                                    final int b4 = i.unpackUint32(array, n3);
                                     n3 += 4;
                                     aVoid(array6 = new byte[10], 2, n40);
                                     aVoid(array6, 4, n41);
@@ -820,9 +814,9 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 25: {
-                                    final short n42 = (short) i.aInt(array, n3);
+                                    final short n42 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n43 = (short) i.aInt(array, n3);
+                                    final short n43 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     final short n44 = (short) (array[n3++] & 0xFF);
                                     final short n45 = (short) (array[n3++] & 0xFF);
@@ -833,9 +827,9 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 5: {
-                                    final short n46 = (short) i.aInt(array, n3);
+                                    final short n46 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n47 = (short) i.aInt(array, n3);
+                                    final short n47 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     final short n48 = (short) (array[n3++] & 0xFF);
                                     aVoid(array6 = new byte[7], 2, n46);
@@ -844,7 +838,7 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 27: {
-                                    final short n49 = (short) i.aInt(array, n3);
+                                    final short n49 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[n49 + 8], 2, n49);
                                     aVoid(array6, 4, (short) 10000);
@@ -855,9 +849,9 @@ public final class c {
                                 }
                                 case 2: {
                                     final short n50 = (short) (array[n3++] & 0xFF);
-                                    final short n51 = (short) i.aInt(array, n3);
+                                    final short n51 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n52 = (short) i.aInt(array, n3);
+                                    final short n52 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[n52 + 11], 2, n52);
                                     aVoid(array6, 4, (short) 10000);
@@ -869,11 +863,11 @@ public final class c {
                                     break Label_1801;
                                 }
                                 case 9: {
-                                    final short n53 = (short) i.aInt(array, n3);
+                                    final short n53 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n54 = (short) i.aInt(array, n3);
+                                    final short n54 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
-                                    final short n55 = (short) i.aInt(array, n3);
+                                    final short n55 = (short) i.unpackUint16(array, n3);
                                     n3 += 2;
                                     aVoid(array6 = new byte[8], 2, n53);
                                     aVoid(array6, 4, n54);
@@ -925,9 +919,9 @@ public final class c {
                     }
                     this.aByteArrArr = aByteArrArr;
                 } else {
-                    byteArrayInputStream.skip(2L);
-                    byteArrayInputStream.read(array, 0, 4);
-                    byteArrayInputStream.skip(i.bInt(array, 0));
+                    fileDemo_fChunk0.skip(2L);
+                    fileDemo_fChunk0.read(array, 0, 4);
+                    fileDemo_fChunk0.skip(i.unpackUint32(array, 0));
                 }
             } while (!b);
         } catch (Exception ex) {
@@ -937,8 +931,8 @@ public final class c {
     public static int aInt(final Graphics graphics, final String s, final int n, int n2, int iInteger) {
         String[] aClassStringArr;
         for (aClassStringArr = aClassStringArr(s, iInteger), iInteger = 0; iInteger < aClassStringArr.length; ++iInteger) {
-            i.aClassh.bVoid(graphics, aClassStringArr[iInteger], n, n2, 17);
-            n2 += i.aClassh.aClassFont.getHeight();
+            i.textSize8.drawTextWithFlags(graphics, aClassStringArr[iInteger], n, n2, 17);
+            n2 += i.textSize8.font.getHeight();
         }
         return n2;
     }
@@ -961,22 +955,22 @@ public final class c {
                 int n5;
                 int n6;
                 if (i.bBoolean) {
-                    h = i.aClassh;
+                    h = i.textSize8;
                     graphics2 = graphics;
                     s2 = aClassStringArr[iInteger];
                     n4 = n + n3;
                     n5 = n2;
                     n6 = 8;
                 } else {
-                    h = i.aClassh;
+                    h = i.textSize8;
                     graphics2 = graphics;
                     s2 = aClassStringArr[iInteger];
                     n4 = n;
                     n5 = n2;
                     n6 = 4;
                 }
-                h.bVoid(graphics2, s2, n4, n5, n6);
-                n2 += i.aClassh.aClassFont.getHeight();
+                h.drawTextWithFlags(graphics2, s2, n4, n5, n6);
+                n2 += i.textSize8.font.getHeight();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -989,7 +983,7 @@ public final class c {
         final String[] aClassStringArr = aClassStringArr(s, ' ');
         for (int iInteger = 0; iInteger < aClassStringArr.length; ++iInteger) {
             final String str = aClassStringArr[iInteger];
-            if (i.aClassh.aClassFont.stringWidth(str) >= n) {
+            if (i.textSize8.font.stringWidth(str) >= n) {
                 final String[] bClassStringArr;
                 final String trim;
                 if ((bClassStringArr = bClassStringArr(obj + str, n)).length > 1 && (trim = bClassStringArr[bClassStringArr.length - 1].trim()).length() == 1 && (trim.equals(".") || trim.equals(",") || trim.equals(";") || trim.equals("?") || trim.equals("'") || trim.equals("\"") || trim.equals("!"))) {
@@ -1010,9 +1004,9 @@ public final class c {
                 }
             } else {
                 StringBuffer sb;
-                if (i.aClassh.aClassFont.stringWidth(obj + str + " ") < n) {
+                if (i.textSize8.font.stringWidth(obj + str + " ") < n) {
                     final String trim2;
-                    if (aClassStringArr.length > 2 && iInteger == aClassStringArr.length - 2 && (trim2 = aClassStringArr[aClassStringArr.length - 1].trim()).length() == 1 && i.aClassh.aClassFont.stringWidth(obj + " " + str + " " + trim2) >= n && (trim2.equals(".") || trim2.equals(",") || trim2.equals(";") || trim2.equals("?") || trim2.equals("'") || trim2.equals("\"") || trim2.equals("!"))) {
+                    if (aClassStringArr.length > 2 && iInteger == aClassStringArr.length - 2 && (trim2 = aClassStringArr[aClassStringArr.length - 1].trim()).length() == 1 && i.textSize8.font.stringWidth(obj + " " + str + " " + trim2) >= n && (trim2.equals(".") || trim2.equals(",") || trim2.equals(";") || trim2.equals("?") || trim2.equals("'") || trim2.equals("\"") || trim2.equals("!"))) {
                         if (obj != null && !obj.equals("") && !obj.equals(" ")) {
                             vector.addElement(obj);
                         }
@@ -1049,7 +1043,7 @@ public final class c {
             final char char1 = s.charAt(iInteger);
             StringBuffer sb;
             String str;
-            if (i.aClassh.aClassFont.stringWidth(string + char1) < n) {
+            if (i.textSize8.font.stringWidth(string + char1) < n) {
                 sb = new StringBuffer();
                 str = string;
             } else {
@@ -1109,14 +1103,14 @@ public final class c {
                 {
                     final char char1;
                     if ((char1 = s.charAt(iInteger)) > ' ') {
-                        n2 += i.aClassh.aClassFont.charWidth((char) char1);
+                        n2 += i.textSize8.font.charWidth((char) char1);
                     } else if (char1 == ' ' && iInteger + 1 < length && (s.charAt(iInteger + 1) == '?' || s.charAt(iInteger + 1) == '!' || s.charAt(iInteger + 1) == ':')) {
-                        final int n4 = n2 + i.aClassh.aClassFont.charWidth((char) char1);
+                        final int n4 = n2 + i.textSize8.font.charWidth((char) char1);
                         s.charAt(iInteger + 1);
-                        n2 = n4 + i.aClassh.aClassFont.charWidth((char) char1);
+                        n2 = n4 + i.textSize8.font.charWidth((char) char1);
                     } else {
                         if (char1 == ' ') {
-                            n2 += i.aClassh.aClassFont.charWidth((char) char1);
+                            n2 += i.textSize8.font.charWidth((char) char1);
                             break Label_0276;
                         }
                         if (char1 == '\n') {

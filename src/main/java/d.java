@@ -16,21 +16,21 @@ public final class d
     private d() {
     }
     
-    public static String aClassString(String string, final String str, final String str2) {
+    public static String replaceAll(String source, final String findStr, final String replaceStr) {
         int i;
         do {
-            if ((i = string.indexOf(str)) >= 0) {
-                string = string.substring(0, i) + str2 + string.substring(i + str.length());
+            if ((i = source.indexOf(findStr)) >= 0) {
+                source = source.substring(0, i) + replaceStr + source.substring(i + findStr.length());
             }
         } while (i >= 0);
-        return string;
+        return source;
     }
     
-    public static String aClassString(final int n) {
-        return aClassString(n, null);
+    public static String getLocalizedText(final int textI) {
+        return getLocalizedText(textI, null);
     }
     
-    private static synchronized String aClassString(int n, final String[] array) {
+    private static synchronized String getLocalizedText(int textI, final String[] _unused) {
         if (d.aClassString == null) {
             d.aClassString = System.getProperty("microedition.locale");
         }
@@ -48,8 +48,8 @@ public final class d
                 }
                 (d.aClassDataInputStream = new DataInputStream(in)).mark(512);
             }
-            d.aClassDataInputStream.skipBytes(n << 1);
-            d.aClassDataInputStream.skipBytes(d.aClassDataInputStream.readUnsignedShort() - (n << 1) - 2);
+            d.aClassDataInputStream.skipBytes(textI << 1);
+            d.aClassDataInputStream.skipBytes(d.aClassDataInputStream.readUnsignedShort() - (textI << 1) - 2);
             String utf1 = d.aClassDataInputStream.readUTF();
             if (!d.aClassDataInputStream.markSupported()) {
                 d.aClassDataInputStream.close();

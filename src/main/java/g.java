@@ -35,16 +35,16 @@ public final class g
         for (int j = 0; j < n; ++j) {
             int a;
             do {
-                a = e.aInt(0, 12);
+                a = e_Utils.getRandomInt(0, 12);
             } while (g.aByteArrArr[a][0] != 0);
-            g.aByteArrArr[a][0] = (byte)e.aInt(1, 3);
+            g.aByteArrArr[a][0] = (byte) e_Utils.getRandomInt(1, 3);
         }
     }
     
     public static void aVoid(final Graphics graphics) {
         for (int iInteger = 0; iInteger < 12; ++iInteger) {
             for (int j = 0; j < 13; ++j) {
-                f f;
+                f_Sprite f;
                 Graphics graphics2;
                 int bInt;
                 if (g.aByteArrArr[iInteger][j] == 1) {
@@ -60,7 +60,7 @@ public final class g
                     graphics2 = graphics;
                     bInt = 0;
                 }
-                f.aVoid(graphics2, bInt, iInteger * 24, (j - 1) * 24 + g.aByte, 0);
+                f.drawFrame(graphics2, bInt, iInteger * 24, (j - 1) * 24 + g.aByte, 0);
             }
         }
         g.bInt = (g.bInt + 1) % g.aInt;

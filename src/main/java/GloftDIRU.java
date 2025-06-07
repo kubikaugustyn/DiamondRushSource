@@ -1,4 +1,3 @@
-import javax.microedition.midlet.MIDletStateChangeException;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
@@ -8,33 +7,33 @@ import javax.microedition.midlet.MIDlet;
 // 
 
 public final class GloftDIRU extends MIDlet {
-    public static byte[] aByteArr;
-    private i aClassi;
-    public Display aClassDisplay;
-    public static String aClassString;
+    public static byte[] midletVersionBytes;
+    private i game;
+    public Display display;
+    public static String url;
 
     public GloftDIRU() {
-        GloftDIRU.aByteArr = this.getAppProperty("MIDlet-Version").getBytes();
-        this.aClassi = new i(this);
+        GloftDIRU.midletVersionBytes = this.getAppProperty("MIDlet-Version").getBytes();
+        this.game = new i(this);
     }
 
     public final void startApp() {
-        if (this.aClassDisplay == null) {
-            this.aClassDisplay = Display.getDisplay((MIDlet) this);
+        if (this.display == null) {
+            this.display = Display.getDisplay((MIDlet) this);
         }
-        this.aClassDisplay.setCurrent((Displayable) this.aClassi);
-        this.aClassi.dVoid();
+        this.display.setCurrent((Displayable) this.game);
+        this.game.dVoid();
     }
 
     public final void pauseApp() {
-        this.aClassi.cVoid();
+        this.game.cVoid();
         this.notifyPaused();
     }
 
     public final void destroyApp(final boolean b) {
-        if (GloftDIRU.aClassString != null) {
+        if (GloftDIRU.url != null) {
             try {
-                this.platformRequest(GloftDIRU.aClassString);
+                this.platformRequest(GloftDIRU.url);
             } catch (Exception ex) {
             }
         }
@@ -43,7 +42,7 @@ public final class GloftDIRU extends MIDlet {
 
     public final void aVoid() {
         i.bVoid();
-        this.aClassi.aClassj.dVoid();
+        this.game.aClassj.dVoid();
 //        try {
         this.destroyApp(true);
 //        }
@@ -51,7 +50,7 @@ public final class GloftDIRU extends MIDlet {
     }
 
     static {
-        GloftDIRU.aByteArr = null;
-        GloftDIRU.aClassString = null;
+        GloftDIRU.midletVersionBytes = null;
+        GloftDIRU.url = null;
     }
 }

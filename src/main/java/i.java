@@ -12,6 +12,56 @@ import javax.microedition.lcdui.Canvas;
 // 
 
 public final class i extends Canvas implements Runnable {
+    // ADDED START
+    public static final int SKEY_UP = 1;
+    public static final int SKEY_DOWN = 2;
+    public static final int SKEY_LEFT = 4;
+    public static final int SKEY_RIGHT = 8;
+    public static final int SKEY_CENTER = 16;
+    public static final int SKEY_LSH = 32;
+    public static final int SKEY_RSH = 64;
+    public static final int SKEY_CENTER_ALT = 128; //Center key for Motorola devices
+    public static final int SKEY_STAR = 256;
+    public static final int SKEY_POUND = 512;
+    public static final int SKEY_NUM0 = 1024;
+    public static final int SKEY_NUM1 = 2048;
+    public static final int SKEY_NUM2 = 4096;
+    public static final int SKEY_NUM3 = 8192;
+    public static final int SKEY_NUM4 = 16384;
+    public static final int SKEY_NUM5 = 32768;
+    public static final int SKEY_NUM6 = 65536;
+    public static final int SKEY_NUM7 = 131072;
+    public static final int SKEY_NUM8 = 262144;
+    public static final int SKEY_NUM9 = 524288;
+
+    public static final int KEY_ANY_OK = 32944;//SKEY_NUM5 | SKEY_CENTER_ALT | SKEY_CENTER | SKEY_LSH;
+    public static final int KEY_OK = 32784;//SKEY_NUM5 | SKEY_CENTER;
+    public static final int KEY_CANCEL = 64;//SKEY_RSH;
+    public static final int KEY_RESPAWN = 256;//SKEY_STAR;
+    public static final int KEY_UP = 4097;//SKEY_NUM2 | SKEY_UP;
+    public static final int KEY_DOWN = 262146;//SKEY_NUM8 | SKEY_DOWN;
+    public static final int KEY_LEFT = 16388;//SKEY_NUM4 | SKEY_LEFT;
+    public static final int KEY_RIGHT = 65544;//SKEY_NUM6 | SKEY_RIGHT;
+
+    public static final int SEAL_POS_ANGKOR = 0;
+    public static final int SEAL_POS_BAVARIA = 1;
+    public static final int SEAL_POS_SIBERIA = 2;
+    public static final int SEAL_POS_SHOP = 3;
+
+    public static final int SEAL_MOVE_NOOP = -1;
+    public static final int SEAL_MOVE_UP = 0;
+    public static final int SEAL_MOVE_RIGHT = 1;
+    public static final int SEAL_MOVE_DOWN = 2;
+    public static final int SEAL_MOVE_LEFT = 3;
+    public static final int SEAL_MOVE_OK = 4;
+
+    public static final int STAGE_ANGKOR_FALLING_TORCHES = 5;
+    public static final int STAGE_ANGKOR_GREAT_ANACONDA = 8;
+    public static final int STAGE_ANGKOR_DEMO = 13;
+    public static final int STAGE_BAVARIA_EVIL_TEUTONIC_KNIGHT = 9;
+    public static final int STAGE_SIBERIA_YETTI = 10;
+    // ADDED END
+
     private int lInt;
     private int mInt;
     private boolean cBoolean;
@@ -20,19 +70,29 @@ public final class i extends Canvas implements Runnable {
     private int oInt;
     private String aClassString;
     private boolean eBoolean;
-    private int pInt;
+    /**
+     * The current position of the arrow on the seal.<br>
+     * 0=Angkor, 1=Bavaria, 2=Siberia, 3=Shop<br>
+     * Enum: SEAL_POS_*
+     */
+    private int crtSealPosition;
     private int qInt;
     private int rInt;
     private int sInt;
     private int tInt;
     private String bClassString;
     private String cClassString;
-    private int uInt;
+    /**
+     * The current movement of the arrow on the seal.<br>
+     * -1=NOOP, 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=OK=Enter<br>
+     * Enum: SEAL_MOVE_*
+     */
+    private int crtSealMoveDirection;
     private boolean fBoolean;
     private boolean gBoolean;
     private byte cByte;
-    private int vInt;
-    private int wInt;
+    private int crtSealArrowOffsetX;
+    private int crtSealArrowOffsetY;
     private int xInt;
     private int yInt;
     private int zInt;
@@ -87,7 +147,7 @@ public final class i extends Canvas implements Runnable {
     private static boolean mBoolean;
     private int afInt;
     private int agInt;
-    private static int ahInt;
+    private static int keysPressed;
     private boolean nBoolean;
     private boolean oBoolean;
     private int aiInt;
@@ -118,14 +178,24 @@ public final class i extends Canvas implements Runnable {
     public byte aByte;
     private byte lByte;
     private int azInt;
-    private int aAInt;
-    private int aBInt;
+    /**
+     * The current world index the game cares about.<br>
+     * 0=Angkor, 1=Bavaria, 2=Siberia<br>
+     * Enum: TODO
+     */
+    private int crtWorldIndex;
+    /**
+     * The current stage index the game is loading/in/etc.<br>
+     * Should be a positive number.<br>
+     * Enum for special stages: STAGE_*
+     */
+    private int crtStageI;
     public int aInt;
     public int bInt;
     public int cInt;
     public int dInt;
-    public int eInt;
-    public int fInt;
+    public int crtStageWidth;
+    public int crtStageHeight;
     private int aCInt;
     private int aDInt;
     private int aEInt;
@@ -149,12 +219,12 @@ public final class i extends Canvas implements Runnable {
     public static int gInt;
     private long aLong;
     private boolean vBoolean;
-    public int hInt;
-    public int iInt;
+    public int crtPlayerX;
+    public int crtPlayerY;
     public int jInt;
     public int kInt;
     private int aTInt;
-    private boolean wBoolean;
+    private boolean shouldSaveCheckpoint;
     private int aUInt;
     private int aVInt;
     private boolean xBoolean;
@@ -186,7 +256,7 @@ public final class i extends Canvas implements Runnable {
     private int bqInt;
     private int brInt;
     private int bsInt;
-    private int btInt;
+    private int crtGenFileI;
     private int buInt;
     private int bvInt;
     private int bwInt;
@@ -225,7 +295,7 @@ public final class i extends Canvas implements Runnable {
     private boolean BBoolean;
     private int ccInt;
     private int cdInt;
-    private InputStream aClassInputStream;
+    private InputStream tmpInputStream;
     private byte pByte;
     private byte qByte;
     private boolean CBoolean;
@@ -234,18 +304,18 @@ public final class i extends Canvas implements Runnable {
     private int cgInt;
     private int chInt;
     private Graphics aClassGraphics;
-    private static Image aClassImage;
-    private static Image bClassImage;
-    private static Image cClassImage;
+    private static Image splashLogoImage;
+    private static Image splashBgGradientImage;
+    private static Image splashCopyrightImage;
     private static Image[][] textures;
     public static Image[][] demoUITextures;
-    public static f[] aClassfArr;
-    private static h bClassh;
-    public static h aClassh;
-    private static f aClassf;
+    public static f_Sprite[] aClassfArr;
+    private static h textSize0;
+    public static h textSize8;
+    private static f_Sprite aClassf;
     private static byte[] fByteArr;
-    private static b[] aClassbArr;
-    private static f bClassf;
+    private static b_SpriteAnimator[] aClassbArr;
+    private static f_Sprite bClassf;
     private static byte[] gByteArr;
     private static byte[] hByteArr;
     private long cLong;
@@ -253,9 +323,9 @@ public final class i extends Canvas implements Runnable {
     private boolean DBoolean;
     private static byte[] iByteArr;
     private static byte[] jByteArr;
-    public static int[][] aIntArrArr;
+    public static int[][] crtStageForegrondLayer;
     public static int[][] bIntArrArr;
-    private static byte[][] aByteArrArr;
+    private static byte[][] crtStagePlayerLayer;
     private static byte[][] bByteArrArr;
     private static byte[][] cByteArrArr;
     private static byte[] kByteArr;
@@ -268,13 +338,13 @@ public final class i extends Canvas implements Runnable {
     private static byte[] mByteArr;
     private static int cmInt;
     private static int cnInt;
-    private static byte[] nByteArr;
+    private static byte[] tmpBytes;
     private static int[][] cIntArrArr;
     private static int[][] dIntArrArr;
     private static byte[][] dByteArrArr;
     private static byte[][] eByteArrArr;
     private static byte[] oByteArr;
-    public final j aClassj;
+    public final j_SoundManager aClassj;
     private c aClassc;
     private static c[] aClasscArr;
     private static byte[] pByteArr;
@@ -285,11 +355,11 @@ public final class i extends Canvas implements Runnable {
     private int cqInt;
     private int crInt;
     private int csInt;
-    private static f cClassf;
+    private static f_Sprite cClassf;
     private int ctInt;
     private byte rByte;
     public static boolean aBoolean;
-    private static String dClassString;
+    private static String moreGamesUrl;
     private long eLong;
     private long fLong;
     private boolean FBoolean;
@@ -301,7 +371,7 @@ public final class i extends Canvas implements Runnable {
     private boolean LBoolean;
     private boolean MBoolean;
     private boolean NBoolean;
-    private int cuInt;
+    private int crtHeroPalette;
     private int cvInt;
     private int cwInt;
     private boolean OBoolean;
@@ -357,16 +427,16 @@ public final class i extends Canvas implements Runnable {
     private boolean abBoolean;
     private int ddInt;
     private int[] aIntArr;
-    private static byte sByte;
-    private static int[] bIntArr;
+    private static byte crtCheatPageKeyCodeIndex;
+    private static int[] cheatPageKeyCode;
     private static int deInt;
     private static int dfInt;
     private static int dgInt;
     private byte tByte;
     private byte uByte;
     private boolean acBoolean;
-    private static byte[] qByteArr;
-    private static byte[] rByteArr;
+    private static byte[] crtStageDoorXs;
+    private static byte[] crtStageDoorYs;
     private long iLong;
     private boolean adBoolean;
     private int dhInt;
@@ -375,9 +445,9 @@ public final class i extends Canvas implements Runnable {
     private long kLong;
     private boolean afBoolean;
     private long lLong;
-    private boolean agBoolean;
+    private boolean crtShouldLoadWaterBreathingPotion;
     private boolean ahBoolean;
-    private boolean aiBoolean;
+    private boolean crtShouldLoadFanPot;
     private boolean ajBoolean;
     private String eClassString;
     private int diInt;
@@ -414,7 +484,7 @@ public final class i extends Canvas implements Runnable {
     private byte AByte;
     private int dGInt;
     private int dHInt;
-    private static f dClassf;
+    private static f_Sprite dClassf;
     private static int[][] eIntArrArr;
     private static long[] aLongArr;
     private static long[] bLongArr;
@@ -428,7 +498,7 @@ public final class i extends Canvas implements Runnable {
     private static long[][] aLongArrArr;
     private static StringBuffer aClassStringBuffer;
     private static StringBuffer bClassStringBuffer;
-    private static StringBuffer cClassStringBuffer;
+    private static StringBuffer crtWorldMapFileName;
     private static Image fClassImage;
     private static Graphics cClassGraphics;
     private int dKInt;
@@ -480,12 +550,12 @@ public final class i extends Canvas implements Runnable {
     private static short[][] aShortArrArr;
     private static int[] dIntArr;
     private static int[][] gIntArrArr;
-    private static String[] cClassStringArr;
-    public static String[] aClassStringArr;
-    public static String[] bClassStringArr;
+    private static String[] stageTitles;
+    public static String[] texts; // Loaded from lang.xx or other files
+    public static String[] demoTextMapping;
     public static boolean bBoolean;
     private static byte[] sByteArr;
-    private static String[] dClassStringArr;
+    private static String[] worldFiles;
     private static int eqInt;
     private long nLong;
     private String hClassString;
@@ -498,22 +568,22 @@ public final class i extends Canvas implements Runnable {
         this.lInt = 40;
         this.cBoolean = false;
         this.nInt = 0;
-        this.oInt = a.aIntArr[this.nInt];
+        this.oInt = a_Config.itemPrices[this.nInt];
         this.aClassString = "";
         this.eBoolean = true;
-        this.pInt = 0;
+        this.crtSealPosition = SEAL_POS_ANGKOR;
         this.qInt = 0;
         this.rInt = 0;
         this.sInt = this.qInt;
         this.tInt = this.rInt;
         this.bClassString = "";
         this.cClassString = "";
-        this.uInt = -1;
+        this.crtSealMoveDirection = SEAL_MOVE_NOOP;
         this.fBoolean = false;
         this.gBoolean = true;
         this.cByte = 0;
-        this.vInt = 0;
-        this.wInt = 0;
+        this.crtSealArrowOffsetX = 0;
+        this.crtSealArrowOffsetY = 0;
         this.xInt = 0;
         this.yInt = 0;
         this.zInt = 0;
@@ -590,7 +660,7 @@ public final class i extends Canvas implements Runnable {
         this.LBoolean = false;
         this.MBoolean = false;
         this.NBoolean = false;
-        this.cuInt = -1;
+        this.crtHeroPalette = -1;
         this.PBoolean = false;
         this.QBoolean = false;
         this.RBoolean = false;
@@ -640,13 +710,13 @@ public final class i extends Canvas implements Runnable {
         this.aDInt = -1;
         this.aFInt = -1;
         this.aHInt = -1;
-        i.aClassbArr = new b[6];
-        i.aClassfArr = new f[61];
-        if (f.eByteArr == null) {
+        i.aClassbArr = new b_SpriteAnimator[6];
+        i.aClassfArr = new f_Sprite[61];
+        if (f_Sprite._unused_mcContents == null) {
             final InputStream resourceAsStream = this.getClass().getResourceAsStream("/mc");
-            f.eByteArr = new byte[256];
+            f_Sprite._unused_mcContents = new byte[256];
             try {
-                resourceAsStream.read(f.eByteArr);
+                resourceAsStream.read(f_Sprite._unused_mcContents);
                 resourceAsStream.close();
             } catch (Exception ex) {
             }
@@ -654,15 +724,15 @@ public final class i extends Canvas implements Runnable {
         i.textures = new Image[33][];
         i.demoUITextures = new Image[2][];
         i.aClassGloftDIRU = aClassGloftDIRU;
-        this.aClassj = new j();
+        this.aClassj = new j_SoundManager();
         this.setFullScreenMode(true);
         this.oBoolean = true;
         i.mBoolean = true;
-        i.dClassString = i.aClassGloftDIRU.getAppProperty(i.dClassString);
+        i.moreGamesUrl = i.aClassGloftDIRU.getAppProperty(i.moreGamesUrl);
         (this.aClassThread = new Thread(this)).start();
         short[] array;
         int n;
-        if (!aBoolean()) {
+        if (!getMoreGamesEnabled()) {
             (i.aShortArrArr[0] = new short[8])[0] = 0;
             i.aShortArrArr[0][1] = 16;
             i.aShortArrArr[0][2] = 1;
@@ -688,20 +758,14 @@ public final class i extends Canvas implements Runnable {
         array[n] = 22;
     }
 
-    private void aVoid(int n, int hInt, final int n2) {
+    private void hurtHero(int n, int hInt, final int n2) {
         this.aFInt = -1;
         this.aIInt = -1;
         this.aHInt = -1;
-        final int dInt;
-        if ((dInt = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3].dInt) == 40) {
-            return;
-        }
-        if (dInt == 48) {
-            return;
-        }
-        if (dInt == 47) {
-            return;
-        }
+        final int dInt = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3].crtAnimationI;
+        if (dInt == 40) return;
+        if (dInt == 48) return;
+        if (dInt == 47) return;
         if ((this.bLong <= 0L && this.aWInt == 0 && this.biInt == 0 && this.lByte != 6 && (this.kInt & 0x70) == 0x0) || this.aTInt > 0) {
             ++this.bcInt;
             this.aVoid((byte) (this.nByte - n));
@@ -712,17 +776,17 @@ public final class i extends Canvas implements Runnable {
                 i.cClassf = null;
             }
             this.kInt = ((this.kInt & 0xFFFFFF8F) | hInt);
-            this.pVoid(5);
+            this.playSound(j_SoundManager.SOUND_SFX_HERO_HURT);
             switch (hInt) {
                 case 16: {
                     final int n3 = 0;
                     this.avInt = n3;
                     this.auInt = n3;
                     this.aTInt = 5;
-                    i.aByteArrArr[this.hInt][this.iInt] = 9;
+                    i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY] = 9;
                     this.kInt &= 0xFFFFFF8F;
-                    i.bIntArrArr[this.hInt][this.iInt] = 138412032;
-                    i.cByteArrArr[this.hInt][this.iInt] = 24;
+                    i.bIntArrArr[this.crtPlayerX][this.crtPlayerY] = 138412032;
+                    i.cByteArrArr[this.crtPlayerX][this.crtPlayerY] = 24;
                 }
                 case 64: {
                     this.gVoid(1000);
@@ -732,11 +796,11 @@ public final class i extends Canvas implements Runnable {
                     if (n2 != 0) {
                         n = (byte) n2;
                         do {
-                            hInt = this.hInt - i.gByteArr[n];
-                            final int iInt = this.iInt - i.gByteArr[n + 8];
-                            if (i.aByteArrArr[hInt][iInt] < 0 && (byte) i.aIntArrArr[hInt][iInt] < 0) {
-                                this.hInt = hInt;
-                                this.iInt = iInt;
+                            hInt = this.crtPlayerX - i.gByteArr[n];
+                            final int iInt = this.crtPlayerY - i.gByteArr[n + 8];
+                            if (i.crtStagePlayerLayer[hInt][iInt] < 0 && (byte) i.crtStageForegrondLayer[hInt][iInt] < 0) {
+                                this.crtPlayerX = hInt;
+                                this.crtPlayerY = iInt;
                                 this.jInt = 18;
                                 this.aByte = 0;
                                 this.kInt = ((this.kInt & 0xFFFFFFF8) | n | 0x800);
@@ -780,7 +844,7 @@ public final class i extends Canvas implements Runnable {
             this.cYInt = 0;
             int aInt;
             for (iInteger = 0; iInteger < this.cXInt; ++iInteger) {
-                aInt = aInt(i.bClassh, i.aClassStringArr[i.aShortArrArr[this.boInt][(iInteger << 1) + 1]], 0);
+                aInt = aInt(i.textSize0, i.texts[i.aShortArrArr[this.boInt][(iInteger << 1) + 1]], 0);
                 if ((this.boInt != 0 || iInteger != 3) && aInt > this.cYInt) {
                     this.cYInt = aInt;
                 }
@@ -790,18 +854,18 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private static boolean aBoolean(final int n) {
-        return (i.ahInt & n) != 0x0;
+    private static boolean isKeyPressed(final int keys) {
+        return (i.keysPressed & keys) != 0x0;
     }
 
-    public final void keyPressedVoid(int gInt) {
-        gInt = gInt(gInt);
-        i.ahInt |= gInt;
+    public final void keyPressed(int keyCode) {
+        keyCode = getKeyFromKeyCode(keyCode);
+        i.keysPressed |= keyCode;
         this.dBoolean = false;
     }
 
-    public final void keyReleasedVoid(final int n) {
-        i.ahInt &= ~gInt(n);
+    public final void keyReleased(final int keyCode) {
+        i.keysPressed &= ~getKeyFromKeyCode(keyCode);
         this.dBoolean = true;
     }
 
@@ -812,13 +876,13 @@ public final class i extends Canvas implements Runnable {
         this.akInt = 0;
     }
 
-    private static void aVoid(final long n) {
-        if (n <= 0L) {
+    private static void sleep(final long millis) {
+        if (millis <= 0L) {
             return;
         }
         System.currentTimeMillis();
         try {
-            Thread.sleep(n);
+            Thread.sleep(millis);
         } catch (Exception ex) {
         }
     }
@@ -864,17 +928,13 @@ public final class i extends Canvas implements Runnable {
             if (!this.afBoolean) {
                 this.eLong = System.currentTimeMillis();
                 try {
-                    this.fVoid();
+                    this.handleKeyPresses();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    aVoid(5000L);
+                    sleep(5000L);
                 }
-                if (this.BBoolean) {
-                    break;
-                }
-                if (bByte != 2) {
-                    ++i.aSInt;
-                }
+                if (this.BBoolean) break;
+                if (bByte != 2) ++i.aSInt;
                 System.currentTimeMillis();
                 if (this.fLong > 65L) {
                     this.vBoolean = true;
@@ -886,7 +946,7 @@ public final class i extends Canvas implements Runnable {
                         ++gInt;
                     }
                     this.fLong = Math.abs(System.currentTimeMillis() - this.eLong);
-                    aVoid(50L - (System.currentTimeMillis() - this.eLong));
+                    sleep(50L - (System.currentTimeMillis() - this.eLong));
                 }
             }
         }
@@ -895,7 +955,7 @@ public final class i extends Canvas implements Runnable {
         aClassGloftDIRU.aVoid();
     }
 
-    private void fVoid() {
+    private void handleKeyPresses() {
         if (i.eqInt > 0) {
             i.eqInt -= (int) (System.currentTimeMillis() - this.nLong);
             this.nLong = System.currentTimeMillis();
@@ -903,11 +963,11 @@ public final class i extends Canvas implements Runnable {
                 this.dVoid(true);
             }
         }
-        if (i.ahInt == 0) {
+        if (i.keysPressed == 0) {
             this.aByte = 0;
         } else if (i.eqInt > 0) {
             this.dVoid(true);
-            i.ahInt = 0;
+            i.keysPressed = 0;
         } else {
             Label_4240:
             {
@@ -918,7 +978,7 @@ public final class i extends Canvas implements Runnable {
                     {
                         switch (i.bByte) {
                             case 33: {
-                                if (aBoolean(64)) {
+                                if (isKeyPressed(64)) {
                                     if (this.boInt == 0) {
                                         i.bByte = 4;
                                         this.aVoid(0);
@@ -933,7 +993,7 @@ public final class i extends Canvas implements Runnable {
                                 break Label_4240;
                             }
                             case 26: {
-                                if (aBoolean(64)) {
+                                if (isKeyPressed(64)) {
                                     i.bByte = 4;
                                     this.aVoid(4);
                                 }
@@ -951,13 +1011,13 @@ public final class i extends Canvas implements Runnable {
                                 boolean b = false;
                                 Label_0795:
                                 {
-                                    if (aBoolean(512)) {
+                                    if (isKeyPressed(512)) {
                                         this.abBoolean = !this.abBoolean;
-                                    } else if (aBoolean(65536)) {
+                                    } else if (isKeyPressed(65536)) {
                                         this.aZInt += 50;
-                                    } else if (aBoolean(131072)) {
+                                    } else if (isKeyPressed(131072)) {
                                         this.bbInt += 5;
-                                    } else if (aBoolean(262144)) {
+                                    } else if (isKeyPressed(262144)) {
                                         if (i.mByte != 1) {
                                             this.cAInt <<= 1;
                                             Label_0454:
@@ -982,13 +1042,13 @@ public final class i extends Canvas implements Runnable {
                                                 i.iByteArr[10] = 0;
                                             }
                                         }
-                                    } else if (aBoolean(524288)) {
+                                    } else if (isKeyPressed(524288)) {
                                         this.SBoolean = !this.SBoolean;
-                                    } else if (aBoolean(1024)) {
+                                    } else if (isKeyPressed(1024)) {
                                         this.TBoolean = !this.TBoolean;
                                     } else {
-                                        if (!aBoolean(64)) {
-                                            if (!aBoolean(32944)) {
+                                        if (!isKeyPressed(64)) {
+                                            if (!isKeyPressed(32944)) {
                                                 break Label_0795;
                                             }
                                             i.iByteArr[8] = (byte) this.czInt;
@@ -1036,28 +1096,28 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 34: {
                                 int n = 0;
-                                if (aBoolean(33008)) {
+                                if (isKeyPressed(33008)) {
                                     this.SVoid();
                                     aVoid(i.aClassf, true);
                                     i.aClassf = null;
                                 }
-                                if (aBoolean(4097)) {
+                                if (isKeyPressed(4097)) {
                                     --this.ddInt;
                                     if (this.ddInt < 0) {
                                         this.ddInt = 0;
                                     }
                                 }
-                                if (aBoolean(262146)) {
+                                if (isKeyPressed(262146)) {
                                     ++this.ddInt;
                                     if (this.ddInt >= 2) {
                                         this.ddInt = 1;
                                     }
                                 }
                                 int n2 = this.aIntArr[this.ddInt];
-                                if (aBoolean(16388)) {
+                                if (isKeyPressed(16388)) {
                                     --n2;
                                 }
-                                if (aBoolean(65544)) {
+                                if (isKeyPressed(65544)) {
                                     ++n2;
                                 }
                                 if (n2 < 0) {
@@ -1087,7 +1147,7 @@ public final class i extends Canvas implements Runnable {
                                 }
                             }
                             case 12: {
-                                if (aBoolean(32944)) {
+                                if (isKeyPressed(32944)) {
                                     this.azInt = 5;
                                     i.iByteArr[3] = (byte) this.azInt;
                                     if (this.kByte == 2) {
@@ -1108,7 +1168,7 @@ public final class i extends Canvas implements Runnable {
                                 break Label_4240;
                             }
                             case 30: {
-                                if (aBoolean(1048575)) {
+                                if (isKeyPressed(1048575)) {
                                     i.bByte = 4;
                                     if (this.boInt == -1) {
                                         this.aVoid(this.aRInt = 0);
@@ -1126,53 +1186,54 @@ public final class i extends Canvas implements Runnable {
                                 this.TVoid();
                                 break Label_4240;
                             }
+                            // In-game, in a stage
                             case 1: {
                                 if (this.hBoolean || this.ajBoolean) {
-                                    i.ahInt = 0;
+                                    i.keysPressed = 0;
                                 }
                                 i.mByte = i.bByte;
-                                this.RVoid();
-                                if (this.abBoolean && (aBoolean(524288) || aBoolean(131072))) {
-                                    if (this.aAInt == 0 && this.aBInt == 13) {
+                                this.checkCheatKeyCodeIsPressed();
+                                if (this.abBoolean && (isKeyPressed(524288) || isKeyPressed(131072))) {
+                                    if (this.crtWorldIndex == 0 && this.crtStageI == 13) {
                                         this.aClassc = null;
-                                        this.hInt = 60;
-                                        this.iInt = 3;
+                                        this.crtPlayerX = 60;
+                                        this.crtPlayerY = 3;
                                     } else {
-                                        this.atBoolean = aBoolean(524288);
+                                        this.atBoolean = isKeyPressed(524288);
                                         this.CBoolean = !this.atBoolean;
                                         this.bdInt = 0;
                                         this.bcInt = 0;
                                         this.xBoolean = true;
-                                        this.hInt = this.eInt + 5 + 1;
+                                        this.crtPlayerX = this.crtStageWidth + 5 + 1;
                                     }
                                 }
-                                if ((this.clInt != 0 && !aBoolean(32944)) || this.ayInt != 0 || this.xBoolean || this.nByte <= 0 || i.aClassbArr[0].dInt == 19 || this.EBoolean) {
-                                    i.ahInt = 0;
+                                if ((this.clInt != 0 && !isKeyPressed(32944)) || this.ayInt != 0 || this.xBoolean || this.nByte <= 0 || i.aClassbArr[0].crtAnimationI == 19 || this.EBoolean) {
+                                    i.keysPressed = 0;
                                     break Label_4240;
                                 }
                                 if (this.aClassc != null) {
-                                    if (aBoolean(32784)) {
+                                    if (isKeyPressed(32784)) {
                                         this.aClassc.aVoid();
-                                    } else if (aBoolean(32944)) {
+                                    } else if (isKeyPressed(32944)) {
                                         this.aClassc.aBoolean = true;
                                     }
-                                    i.ahInt = 0;
+                                    i.keysPressed = 0;
                                     break Label_4240;
                                 }
                                 if (this.aTInt > 0) {
                                     boolean b2 = true;
-                                    if (aBoolean(4097)) {
+                                    if (isKeyPressed(4097)) {
                                         this.avInt = -5;
-                                    } else if (aBoolean(262146)) {
+                                    } else if (isKeyPressed(262146)) {
                                         this.avInt = 5;
-                                    } else if (aBoolean(16388)) {
+                                    } else if (isKeyPressed(16388)) {
                                         this.auInt = -5;
-                                    } else if (aBoolean(65544)) {
+                                    } else if (isKeyPressed(65544)) {
                                         this.auInt = 5;
-                                    } else if (!aBoolean(32784)) {
-                                        if (aBoolean(32944)) {
+                                    } else if (!isKeyPressed(32784)) {
+                                        if (isKeyPressed(32944)) {
                                             this.aeVoid();
-                                            i.ahInt = 0;
+                                            i.keysPressed = 0;
                                         } else {
                                             b2 = false;
                                         }
@@ -1180,36 +1241,36 @@ public final class i extends Canvas implements Runnable {
                                     if (b2) {
                                         --this.aTInt;
                                         if (this.aTInt == 0) {
-                                            if ((byte) i.aIntArrArr[this.hInt][this.iInt] < 0) {
-                                                i.aIntArrArr[this.hInt][this.iInt] = 32;
+                                            if ((byte) i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] < 0) {
+                                                i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] = 32;
                                             }
-                                            if (i.aByteArrArr[this.hInt][this.iInt] == 9) {
-                                                i.aByteArrArr[this.hInt][this.iInt] = -1;
+                                            if (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY] == 9) {
+                                                i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY] = -1;
                                             }
                                             this.bLong = 40L;
                                             this.jInt = 0;
                                             this.kInt &= 0xFFFFFF8F;
                                             this.gVoid(this.cInt());
                                         }
-                                        i.ahInt = 0;
+                                        i.keysPressed = 0;
                                     }
                                 } else {
-                                    if (aBoolean(4097)) {
+                                    if (isKeyPressed(KEY_UP)) { // 4097
                                         this.aByte = 1;
-                                    } else if (aBoolean(262146)) {
+                                    } else if (isKeyPressed(KEY_DOWN)) { // 262146
                                         this.aByte = 3;
-                                    } else if (aBoolean(16388)) {
+                                    } else if (isKeyPressed(KEY_LEFT)) { // 16388
                                         this.aByte = 4;
-                                    } else if (aBoolean(65544)) {
+                                    } else if (isKeyPressed(KEY_RIGHT)) { // 65544
                                         this.aByte = 2;
-                                    } else if (aBoolean(32784)) {
-                                        i.ahInt = 0;
-                                        if (this.bSInt == this.hInt && this.bTInt == this.iInt && (i.aIntArrArr[this.hInt][this.iInt] & 0xFF) == 0x4) {
-                                            this.pVoid(9);
-                                            this.apVoid();
+                                    } else if (isKeyPressed(KEY_OK)) { // 32784
+                                        i.keysPressed = 0;
+                                        if (this.bSInt == this.crtPlayerX && this.bTInt == this.crtPlayerY && (i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) == 0x4) {
+                                            this.playSound(j_SoundManager.SOUND_SFX_CHECKPOINT);
+                                            this.restoreCheckpoint();
                                         } else {
                                             final int n4;
-                                            if ((n4 = ((i.eIntArrArr == null) ? 0 : aInt(i.eIntArrArr[this.hInt][this.iInt], (byte) 0, (byte) 3, (byte) 4))) != 8 && n4 != 7) {
+                                            if ((n4 = ((i.eIntArrArr == null) ? 0 : aInt(i.eIntArrArr[this.crtPlayerX][this.crtPlayerY], (byte) 0, (byte) 3, (byte) 4))) != 8 && n4 != 7) {
                                                 final int n5 = this.kInt & 0x7;
                                                 int n6 = -1;
                                                 int n7 = -1;
@@ -1218,15 +1279,15 @@ public final class i extends Canvas implements Runnable {
                                                     int n8 = 0;
                                                     for (int n9 = 0; n9 < 2; ++n9) {
                                                         final int n10;
-                                                        if (((n10 = ((n9 == 0) ? 1 : -1)) > 0 && this.hInt < this.eInt - 3) || (n10 < 0 && this.hInt > 3)) {
+                                                        if (((n10 = ((n9 == 0) ? 1 : -1)) > 0 && this.crtPlayerX < this.crtStageWidth - 3) || (n10 < 0 && this.crtPlayerX > 3)) {
                                                             for (int n11 = 1; n11 <= 3; ++n11) {
-                                                                final int n12 = this.hInt + n10 * n11;
-                                                                final byte b4 = i.aByteArrArr[n12][this.iInt];
+                                                                final int n12 = this.crtPlayerX + n10 * n11;
+                                                                final byte b4 = i.crtStagePlayerLayer[n12][this.crtPlayerY];
                                                                 int n15 = 0;
                                                                 Label_2157:
                                                                 {
-                                                                    if ((i.aIntArrArr[n12][this.iInt] & 0xFF) != 0x7 || (i.aIntArrArr[n12][this.iInt] >> 8 & 0xF0) != 0x0) {
-                                                                        if (b4 == 48 && (i.bIntArrArr[n12][this.iInt] & 0x8) != 0x0) {
+                                                                    if ((i.crtStageForegrondLayer[n12][this.crtPlayerY] & 0xFF) != 0x7 || (i.crtStageForegrondLayer[n12][this.crtPlayerY] >> 8 & 0xF0) != 0x0) {
+                                                                        if (b4 == 48 && (i.bIntArrArr[n12][this.crtPlayerY] & 0x8) != 0x0) {
                                                                             continue;
                                                                         }
                                                                         Label_2094:
@@ -1288,16 +1349,16 @@ public final class i extends Canvas implements Runnable {
                                                     final int[] array2 = {-1, 0, 1, 0, -1, 1, 1, -1, -2, 0, 2, 0};
                                                     final int[] array3 = {0, 0, 0, 0, 3, 6, 12, 9, 1, 2, 4, 8};
                                                     for (int n17 = 0; n17 < array.length; ++n17) {
-                                                        final int n18 = this.hInt + array[n17];
-                                                        final int n19 = this.iInt + array2[n17];
-                                                        if (n18 >= 0 && n18 < this.eInt && n19 >= 0 && n19 < this.fInt) {
+                                                        final int n18 = this.crtPlayerX + array[n17];
+                                                        final int n19 = this.crtPlayerY + array2[n17];
+                                                        if (n18 >= 0 && n18 < this.crtStageWidth && n19 >= 0 && n19 < this.crtStageHeight) {
                                                             final int n20 = i.bIntArrArr[n18][n19] & 0x7;
                                                             boolean b5 = false;
                                                             int n21 = -1;
                                                             boolean b6 = false;
                                                             Label_2616:
                                                             {
-                                                                switch (i.aByteArrArr[n18][n19]) {
+                                                                switch (i.crtStagePlayerLayer[n18][n19]) {
                                                                     case 9:
                                                                     case 18:
                                                                     case 30: {
@@ -1430,42 +1491,42 @@ public final class i extends Canvas implements Runnable {
                                                     }
                                                     m.kInt = (n23 | n24);
                                                 }
-                                                if (this.aByte == 6 && (i.aIntArrArr[this.hInt][this.iInt] & 0xFF) == 0x2 && i.aIntArrArr[this.hInt][this.iInt] >> 8 == 1) {
+                                                if (this.aByte == 6 && (i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) == 0x2 && i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] >> 8 == 1) {
                                                     this.aDInt = -1;
-                                                    this.bVoid(this.hInt, this.iInt, (byte) 2);
+                                                    this.bVoid(this.crtPlayerX, this.crtPlayerY, (byte) 2);
                                                 }
                                             }
                                         }
-                                    } else if (aBoolean(256)) {
+                                    } else if (isKeyPressed(KEY_RESPAWN)) { // 256
                                         this.aDInt = -1;
-                                        final int dInt2;
-                                        if ((dInt2 = i.aClassbArr[0].dInt) == 36 + (this.kInt & 0x7) - 1) {
-                                            if ((i.aIntArrArr[this.hInt][this.iInt] & 0xFF) == 0x4) {
-                                                this.apVoid();
+                                        final int animationI = i.aClassbArr[0].crtAnimationI;
+                                        if (animationI == 36 + (this.kInt & 0x7) - 1) {
+                                            if ((i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) == 0x4) {
+                                                this.restoreCheckpoint();
                                             } else {
-                                                this.pVoid(2);
+                                                this.playSound(j_SoundManager.SOUND_SFX_DEATH);
                                                 this.gVoid(19);
                                             }
                                         }
-                                        switch (dInt2) {
+                                        switch (animationI) {
                                             case 0:
                                             case 1:
                                             case 2:
                                             case 3:
                                             case 34:
                                             case 35: {
-                                                if ((i.aIntArrArr[this.hInt][this.iInt] & 0xFF) == 0x4) {
-                                                    this.apVoid();
+                                                if ((i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) == 0x4) {
+                                                    this.restoreCheckpoint();
                                                     break;
                                                 }
-                                                this.pVoid(2);
+                                                this.playSound(j_SoundManager.SOUND_SFX_DEATH);
                                                 this.gVoid(19);
                                                 break;
                                             }
                                         }
-                                    } else if (aBoolean(32944)) {
+                                    } else if (isKeyPressed(KEY_ANY_OK)) { // 32944
                                         this.aeVoid();
-                                        i.ahInt = 0;
+                                        i.keysPressed = 0;
                                     }
                                     if (this.aByte != 5 && this.lByte == 0 && this.mInt == 0 && this.aByte != (this.kInt & 0x7)) {
                                         this.kInt |= 0x1000;
@@ -1481,35 +1542,35 @@ public final class i extends Canvas implements Runnable {
                                 {
                                     if (this.dVInt == this.dXInt && this.dWInt == this.dYInt) {
                                         int n25 = -1;
-                                        if (aBoolean(4097)) {
+                                        if (isKeyPressed(4097)) {
                                             n25 = 2;
-                                        } else if (aBoolean(262146)) {
+                                        } else if (isKeyPressed(262146)) {
                                             n25 = 3;
-                                        } else if (aBoolean(16388)) {
+                                        } else if (isKeyPressed(16388)) {
                                             n25 = 4;
-                                        } else if (aBoolean(65544)) {
+                                        } else if (isKeyPressed(65544)) {
                                             n25 = 1;
-                                        } else if (aBoolean(32944)) {
+                                        } else if (isKeyPressed(32944)) {
                                             if (System.currentTimeMillis() >= 2000L) {
                                                 final int aInt = aInt(i.aLongArrArr[this.dVInt][this.dWInt], (byte) 6, (byte) 5);
                                                 this.pVoid();
                                                 this.auVoid();
                                                 System.gc();
-                                                this.aBInt = aInt;
+                                                this.crtStageI = aInt;
                                                 this.lVoid();
-                                                i.ahInt = 0;
+                                                i.keysPressed = 0;
                                             }
                                             break Label_4006;
-                                        } else if (aBoolean(64)) {
+                                        } else if (isKeyPressed(64)) {
                                             this.JBoolean = true;
                                             this.HBoolean = true;
                                             this.LBoolean = true;
                                             this.bsInt = 0;
                                             i.bByte = 28;
-                                            i.ahInt = 0;
+                                            i.keysPressed = 0;
                                             break Label_4240;
                                         }
-                                        i.ahInt = 0;
+                                        i.keysPressed = 0;
                                         if (n25 != -1) {
                                             final int dvInt = this.dVInt;
                                             final int dwInt = this.dWInt;
@@ -1644,7 +1705,7 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 17:
                             case 20: {
-                                if (aBoolean(32944)) {
+                                if (isKeyPressed(32944)) {
                                     if (this.aRInt == 5) {
                                         this.avVoid();
                                         this.cVoid(false);
@@ -1657,20 +1718,20 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 27: {
                                 i.mByte = i.bByte;
-                                this.RVoid();
+                                this.checkCheatKeyCodeIsPressed();
                                 if (this.DInt != -1 || this.BInt != 0) {
-                                    i.ahInt = 0;
+                                    i.keysPressed = 0;
                                     break Label_4240;
                                 }
                                 Label_4185:
                                 {
-                                    i i2;
-                                    int uInt;
-                                    if (aBoolean(32944)) {
-                                        i2 = this;
-                                        uInt = 4;
+                                    i self;
+                                    int sealMoveDirection;
+                                    if (isKeyPressed(KEY_ANY_OK)) { // 32944
+                                        self = this;
+                                        sealMoveDirection = SEAL_MOVE_OK;
                                     } else {
-                                        if (aBoolean(64)) {
+                                        if (isKeyPressed(KEY_CANCEL)) { // 64
                                             this.pVoid();
                                             i.bByte = 9;
                                             this.brInt = 8;
@@ -1678,37 +1739,37 @@ public final class i extends Canvas implements Runnable {
                                             this.bsInt = 0;
                                             break Label_4185;
                                         }
-                                        if (aBoolean(4097)) {
-                                            i2 = this;
-                                            uInt = 0;
-                                        } else if (aBoolean(262146)) {
-                                            i2 = this;
-                                            uInt = 2;
-                                        } else if (aBoolean(16388)) {
-                                            i2 = this;
-                                            uInt = 3;
+                                        if (isKeyPressed(KEY_UP)) { // 4097
+                                            self = this;
+                                            sealMoveDirection = SEAL_MOVE_UP;
+                                        } else if (isKeyPressed(KEY_DOWN)) { // 262146
+                                            self = this;
+                                            sealMoveDirection = SEAL_MOVE_DOWN;
+                                        } else if (isKeyPressed(KEY_LEFT)) { // 16388
+                                            self = this;
+                                            sealMoveDirection = SEAL_MOVE_LEFT;
                                         } else {
-                                            if (!aBoolean(65544)) {
+                                            if (!isKeyPressed(KEY_RIGHT)) { // 65544
                                                 break Label_4185;
                                             }
-                                            i2 = this;
-                                            uInt = 1;
+                                            self = this;
+                                            sealMoveDirection = SEAL_MOVE_RIGHT;
                                         }
                                     }
-                                    i2.uInt = uInt;
+                                    self.crtSealMoveDirection = sealMoveDirection;
                                 }
-                                i.ahInt = 0;
+                                i.keysPressed = 0;
                                 break Label_4240;
                             }
                             case 31: {
-                                if (aBoolean(64)) {
+                                if (isKeyPressed(64)) {
                                     this.bsInt = 0;
                                     this.brInt = 8;
                                     i.bByte = 9;
                                     this.aVoid(-1);
                                     break;
                                 }
-                                if (aBoolean(32944)) {
+                                if (isKeyPressed(32944)) {
                                     this.QVoid();
                                     break;
                                 }
@@ -1718,7 +1779,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     ahInt = 0;
                 }
-                i.ahInt = ahInt;
+                i.keysPressed = ahInt;
             }
             if (!this.dBoolean && (this.kInt & 0x7) != 0x0) {
                 this.mInt = 10;
@@ -1746,8 +1807,8 @@ public final class i extends Canvas implements Runnable {
                         int n38;
                         for (n38 = 0; i.sByteArr[n38] != 36; ++n38) {
                         }
-                        for (int n39 = 0; n39 < GloftDIRU.aByteArr.length; ++n39, ++n38) {
-                            i.sByteArr[n38] = GloftDIRU.aByteArr[n39];
+                        for (int n39 = 0; n39 < GloftDIRU.midletVersionBytes.length; ++n39, ++n38) {
+                            i.sByteArr[n38] = GloftDIRU.midletVersionBytes[n39];
                         }
                         this.aRInt = 2;
                     }
@@ -1762,7 +1823,7 @@ public final class i extends Canvas implements Runnable {
                                 int n41 = 0;
                                 Label_4715:
                                 {
-                                    if (aBoolean(4097)) {
+                                    if (isKeyPressed(4097)) {
                                         if (this.eoInt >= 240) {
                                             this.eoInt -= 3;
                                             if (this.eoInt < 240) {
@@ -1773,13 +1834,13 @@ public final class i extends Canvas implements Runnable {
                                             break Label_4719;
                                         }
                                     } else {
-                                        if (aBoolean(262146)) {
+                                        if (isKeyPressed(262146)) {
                                             i3 = this;
                                             n40 = this.eoInt;
                                             n41 = 3;
                                             break Label_4715;
                                         }
-                                        if (aBoolean(64)) {
+                                        if (isKeyPressed(64)) {
                                             if (this.iBoolean) {
                                                 this.bsInt = 0;
                                                 this.brInt = 8;
@@ -1820,7 +1881,7 @@ public final class i extends Canvas implements Runnable {
                         i.bByte = 4;
                         this.aRInt = 2;
                         this.aVoid(0);
-                        this.aClassj.bVoid(19);
+                        this.aClassj.playSound(j_SoundManager.SOUND_M_TITLE);
                         break;
                     }
                 }
@@ -1874,86 +1935,92 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             case 4: {
-                                h.aVoid(16777215);
-                                i.cClassStringBuffer.delete(0, i.cClassStringBuffer.length());
-                                switch (this.aAInt) {
+                                // Load the map file
+                                h.setColor(0xFFFFFF);
+                                i.crtWorldMapFileName.delete(0, i.crtWorldMapFileName.length()); // Clear
+                                switch (this.crtWorldIndex) {
                                     case 0: {
-                                        i.cClassStringBuffer.append("/map_angkor.out");
+                                        i.crtWorldMapFileName.append("/map_angkor.out");
                                         break;
                                     }
                                     case 1: {
-                                        i.cClassStringBuffer.append("/map_scotland.out");
+                                        i.crtWorldMapFileName.append("/map_scotland.out");
                                         break;
                                     }
                                     case 2: {
-                                        i.cClassStringBuffer.append("/map_tibet.out");
+                                        i.crtWorldMapFileName.append("/map_tibet.out");
                                         break;
                                     }
                                 }
                                 i.aLongArrArr = new long[12][12];
                                 this.cIntArr = new int[20];
-                                this.aVoid(i.cClassStringBuffer.toString());
+                                this.aVoid(i.crtWorldMapFileName.toString());
                                 break;
                             }
                             case 5: {
-                                i.aClassfArr[17] = importTexturesWithPalettes("/ms.f", 0);
-                                i.aClassfArr[23] = importTexturesWithPalettes("/ms.f", 1);
+                                // Load the map sprites
+                                i.aClassfArr[17] = loadSprite("/ms.f", 0);
+                                i.aClassfArr[23] = loadSprite("/ms.f", 1);
                                 break;
                             }
                             case 6: {
+                                // Load the map header
                                 while (true) {
-                                    f[] array4 = null;
+                                    f_Sprite[] array4 = null;
                                     int n44 = 0;
-                                    String s = null;
-                                    int n45 = 0;
-                                    switch (this.aAInt) {
+                                    String fileName = null;
+                                    int chunkI = 0;
+                                    switch (this.crtWorldIndex) {
                                         case 0: {
                                             array4 = i.aClassfArr;
                                             n44 = 24;
-                                            s = "/ms.f";
-                                            n45 = 2;
+                                            fileName = "/ms.f";
+                                            chunkI = 2;
                                             break;
                                         }
                                         case 1: {
                                             array4 = i.aClassfArr;
                                             n44 = 25;
-                                            s = "/ms.f";
-                                            n45 = 3;
+                                            fileName = "/ms.f";
+                                            chunkI = 3;
                                             break;
                                         }
                                         case 2: {
                                             array4 = i.aClassfArr;
                                             n44 = 26;
-                                            s = "/ms.f";
-                                            n45 = 4;
+                                            fileName = "/ms.f";
+                                            chunkI = 4;
                                             break;
                                         }
                                         default: {
                                             break Label_5670;
                                         }
                                     }
-                                    array4[n44] = importTexturesWithPalettes(s, n45);
+                                    array4[n44] = loadSprite(fileName, chunkI);
                                     continue;
                                 }
                             }
                             case 7: {
+                                // Load the ice crystal
                                 if (i.aClassfArr[54] == null) {
-                                    i.aClassfArr[54] = importTexturesWithPalettes("/mmv.f", 1);
+                                    i.aClassfArr[54] = loadSprite("/mmv.f", 1);
                                 }
                                 this.GInt = cInt(i.aClassfArr[54], 0) >> 1;
                                 this.HInt = bInt(i.aClassfArr[54], 0) >> 1;
                                 break;
                             }
                             case 8: {
+                                // Load the fire crystal
                                 if (i.aClassfArr[53] == null) {
-                                    i.aClassfArr[53] = importTexturesWithPalettes("/mmv.f", 2);
+                                    i.aClassfArr[53] = loadSprite("/mmv.f", 2);
                                     break;
                                 }
                                 break;
                             }
                             case 9: {
+                                // Load the silver diamond
                                 if (i.aClassfArr[52] == null) {
-                                    i.aClassfArr[52] = importTexturesWithPalettes("/mmv.f", 3);
+                                    i.aClassfArr[52] = loadSprite("/mmv.f", 3);
                                     break;
                                 }
                                 break;
@@ -1979,7 +2046,7 @@ public final class i extends Canvas implements Runnable {
                                 }
                                 this.dVInt = -1;
                                 if (!this.acBoolean) {
-                                    this.aBInt = i.dZInt;
+                                    this.crtStageI = i.dZInt;
                                 }
                                 this.acBoolean = false;
                                 for (int n46 = 0; n46 < 12; ++n46) {
@@ -1990,7 +2057,7 @@ public final class i extends Canvas implements Runnable {
                                             int n49;
                                             int n50;
                                             int n51;
-                                            if ((this.aByte(this.aAInt, aInt11) & 0x40) != 0x0 || aInt11 == 0) {
+                                            if ((this.aByte(this.crtWorldIndex, aInt11) & 0x40) != 0x0 || aInt11 == 0) {
                                                 n49 = n46;
                                                 n50 = n47;
                                                 n51 = 0;
@@ -2000,7 +2067,7 @@ public final class i extends Canvas implements Runnable {
                                                 n51 = 1;
                                             }
                                             aVoid(n49, n50, n51, (byte) 0, (byte) 3);
-                                            if (aInt11 == this.aBInt) {
+                                            if (aInt11 == this.crtStageI) {
                                                 this.dVInt = n46;
                                                 this.dWInt = n47;
                                             }
@@ -2039,12 +2106,12 @@ public final class i extends Canvas implements Runnable {
                             i.deInt = 0;
                             i.dfInt = 0;
                             i.dgInt = 0;
-                            this.tByte = this.aByte(this.aAInt, this.aBInt);
+                            this.tByte = this.aByte(this.crtWorldIndex, this.crtStageI);
                             this.uByte = 0;
                             break;
                         }
                         case 1: {
-                            i.deInt = (i.deInt = aInt(i.iByteArr, 4)) + this.aZInt;
+                            i.deInt = (i.deInt = unpackUint16(i.iByteArr, 4)) + this.aZInt;
                             this.uBoolean = false;
                             break;
                         }
@@ -2054,7 +2121,7 @@ public final class i extends Canvas implements Runnable {
                             break;
                         }
                         case 3: {
-                            i.dfInt = (i.dfInt = aInt(i.iByteArr, 6)) + this.bbInt;
+                            i.dfInt = (i.dfInt = unpackUint16(i.iByteArr, 6)) + this.bbInt;
                             break;
                         }
                         case 4: {
@@ -2065,11 +2132,11 @@ public final class i extends Canvas implements Runnable {
                         case 5: {
                             i.dgInt = i.iByteArr[2];
                             this.UInt = 0;
-                            if ((i.dgInt & 0x8) == 0x0 && i.dfInt >= a.bIntArr[1]) {
+                            if ((i.dgInt & 0x8) == 0x0 && i.dfInt >= a_Config.worldPrices[1]) {
                                 this.UInt = 1;
                                 break;
                             }
-                            if ((i.dgInt & 0x10) == 0x0 && i.dfInt >= a.bIntArr[2]) {
+                            if ((i.dgInt & 0x10) == 0x0 && i.dfInt >= a_Config.worldPrices[2]) {
                                 this.UInt = 2;
                                 break;
                             }
@@ -2083,14 +2150,14 @@ public final class i extends Canvas implements Runnable {
                             break;
                         }
                         case 7: {
-                            this.aVoid(this.aAInt, this.aBInt, (byte) 2);
+                            this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 2);
                             this.VInt = 0;
                             break;
                         }
                         case 8: {
                             int vInt;
                             int n52;
-                            for (n52 = (vInt = (i.dgInt & 0xE0) >> 5); vInt < 4 && i.deInt >= a.aIntArr[vInt]; ++vInt) {
+                            for (n52 = (vInt = (i.dgInt & 0xE0) >> 5); vInt < 4 && i.deInt >= a_Config.itemPrices[vInt]; ++vInt) {
                             }
                             if (n52 < vInt) {
                                 final byte[] iByteArr = i.iByteArr;
@@ -2114,26 +2181,26 @@ public final class i extends Canvas implements Runnable {
                         }
                         case 11: {
                             if (this.azInt < 99 && this.aZInt == this.aYInt && (this.tByte & 0x4) == 0x0) {
-                                this.aVoid(this.aAInt, this.aBInt, (byte) 4);
+                                this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 4);
                                 this.uByte |= 0x4;
                                 ++this.azInt;
                             }
                             if (this.azInt < 99 && this.bbInt == this.baInt && (this.tByte & 0x8) == 0x0) {
-                                this.aVoid(this.aAInt, this.aBInt, (byte) 8);
+                                this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 8);
                                 this.uByte |= 0x8;
                                 ++this.azInt;
                             }
                             if (this.azInt < 99 && this.bcInt == 0 && (this.tByte & 0x10) == 0x0) {
-                                this.aVoid(this.aAInt, this.aBInt, (byte) 16);
+                                this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 16);
                                 this.uByte |= 0x10;
                                 ++this.azInt;
                             }
                             if (this.azInt < 99 && this.bdInt == 0 && (this.tByte & 0x20) == 0x0) {
-                                this.aVoid(this.aAInt, this.aBInt, (byte) 32);
+                                this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 32);
                                 this.uByte |= 0x20;
                                 ++this.azInt;
                             }
-                            final int abInt = this.aBInt;
+                            final int abInt = this.crtStageI;
                             int n55 = 0;
                             Label_6463:
                             while (true) {
@@ -2172,7 +2239,7 @@ public final class i extends Canvas implements Runnable {
                 if (this.bsInt == 12) {
                     i.bByte = 17;
                     this.aRInt = 0;
-                    this.pVoid(15);
+                    this.playSound(15);
                     return;
                 }
                 break;
@@ -2227,33 +2294,33 @@ public final class i extends Canvas implements Runnable {
             case 16: {
                 this.DBoolean = true;
                 this.lVoid();
-                i.ahInt = 0;
+                i.keysPressed = 0;
             }
             case 0: {
                 System.out.println("Set value to i.aClassbArr[0]. new b(<TEXTURES /ui.f 0>, 0, 0, null)");
-                (i.aClassbArr[0] = new b(importTexturesWithPalettes("/ui.f", 0), 0, 0, null)).aVoid(0);
+                (i.aClassbArr[0] = new b_SpriteAnimator(loadSprite("/ui.f", 0), 0, 0, null)).setAnimation(0); // ui.f, chunk 0, palette 0, all animations
                 System.out.println(i.aClassbArr[0]);
                 i.bByte = 6;
                 this.eVoid();
             }
             case 6: {
                 if (i.aSInt < 60) {
-                    i.aClassbArr[0].bVoid();
+                    i.aClassbArr[0].tick();
                     return;
                 }
-                i.aClassStringArr = aClassStringArr(127);
-                i.bClassStringArr = aClassStringArr();
-                i.cClassStringArr = bClassStringArr();
+                i.texts = aClassStringArr(127);
+                i.demoTextMapping = getDemoTextMapping();
+                i.stageTitles = generateStageTitles();
                 try {
-                    i.bBoolean = d.aClassString(127).trim().equals("1");
+                    i.bBoolean = d.getLocalizedText(127).trim().equals("1");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     i.bBoolean = false;
                 }
                 aAVoid();
-                i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3);
+                i.aClassfArr[18] = loadSprite("/ui.f", 3);
                 this.pVoid();
-                j.aBoolean = true;
+                j_SoundManager.soundEnabled = true;
                 i.bByte = 8;
                 this.bsInt = 0;
                 this.brInt = 32;
@@ -2298,21 +2365,21 @@ public final class i extends Canvas implements Runnable {
                         case 4: {
                         }
                         case 6: {
-                            if (i.aClassImage == null) {
-                                i.aClassImage = aClassImage("/spl.f", 0);
+                            if (i.splashLogoImage == null) {
+                                i.splashLogoImage = readChunkAsImageFile("/spl.f", 0);
                             }
-                            if (i.bClassImage == null) {
-                                i.bClassImage = aClassImage("/spl.f", 1);
+                            if (i.splashBgGradientImage == null) {
+                                i.splashBgGradientImage = readChunkAsImageFile("/spl.f", 1);
                             }
-                            if (i.cClassImage == null) {
-                                i.cClassImage = aClassImage("/spl.f", 2);
+                            if (i.splashCopyrightImage == null) {
+                                i.splashCopyrightImage = readChunkAsImageFile("/spl.f", 2);
                                 break;
                             }
                             break;
                         }
                         case 7: {
                             if (i.aClassfArr[18] == null) {
-                                i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3);
+                                i.aClassfArr[18] = loadSprite("/ui.f", 3);
                                 break;
                             }
                             break;
@@ -2333,7 +2400,7 @@ public final class i extends Canvas implements Runnable {
                             i.bByte = 30;
                             this.FBoolean = true;
                         }
-                        this.aClassj.bVoid(19);
+                        this.aClassj.playSound(j_SoundManager.SOUND_M_TITLE);
                     }
                 } catch (Exception ex4) {
                 }
@@ -2360,9 +2427,9 @@ public final class i extends Canvas implements Runnable {
                         this.NBoolean = true;
                         this.MBoolean = true;
                         this.LBoolean = true;
-                        this.aAInt = 0;
-                        this.aBInt = 13;
-                        i.ahInt = 0;
+                        this.crtWorldIndex = 0;
+                        this.crtStageI = STAGE_ANGKOR_DEMO;
+                        i.keysPressed = 0;
                     }
                 } else {
                     this.jVoid(); // Sets i.bByte to 1
@@ -2373,9 +2440,9 @@ public final class i extends Canvas implements Runnable {
                 final int n64 = this.bsInt++;
                 if (n64 < 21) {
                     if (n64 == 0) {
-                        this.aClassj.bVoid();
+                        this.aClassj.loadMidiIndices();
                     }
-                    this.aClassj.aVoid(n64);
+                    this.aClassj.loadSound(n64);
                     if (n64 == 20) {
                         this.aClassj.cVoid();
                     }
@@ -2383,25 +2450,26 @@ public final class i extends Canvas implements Runnable {
                 } else {
                     switch (n64) {
                         case 21: {
-                            i.aClassfArr[9] = importTexturesWithPalettes("/cm.f", 7);
+                            i.aClassfArr[9] = loadSprite("/cm.f", 7); // Effect animations
                             break;
                         }
                         case 22: {
-                            i.aClassfArr[0] = importTexturesWithPalettes("/ui.f", 2);
+                            i.aClassfArr[0] = loadSprite("/ui.f", 2); // Top and bottom UI
                             break;
                         }
                         case 23: {
-                            i.demoUITextures[0] = importTexturesWithPalette("/demoui.f", 0, 0);
-                            i.demoUITextures[1] = importTexturesWithPalette("/demoui.f", 0, 1);
+                            // Demo UI - text box border parts + 5 button
+                            i.demoUITextures[0] = importTexturesWithPalette("/demoui.f", 0, 0); // Gray/brown
+                            i.demoUITextures[1] = importTexturesWithPalette("/demoui.f", 0, 1); // Blue
                             break;
                         }
                         case 24: {
-                            this.aClassj.aVoid();
+                            this.aClassj.startThread();
                             i.bByte = 9;
                             this.aVoid(-1);
-                            (i.aClassStringBuffer = new StringBuffer(i.cClassStringArr[0])).delete(i.aClassStringBuffer.length() - 1, i.aClassStringBuffer.length());
-                            (i.bClassStringBuffer = new StringBuffer(i.cClassStringArr[11])).delete(i.bClassStringBuffer.length() - 1, i.bClassStringBuffer.length());
-                            i.cClassStringBuffer = new StringBuffer("1");
+                            (i.aClassStringBuffer = new StringBuffer(i.stageTitles[0])).delete(i.aClassStringBuffer.length() - 1, i.aClassStringBuffer.length());
+                            (i.bClassStringBuffer = new StringBuffer(i.stageTitles[11])).delete(i.bClassStringBuffer.length() - 1, i.bClassStringBuffer.length());
+                            i.crtWorldMapFileName = new StringBuffer("1");
                             break;
                         }
                     }
@@ -2417,7 +2485,7 @@ public final class i extends Canvas implements Runnable {
                     Label_7811:
                     {
                         if (this.UInt > 0) {
-                            sb.append(i.aClassStringArr[124]).append("\n");
+                            sb.append(i.texts[124]).append("\n"); // "World unlocked: " + "\n"
                             while (true) {
                                 byte[] iByteArr3 = null;
                                 int n65 = 0;
@@ -2425,14 +2493,14 @@ public final class i extends Canvas implements Runnable {
                                 byte b8 = 0;
                                 switch (this.UInt) {
                                     case 1: {
-                                        sb.append(i.aClassStringArr[4]);
+                                        sb.append(i.texts[4]); // "Bavaria"
                                         iByteArr3 = i.iByteArr;
                                         b7 = iByteArr3[n65 = 2];
                                         b8 = 8;
                                         break;
                                     }
                                     case 2: {
-                                        sb.append(i.aClassStringArr[64]);
+                                        sb.append(i.texts[64]); // "Siberia"
                                         final byte[] iByteArr4 = i.iByteArr;
                                         final int n66 = 2;
                                         iByteArr4[n66] |= 0x8;
@@ -2455,7 +2523,7 @@ public final class i extends Canvas implements Runnable {
                         if (sb.length() > 0) {
                             sb.append("\n\n");
                         }
-                        sb.append(i.aClassStringArr[33]).append("\n").append(i.aClassStringArr[120 + this.VInt - 1]);
+                        sb.append(i.texts[33]).append("\n").append(i.texts[120 + this.VInt - 1]); // "Unlocked" + "\n" + <textx #121-124 - vests, suit, jacket...>
                         this.VInt = 0;
                     }
                     if (sb.length() > 0) {
@@ -2591,7 +2659,7 @@ public final class i extends Canvas implements Runnable {
                     g.aByteArrArr = new byte[12][13];
                     ++this.WInt;
                     g.bVoid(3);
-                    this.aClassj.bVoid(19);
+                    this.aClassj.playSound(j_SoundManager.SOUND_M_TITLE);
                     this.eVoid();
                     return;
                 }
@@ -2622,7 +2690,7 @@ public final class i extends Canvas implements Runnable {
                 this.aVoid(0);
                 i.bByte = 22;
                 this.aRInt = 0;
-                this.aClassj.eVoid();
+                this.aClassj.freeCrtPlayerResource();
                 break;
             }
         }
@@ -2662,78 +2730,78 @@ public final class i extends Canvas implements Runnable {
             case 4: {
                 this.pVoid();
                 if (i.aClassfArr[10] == null) {
-                    final f[] aClassfArr = i.aClassfArr;
+                    final f_Sprite[] aClassfArr = i.aClassfArr;
                     final int n2 = 10;
                     final String s = "/mmv.f";
                     final int n3 = 0;
                     n = 0;
-                    aClassfArr[n2] = importTexturesWithPalettes(s, n3, 0, 0);
+                    aClassfArr[n2] = loadSprite(s, n3, 0, 0);
                 }
                 if (i.aClassfArr[46] == null) {
-                    final f[] aClassfArr2 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr2 = i.aClassfArr;
                     final int n4 = 46;
                     final String s2 = "/mmv.f";
                     final int n5 = 5;
                     n = 0;
-                    aClassfArr2[n4] = importTexturesWithPalettes(s2, n5, 0, 0);
+                    aClassfArr2[n4] = loadSprite(s2, n5, 0, 0);
                 }
                 this.zInt = 240 - cInt(i.aClassfArr[10], 0) >> 1;
                 this.AInt = 320 - bInt(i.aClassfArr[10], 0) - 48 >> 1;
             }
             case 5: {
                 if (i.aClassfArr[55] == null) {
-                    final f[] aClassfArr3 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr3 = i.aClassfArr;
                     final int n6 = 55;
                     final String s3 = "/mmv.f";
                     final int n7 = 4;
                     n = 0;
-                    aClassfArr3[n6] = importTexturesWithPalettes(s3, n7, 0, 0);
+                    aClassfArr3[n6] = loadSprite(s3, n7, 0, 0);
                     this.xInt = aInt(i.aClassfArr[55], 0);
                     i.bClassf = i.aClassfArr[55];
                 }
                 if (i.aClassfArr[18] == null) {
-                    final f[] aClassfArr4 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr4 = i.aClassfArr;
                     final int n8 = 18;
                     final String s4 = "/ui.f";
                     final int n9 = 3;
                     n = 0;
-                    aClassfArr4[n8] = importTexturesWithPalettes(s4, n9, 0, 0);
+                    aClassfArr4[n8] = loadSprite(s4, n9, 0, 0);
                     return;
                 }
                 break;
             }
             case 6: {
                 if (i.aClassfArr[54] == null) {
-                    final f[] aClassfArr5 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr5 = i.aClassfArr;
                     final int n10 = 54;
                     final String s5 = "/mmv.f";
                     final int n11 = 1;
                     n = 0;
-                    aClassfArr5[n10] = importTexturesWithPalettes(s5, n11, 0, 0);
+                    aClassfArr5[n10] = loadSprite(s5, n11, 0, 0);
                 }
                 this.GInt = cInt(i.aClassfArr[54], 0) >> 1;
                 this.HInt = bInt(i.aClassfArr[54], 0) >> 1;
             }
             case 7: {
                 if (i.aClassfArr[53] == null) {
-                    final f[] aClassfArr6 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr6 = i.aClassfArr;
                     final int n12 = 53;
                     final String s6 = "/mmv.f";
                     final int n13 = 2;
                     n = 0;
-                    aClassfArr6[n12] = importTexturesWithPalettes(s6, n13, 0, 0);
+                    aClassfArr6[n12] = loadSprite(s6, n13, 0, 0);
                     return;
                 }
                 break;
             }
             case 8: {
                 if (i.aClassfArr[52] == null) {
-                    final f[] aClassfArr7 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr7 = i.aClassfArr;
                     final int n14 = 52;
                     final String s7 = "/mmv.f";
                     final int n15 = 3;
                     n = 0;
-                    aClassfArr7[n14] = importTexturesWithPalettes(s7, n15, 0, 0);
+                    aClassfArr7[n14] = loadSprite(s7, n15, 0, 0);
                     return;
                 }
                 break;
@@ -2743,35 +2811,35 @@ public final class i extends Canvas implements Runnable {
                     final String string = "/" + 0 + ".f";
                     final int n16 = 3;
                     n = 0;
-                    i.textures[8] = importTexturesWithPalettes(string, n16, 0, 0).aClassImageArrArr[0];
+                    i.textures[8] = loadSprite(string, n16, 0, 0).images[0];
                     final String s8 = "/cm.f";
                     final int n17 = 2;
                     n = 0;
-                    final f aClassf;
-                    (aClassf = importTexturesWithPalettes(s8, n17, 0, 0)).aVoid(0, 0, -1, -1);
-                    aClassf.aVoid(1, 0, 0, -1);
+                    final f_Sprite aClassf;
+                    (aClassf = loadSprite(s8, n17, 0, 0)).createImages(0, 0, -1, -1);
+                    aClassf.createImages(1, 0, 0, -1);
                     i.aClassfArr[59] = aClassf;
-                    g.aInt = aClassf.aClassImageArrArr[0].length;
-                    aClassf.dByteArr = null;
+                    g.aInt = aClassf.images[0].length;
+                    aClassf.moduleData = null;
                     if (i.aClassfArr[17] == null) {
-                        final f[] aClassfArr8 = i.aClassfArr;
+                        final f_Sprite[] aClassfArr8 = i.aClassfArr;
                         final int n18 = 17;
                         final String s9 = "/ms.f";
                         final int n19 = 0;
                         n = 0;
-                        aClassfArr8[n18] = importTexturesWithPalettes(s9, n19, 0, 0);
+                        aClassfArr8[n18] = loadSprite(s9, n19, 0, 0);
                     }
                 } catch (Exception ex) {
                 }
             }
             case 10: {
                 if (i.aClassfArr[9] == null) {
-                    final f[] aClassfArr9 = i.aClassfArr;
+                    final f_Sprite[] aClassfArr9 = i.aClassfArr;
                     final int n20 = 9;
                     final String s10 = "/cm.f";
                     final int n21 = 7;
                     n = 0;
-                    aClassfArr9[n20] = importTexturesWithPalettes(s10, n21, 0, 0);
+                    aClassfArr9[n20] = loadSprite(s10, n21, 0, 0);
                 }
                 this.JInt = aInt(i.aClassfArr[9], 5);
                 n = i.iByteArr[2];
@@ -2792,13 +2860,13 @@ public final class i extends Canvas implements Runnable {
                         n22 = 1;
                         b = true;
                     } else {
-                        if (aInt(i.iByteArr, 6) >= a.bIntArr[1]) {
+                        if (unpackUint16(i.iByteArr, 6) >= a_Config.worldPrices[1]) {
                             final byte[] iByteArr = i.iByteArr;
                             final int n23 = 1;
                             iByteArr[n23] |= 0x1;
                             this.uVoid();
                             this.BInt = 1;
-                            this.pInt = 1;
+                            this.crtSealPosition = SEAL_POS_BAVARIA;
                             break Label_0747;
                         }
                         array = i.aBooleanArr;
@@ -2817,13 +2885,13 @@ public final class i extends Canvas implements Runnable {
                         n24 = 2;
                         b2 = true;
                     } else {
-                        if (aInt(i.iByteArr, 6) >= a.bIntArr[2]) {
+                        if (unpackUint16(i.iByteArr, 6) >= a_Config.worldPrices[2]) {
                             final byte[] iByteArr2 = i.iByteArr;
                             final int n25 = 1;
                             iByteArr2[n25] |= 0x2;
                             this.uVoid();
                             this.BInt = 2;
-                            this.pInt = 2;
+                            this.crtSealPosition = SEAL_POS_SIBERIA;
                             break Label_0810;
                         }
                         array2 = i.aBooleanArr;
@@ -2832,8 +2900,8 @@ public final class i extends Canvas implements Runnable {
                     }
                     array2[n24] = b2;
                 }
-                this.qInt = a.dIntArr[this.pInt << 1];
-                this.rInt = a.dIntArr[(this.pInt << 1) + 1];
+                this.qInt = a_Config.sealArrowPosOffsets[this.crtSealPosition << 1];
+                this.rInt = a_Config.sealArrowPosOffsets[(this.crtSealPosition << 1) + 1];
                 this.sInt = this.qInt;
                 this.tInt = this.rInt;
                 this.hVoid();
@@ -2846,47 +2914,51 @@ public final class i extends Canvas implements Runnable {
 
     private void hVoid() {
         i i;
-        StringBuffer append;
-        String lowerCase;
-        if (this.pInt == 3) {
+        StringBuffer sb;
+        String action;
+        if (this.crtSealPosition == SEAL_POS_SHOP) {
             i = this;
-            append = new StringBuffer();
-            lowerCase = i.aClassStringArr[45];
-        } else if (bBoolean(this.pInt)) {
+            sb = new StringBuffer();
+            action = i.texts[45]; // "Press 5"
+        } else if (isSealPositionUnlocked(this.crtSealPosition)) {
             i = this;
-            append = new StringBuffer();
-            lowerCase = i.aClassStringArr[45];
+            sb = new StringBuffer();
+            action = i.texts[45]; // "Press 5"
         } else {
             i = this;
-            append = new StringBuffer().append(a.bIntArr[this.pInt]).append(" ");
-            lowerCase = i.aClassStringArr[48].toLowerCase();
+            sb = new StringBuffer().append(a_Config.worldPrices[this.crtSealPosition]).append(" ");
+            action = i.texts[48].toLowerCase(); // "Red diamonds"
         }
-        i.bClassString = append.append(lowerCase).append(" ").append(i.aClassStringArr[77]).toString();
+        i.bClassString = sb.append(action).append(" ").append(i.texts[77]).toString(); // "..." + action + " " + "to go to"
         i j = null;
         String[] array = null;
         int n = 0;
-        switch (this.pInt) {
+        switch (this.crtSealPosition) {
             case 0: {
+                // "Angkor Wat"
                 j = this;
-                array = i.aClassStringArr;
+                array = i.texts;
                 n = 1;
                 break;
             }
             case 1: {
+                // "Bavaria"
                 j = this;
-                array = i.aClassStringArr;
+                array = i.texts;
                 n = 4;
                 break;
             }
             case 2: {
+                // "Siberia"
                 j = this;
-                array = i.aClassStringArr;
+                array = i.texts;
                 n = 64;
                 break;
             }
             case 3: {
+                // "Shop"
                 j = this;
-                array = i.aClassStringArr;
+                array = i.texts;
                 n = 63;
                 break;
             }
@@ -2897,8 +2969,10 @@ public final class i extends Canvas implements Runnable {
         j.cClassString = array[n];
     }
 
-    private static boolean bBoolean(final int n) {
-        return n == 0 || n == 3 || aInt(i.iByteArr, 6) >= a.bIntArr[n];
+    private static boolean isSealPositionUnlocked(final int sealPosition) {
+        return sealPosition == SEAL_POS_ANGKOR || // Angkor is unlocked
+                sealPosition == SEAL_POS_SHOP || // Shop is unlocked
+                unpackUint16(i.iByteArr, 6) >= a_Config.worldPrices[sealPosition]; // Do we have enough red diamonds?
     }
 
     private void iVoid() {
@@ -2907,49 +2981,47 @@ public final class i extends Canvas implements Runnable {
             this.tInt = this.rInt;
         }
         if (this.fBoolean) {
-            i.ahInt = 0;
-            final int n = this.vInt - this.qInt;
-            final int n2 = this.wInt - this.rInt;
+            i.keysPressed = 0;
+            final int n = this.crtSealArrowOffsetX - this.qInt;
+            final int n2 = this.crtSealArrowOffsetY - this.rInt;
             this.qInt += n / (8 - this.cByte);
             this.rInt += n2 / (8 - this.cByte);
             ++this.cByte;
             if (this.cByte == 8) {
-                this.qInt = this.vInt;
-                this.rInt = this.wInt;
+                this.qInt = this.crtSealArrowOffsetX;
+                this.rInt = this.crtSealArrowOffsetY;
                 this.fBoolean = false;
                 this.cByte = 0;
                 this.gBoolean = true;
                 this.hVoid();
             }
         } else {
-            switch (this.uInt) {
-                case -1: {
-                    break;
-                }
-                case 4: {
-                    switch (this.pInt) {
-                        case 0: {
+            switch (this.crtSealMoveDirection) {
+                case SEAL_MOVE_NOOP: break;
+                case SEAL_MOVE_OK: {
+                    switch (this.crtSealPosition) {
+                        case SEAL_POS_ANGKOR: {
                             this.GBoolean = true;
                             this.HBoolean = true;
-                            this.aClassj.eVoid();
-                            this.aAInt = 0;
+                            this.aClassj.freeCrtPlayerResource();
+                            this.crtWorldIndex = 0;
                             this.lBoolean = false;
                             i.bByte = 15;
-                            i.dZInt = bInt(this.aAInt);
+                            i.dZInt = bInt(this.crtWorldIndex);
                             this.avVoid();
                             break;
                         }
-                        case 1: {
-                            if (!bBoolean(this.pInt)) {
+                        case SEAL_POS_BAVARIA: {
+                            if (!isSealPositionUnlocked(this.crtSealPosition)) {
                                 break;
                             }
                             this.GBoolean = true;
                             this.HBoolean = true;
-                            this.aClassj.eVoid();
-                            this.aAInt = 1;
-                            this.aBInt = 0;
+                            this.aClassj.freeCrtPlayerResource();
+                            this.crtWorldIndex = 1;
+                            this.crtStageI = 0;
                             i.bByte = 15;
-                            i.dZInt = bInt(this.aAInt);
+                            i.dZInt = bInt(this.crtWorldIndex);
                             this.avVoid();
                             this.pBoolean = true;
                             this.lBoolean = false;
@@ -2959,18 +3031,18 @@ public final class i extends Canvas implements Runnable {
                             }
                             break;
                         }
-                        case 2: {
-                            if (!bBoolean(this.pInt)) {
+                        case SEAL_POS_SIBERIA: {
+                            if (!isSealPositionUnlocked(this.crtSealPosition)) {
                                 break;
                             }
                             this.GBoolean = true;
                             this.HBoolean = true;
-                            this.aClassj.eVoid();
-                            this.aAInt = 2;
-                            this.aBInt = 0;
+                            this.aClassj.freeCrtPlayerResource();
+                            this.crtWorldIndex = 2;
+                            this.crtStageI = 0;
                             this.lBoolean = false;
                             i.bByte = 15;
-                            i.dZInt = bInt(this.aAInt);
+                            i.dZInt = bInt(this.crtWorldIndex);
                             this.avVoid();
                             this.pBoolean = true;
                             if (i.iByteArr[9] < 2) {
@@ -2979,7 +3051,7 @@ public final class i extends Canvas implements Runnable {
                             }
                             break;
                         }
-                        case 3: {
+                        case SEAL_POS_SHOP: {
                             i.bByte = 18;
                             break;
                         }
@@ -2987,18 +3059,18 @@ public final class i extends Canvas implements Runnable {
                     break;
                 }
                 default: {
-                    final byte pInt;
-                    if ((pInt = a.aByteArrArr[this.uInt][this.pInt]) != -1) {
-                        this.pInt = pInt;
+                    final byte newPosition = a_Config.sealMoveDirections[this.crtSealMoveDirection][this.crtSealPosition];
+                    if (newPosition != -1) {
+                        this.crtSealPosition = newPosition;
                         this.fBoolean = true;
-                        this.vInt = a.dIntArr[this.pInt << 1];
-                        this.wInt = a.dIntArr[(this.pInt << 1) + 1];
+                        this.crtSealArrowOffsetX = a_Config.sealArrowPosOffsets[this.crtSealPosition << 1];
+                        this.crtSealArrowOffsetY = a_Config.sealArrowPosOffsets[(this.crtSealPosition << 1) + 1];
                         break;
                     }
                     break;
                 }
             }
-            this.uInt = -1;
+            this.crtSealMoveDirection = SEAL_MOVE_NOOP;
         }
     }
 
@@ -3006,7 +3078,7 @@ public final class i extends Canvas implements Runnable {
         String[] n1 = new String[128];
         for (int i = 0; i <= 127; ++i) {
             try {
-                n1[i] = d.aClassString(i);
+                n1[i] = d.getLocalizedText(i);
             } catch (Exception ex) {
                 n1[i] = "E";
             }
@@ -3014,181 +3086,179 @@ public final class i extends Canvas implements Runnable {
         return (String[]) (Object) n1;
     }
 
-    private static String[] aClassStringArr() {
-        final String[] array = new String[39];
+    private static String[] getDemoTextMapping() {
+        final String[] demoTexts = new String[39];
         for (int i = 0; i < 39; ++i) {
             try {
                 switch (i) {
                     case 0: {
-                        array[i] = d.aClassString(79);
+                        demoTexts[i] = d.getLocalizedText(79);
                         break;
                     }
                     case 1: {
-                        array[i] = d.aClassString(80);
+                        demoTexts[i] = d.getLocalizedText(80);
                         break;
                     }
                     case 2: {
-                        array[i] = d.aClassString(91);
+                        demoTexts[i] = d.getLocalizedText(91);
                         break;
                     }
                     case 3: {
-                        array[i] = d.aClassString(102);
+                        demoTexts[i] = d.getLocalizedText(102);
                         break;
                     }
                     case 4: {
-                        array[i] = d.aClassString(112);
+                        demoTexts[i] = d.getLocalizedText(112);
                         break;
                     }
                     case 5: {
-                        array[i] = d.aClassString(113);
+                        demoTexts[i] = d.getLocalizedText(113);
                         break;
                     }
                     case 6: {
-                        array[i] = d.aClassString(114);
+                        demoTexts[i] = d.getLocalizedText(114);
                         break;
                     }
                     case 7: {
-                        array[i] = d.aClassString(115);
+                        demoTexts[i] = d.getLocalizedText(115);
                         break;
                     }
                     case 8: {
-                        array[i] = d.aClassString(116);
+                        demoTexts[i] = d.getLocalizedText(116);
                         break;
                     }
                     case 9: {
-                        array[i] = d.aClassString(117);
+                        demoTexts[i] = d.getLocalizedText(117);
                         break;
                     }
                     case 10: {
-                        array[i] = d.aClassString(81);
+                        demoTexts[i] = d.getLocalizedText(81);
                         break;
                     }
                     case 11: {
-                        array[i] = d.aClassString(82);
+                        demoTexts[i] = d.getLocalizedText(82);
                         break;
                     }
                     case 12: {
-                        array[i] = d.aClassString(83);
+                        demoTexts[i] = d.getLocalizedText(83);
                         break;
                     }
                     case 13: {
-                        array[i] = d.aClassString(84);
+                        demoTexts[i] = d.getLocalizedText(84);
                         break;
                     }
                     case 14: {
-                        array[i] = d.aClassString(85);
+                        demoTexts[i] = d.getLocalizedText(85);
                         break;
                     }
                     case 15: {
-                        array[i] = d.aClassString(86);
+                        demoTexts[i] = d.getLocalizedText(86);
                         break;
                     }
                     case 16: {
-                        array[i] = d.aClassString(87);
+                        demoTexts[i] = d.getLocalizedText(87);
                         break;
                     }
                     case 17: {
-                        array[i] = d.aClassString(88);
+                        demoTexts[i] = d.getLocalizedText(88);
                         break;
                     }
                     case 18: {
-                        array[i] = d.aClassString(89);
+                        demoTexts[i] = d.getLocalizedText(89);
                         break;
                     }
                     case 19: {
-                        array[i] = d.aClassString(90);
+                        demoTexts[i] = d.getLocalizedText(90);
                         break;
                     }
                     case 20: {
-                        array[i] = d.aClassString(92);
+                        demoTexts[i] = d.getLocalizedText(92);
                         break;
                     }
                     case 21: {
-                        array[i] = d.aClassString(93);
+                        demoTexts[i] = d.getLocalizedText(93);
                         break;
                     }
                     case 22: {
-                        array[i] = d.aClassString(94);
+                        demoTexts[i] = d.getLocalizedText(94);
                         break;
                     }
                     case 23: {
-                        array[i] = d.aClassString(95);
+                        demoTexts[i] = d.getLocalizedText(95);
                         break;
                     }
                     case 24: {
-                        array[i] = d.aClassString(96);
+                        demoTexts[i] = d.getLocalizedText(96);
                         break;
                     }
                     case 25: {
-                        array[i] = d.aClassString(97);
+                        demoTexts[i] = d.getLocalizedText(97);
                         break;
                     }
                     case 26: {
-                        array[i] = d.aClassString(98);
+                        demoTexts[i] = d.getLocalizedText(98);
                         break;
                     }
                     case 27: {
-                        array[i] = d.aClassString(99);
+                        demoTexts[i] = d.getLocalizedText(99);
                         break;
                     }
                     case 28: {
-                        array[i] = d.aClassString(100);
+                        demoTexts[i] = d.getLocalizedText(100);
                         break;
                     }
                     case 29: {
-                        array[i] = d.aClassString(101);
+                        demoTexts[i] = d.getLocalizedText(101);
                         break;
                     }
                     case 30: {
-                        array[i] = d.aClassString(103);
+                        demoTexts[i] = d.getLocalizedText(103);
                         break;
                     }
                     case 31: {
-                        array[i] = d.aClassString(104);
+                        demoTexts[i] = d.getLocalizedText(104);
                         break;
                     }
                     case 32: {
-                        array[i] = d.aClassString(105);
+                        demoTexts[i] = d.getLocalizedText(105);
                         break;
                     }
                     case 33: {
-                        array[i] = d.aClassString(106);
+                        demoTexts[i] = d.getLocalizedText(106);
                         break;
                     }
                     case 34: {
-                        array[i] = d.aClassString(107);
+                        demoTexts[i] = d.getLocalizedText(107);
                         break;
                     }
                     case 35: {
-                        array[i] = d.aClassString(108);
+                        demoTexts[i] = d.getLocalizedText(108);
                         break;
                     }
                     case 36: {
-                        array[i] = d.aClassString(109);
+                        demoTexts[i] = d.getLocalizedText(109);
                         break;
                     }
                     case 37: {
-                        array[i] = d.aClassString(110);
+                        demoTexts[i] = d.getLocalizedText(110);
                         break;
                     }
                     case 38: {
-                        array[i] = d.aClassString(111);
+                        demoTexts[i] = d.getLocalizedText(111);
                         break;
                     }
                 }
             } catch (Exception ex) {
-                array[i] = "E";
+                demoTexts[i] = "E";
             }
         }
-        return array;
+        return demoTexts;
     }
 
     private void jVoid() {
         try {
             int bsInt = this.bsInt;
-            if (this.DBoolean) {
-                bsInt -= 5;
-            }
+            if (this.DBoolean) bsInt -= 5;
             ++this.bsInt;
             switch (bsInt) {
                 case 0: {
@@ -3208,8 +3278,8 @@ public final class i extends Canvas implements Runnable {
                     }
                 }
                 case 3: {
-                    h.aVoid();
-                    h.aVoid();
+                    h.setColorToWhite();
+                    h.setColorToWhite();
                 }
                 case 4: {
                     if (this.JBoolean) {
@@ -3239,12 +3309,13 @@ public final class i extends Canvas implements Runnable {
                     oVoid(this.agInt % 8);
                 }
                 case 7: {
-                    this.baInt = this.cInt(this.aAInt, this.aBInt);
+                    this.baInt = this.cInt(this.crtWorldIndex, this.crtStageI);
                 }
                 case 8: {
                     i.cCInt = 264;
                     i.cDInt = 264;
-                    i.bClassGraphics = (i.dClassImage = Image.createImage(i.cCInt, i.cDInt)).getGraphics();
+                    i.dClassImage = Image.createImage(i.cCInt, i.cDInt);
+                    i.bClassGraphics = i.dClassImage.getGraphics();
                     i.cEInt = -1;
                     i.aBoolean = false;
                     this.eBoolean = true;
@@ -3255,22 +3326,23 @@ public final class i extends Canvas implements Runnable {
                     this.abInt = 0;
                     this.acInt = 0;
                     this.kByte = 0;
-                    this.PBoolean = ((this.aByte(this.aAInt, this.aBInt) & 0x2) != 0x0);
+                    this.PBoolean = ((this.aByte(this.crtWorldIndex, this.crtStageI) & 0x2) != 0x0);
                     this.clInt = 0;
-                    switch (this.aAInt) {
+                    // Special world config
+                    switch (this.crtWorldIndex) {
                         case 0: {
-                            if (this.aBInt == 5) {
+                            if (this.crtStageI == STAGE_ANGKOR_FALLING_TORCHES) {
                                 this.kByte = 1;
                                 this.alInt = 816;
                                 this.amInt = 0;
                                 break;
                             }
-                            if (this.aBInt == 13) {
+                            if (this.crtStageI == STAGE_ANGKOR_DEMO) {
                                 this.kByte = 2;
                                 this.tBoolean = false;
                                 break;
                             }
-                            if (this.aBInt == 8) {
+                            if (this.crtStageI == STAGE_ANGKOR_GREAT_ANACONDA) {
                                 this.kByte = 4;
                                 this.aoInt = 0;
                                 this.aqInt = 3;
@@ -3288,14 +3360,14 @@ public final class i extends Canvas implements Runnable {
                             break;
                         }
                         case 1: {
-                            if (this.aBInt == 9) {
+                            if (this.crtStageI == STAGE_BAVARIA_EVIL_TEUTONIC_KNIGHT) {
                                 this.yVoid();
                                 break;
                             }
                             break;
                         }
                         case 2: {
-                            if (this.aBInt == 10) {
+                            if (this.crtStageI == STAGE_SIBERIA_YETTI) {
                                 this.adVoid();
                                 this.asInt = 360;
                                 this.kByte = 3;
@@ -3331,57 +3403,76 @@ public final class i extends Canvas implements Runnable {
                     i.cmInt = -1;
                     i.mByteArr = null;
                     i.lByteArr = null;
-                    (this.aClassInputStream = this.getClass().getResourceAsStream(i.dClassStringArr[this.aAInt])).read();
-                    int j = 0;
-                    while (j == 0) {
-                        final int read = this.aClassInputStream.read();
-                        int n = 0;
-                        byte[] b2 = new byte[4];
-                        while (n < read && j == 0) {
-                            this.aClassInputStream.read(b2);
-                            final int aInt = aInt(b2, 0);
-                            final int aInt2 = aInt(b2, 2);
-                            if (n == this.aBInt) {
-                                this.eInt = aInt;
-                                this.fInt = aInt2;
-                                i.aByteArrArr = null;
+
+                    // Load the stage
+                    this.tmpInputStream = this.getClass().getResourceAsStream(i.worldFiles[this.crtWorldIndex]);
+                    this.tmpInputStream.read();
+                    // This while loop is why the game freezes when trying to load into a non-existent stage
+                    int shouldExit = 0;
+                    while (shouldExit == 0) {
+                        final int worldStageCount = this.tmpInputStream.read();
+                        int stageI = 0;
+                        byte[] header = new byte[4];
+
+                        while (stageI < worldStageCount && shouldExit == 0) {
+                            this.tmpInputStream.read(header);
+                            final int width = unpackUint16(header, 0);
+                            final int height = unpackUint16(header, 2);
+
+                            if (stageI == this.crtStageI) {
+                                this.crtStageWidth = width;
+                                this.crtStageHeight = height;
+
+                                // Free memory
+                                i.crtStagePlayerLayer = null;
                                 i.cByteArrArr = null;
-                                i.aIntArrArr = null;
+                                i.crtStageForegrondLayer = null;
                                 System.gc();
-                                i.aByteArrArr = new byte[this.eInt][this.fInt];
-                                i.cByteArrArr = new byte[this.eInt][this.fInt];
-                                i.aIntArrArr = new int[this.eInt][this.fInt];
-                                final byte[] b3 = new byte[this.eInt * this.fInt];
-                                this.aClassInputStream.read(b3);
-                                for (int k = 0; k < this.eInt; ++k) {
-                                    for (int l = 0; l < this.fInt; ++l) {
-                                        i.aByteArrArr[k][l] = b3[k + l * this.eInt];
+
+                                // Allocate new memory
+                                i.crtStagePlayerLayer = new byte[this.crtStageWidth][this.crtStageHeight];
+                                i.cByteArrArr = new byte[this.crtStageWidth][this.crtStageHeight];
+                                i.crtStageForegrondLayer = new int[this.crtStageWidth][this.crtStageHeight];
+
+                                // Player layer
+                                final byte[] layerBuffer = new byte[this.crtStageWidth * this.crtStageHeight];
+                                this.tmpInputStream.read(layerBuffer);
+                                for (int x = 0; x < this.crtStageWidth; ++x) {
+                                    for (int y = 0; y < this.crtStageHeight; ++y) {
+                                        i.crtStagePlayerLayer[x][y] = layerBuffer[x + y * this.crtStageWidth];
                                     }
                                 }
-                                i.bByteArrArr = new byte[this.eInt][this.fInt];
-                                i.bIntArrArr = new int[this.eInt][this.fInt];
-                                this.aClassInputStream.read(b3);
-                                for (int n2 = 0; n2 < this.eInt; ++n2) {
-                                    for (int n3 = 0; n3 < this.fInt; ++n3) {
-                                        i.bIntArrArr[n2][n3] = b3[n2 + n3 * this.eInt];
+
+                                // Background layer
+                                i.bByteArrArr = new byte[this.crtStageWidth][this.crtStageHeight];
+                                i.bIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
+                                this.tmpInputStream.read(layerBuffer);
+                                for (int x = 0; x < this.crtStageWidth; ++x) {
+                                    for (int y = 0; y < this.crtStageHeight; ++y) {
+                                        i.bIntArrArr[x][y] = layerBuffer[x + y * this.crtStageWidth];
                                     }
                                 }
-                                this.aClassInputStream.read(b3);
-                                for (int n4 = 0; n4 < this.eInt; ++n4) {
-                                    for (int n5 = 0; n5 < this.fInt; ++n5) {
-                                        i.aIntArrArr[n4][n5] = b3[n4 + n5 * this.eInt];
+
+                                // Foreground layer
+                                this.tmpInputStream.read(layerBuffer);
+                                for (int x = 0; x < this.crtStageWidth; ++x) {
+                                    for (int y = 0; y < this.crtStageHeight; ++y) {
+                                        i.crtStageForegrondLayer[x][y] = layerBuffer[x + y * this.crtStageWidth];
                                     }
                                 }
-                                b2 = null;
-                                j = 1;
+
+                                header = null;
+                                shouldExit = 1;
                             } else {
-                                this.aClassInputStream.skip(aInt * aInt2 * 3);
+                                // Skips the stage's bytes by skipping the three layers
+                                this.tmpInputStream.skip(width * height * 3);
                             }
-                            ++n;
+                            ++stageI;
                         }
                     }
-                    this.aClassInputStream.close();
-                    this.aClassInputStream = null;
+                    this.tmpInputStream.close();
+                    this.tmpInputStream = null;
+
                     final int n6 = 0;
                     this.cInt = n6;
                     this.aInt = n6;
@@ -3402,47 +3493,47 @@ public final class i extends Canvas implements Runnable {
                     this.buInt = 0;
                     int n9 = 0;
                     int n10 = 0;
-                    this.agBoolean = false;
+                    this.crtShouldLoadWaterBreathingPotion = false;
                     this.ahBoolean = false;
-                    this.aiBoolean = false;
+                    this.crtShouldLoadFanPot = false;
                     this.awInt = 0;
                     int n11 = 0;
-                    for (int n12 = 0; n12 < this.eInt; ++n12) {
-                        for (int n13 = 0; n13 < this.fInt; ++n13) {
-                            i.bByteArrArr[n12][n13] = 0;
-                            i.cByteArrArr[n12][n13] = 0;
-                            final int n14 = i.aIntArrArr[n12][n13];
-                            final int n15 = i.bIntArrArr[n12][n13];
-                            final byte b4 = i.aByteArrArr[n12][n13];
+                    for (int x = 0; x < this.crtStageWidth; ++x) {
+                        for (int y = 0; y < this.crtStageHeight; ++y) {
+                            i.bByteArrArr[x][y] = 0;
+                            i.cByteArrArr[x][y] = 0;
+                            final int foreground = i.crtStageForegrondLayer[x][y];
+                            final int background = i.bIntArrArr[x][y];
+                            final byte player = i.crtStagePlayerLayer[x][y];
                             Label_2656:
                             {
-                                if (n14 != -1) {
-                                    switch (n14 & 0xFF) {
+                                if (foreground != -1) {
+                                    switch (foreground & 0xFF) {
                                         case 31: {
                                             this.cLong |= 0x40000000L;
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | 0x1F);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | 0x1F);
                                         }
                                         case 19: {
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | 0x13);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | 0x13);
                                             break;
                                         }
                                         case 17: {
                                             final int n16;
-                                            if ((n16 = (i.aIntArrArr[n12][n13 - 1] & 0xFF)) == 14 || n16 == 33) {
-                                                i.aIntArrArr[n12][n13 - 1] = (0xFF00 | n16);
+                                            if ((n16 = (i.crtStageForegrondLayer[x][y - 1] & 0xFF)) == 14 || n16 == 33) {
+                                                i.crtStageForegrondLayer[x][y - 1] = (0xFF00 | n16);
                                             }
                                             final byte b5;
-                                            switch (b5 = i.aByteArrArr[n12][n13 - 1]) {
+                                            switch (b5 = i.crtStagePlayerLayer[x][y - 1]) {
                                                 case 19:
                                                 case 36:
                                                 case 43:
                                                 case 45:
                                                 case 46:
                                                 case 49: {
-                                                    final Integer n17 = n15;
+                                                    final Integer n17 = background;
                                                     final Integer n18;
                                                     hashtable2.put(n17, ((n18 = hashtable2.get(n17)) == null) ? 1 : n18 + 1);
-                                                    i.aIntArrArr[n12][n13] = -1;
+                                                    i.crtStageForegrondLayer[x][y] = -1;
                                                     final Integer n19 = hashtable3.get(n17);
                                                     if (b5 == 36) {
                                                         if (n19 == null) {
@@ -3469,12 +3560,12 @@ public final class i extends Canvas implements Runnable {
 //                                                    break;
                                                 }
                                                 default: {
-                                                    i.aIntArrArr[n12][n13] = (n15 << 8 | 0x11);
+                                                    i.crtStageForegrondLayer[x][y] = (background << 8 | 0x11);
                                                     break;
                                                 }
                                             }
-                                            if (n15 >= 0) {
-                                                n10 |= 1 << n15;
+                                            if (background >= 0) {
+                                                n10 |= 1 << background;
                                                 break;
                                             }
                                             break;
@@ -3482,56 +3573,56 @@ public final class i extends Canvas implements Runnable {
                                         case 14:
                                         case 33: {
                                             if (!this.fBoolean()) {
-                                                i.aIntArrArr[n12][n13] = 33;
+                                                i.crtStageForegrondLayer[x][y] = 33;
                                             }
-                                            this.cLong |= 1L << (((i.aIntArrArr[n12][n13] & 0xFF) == 0xE) ? 22 : 33);
-                                            if (!this.aBoolean(this.aAInt, this.aBInt, n12, n13)) {
+                                            this.cLong |= 1L << (((i.crtStageForegrondLayer[x][y] & 0xFF) == 0xE) ? 22 : 33);
+                                            if (!this.aBoolean(this.crtWorldIndex, this.crtStageI, x, y)) {
                                                 break;
                                             }
                                             if (this.fBoolean()) {
-                                                i.aByteArrArr[n12][n13] = 41;
-                                                i.bIntArrArr[n12][n13] = 10;
+                                                i.crtStagePlayerLayer[x][y] = 41;
+                                                i.bIntArrArr[x][y] = 10;
                                                 this.aYInt += 10;
                                                 break;
                                             }
-                                            i.aByteArrArr[n12][n13] = -1;
-                                            final int[] array = i.aIntArrArr[n12];
-                                            final int n20 = n13;
+                                            i.crtStagePlayerLayer[x][y] = -1;
+                                            final int[] array = i.crtStageForegrondLayer[x];
+                                            final int n20 = y;
                                             array[n20] |= 0x100;
                                             break;
                                         }
                                         case 2: {
                                             this.cLong |= 0x100000L;
-                                            switch (n15) {
+                                            switch (background) {
                                                 case 0:
                                                 case 1: {
                                                     this.cLong |= 0x80000L;
                                                     break;
                                                 }
                                             }
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | 0x2);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | 0x2);
                                             break;
                                         }
                                         case 8: {
                                             this.ahBoolean = true;
                                         }
                                         case 9: {
-                                            if ((n14 & 0xFF) != 0x8) {
-                                                this.agBoolean = true;
+                                            if ((foreground & 0xFF) != 0x8) {
+                                                this.crtShouldLoadWaterBreathingPotion = true;
                                             }
                                             this.cLong |= 0x10000000L;
-                                            final Integer n21 = n15;
+                                            final Integer n21 = background;
                                             final Integer n22;
                                             hashtable.put(n21, ((n22 = hashtable.get(n21)) == null) ? 1 : n22 + 1);
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | n14);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | foreground);
                                             break;
                                         }
                                         case 7: {
-                                            if (n15 != -1) {
-                                                i.qByteArr[n15] = (byte) n12;
-                                                i.rByteArr[n15] = (byte) n13;
+                                            if (background != -1) {
+                                                i.crtStageDoorXs[background] = (byte) x;
+                                                i.crtStageDoorYs[background] = (byte) y;
                                             }
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | n14);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | foreground);
                                             break;
                                         }
                                         case 30: {
@@ -3540,52 +3631,52 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 1:
                                         case 26: {
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | (n14 & 0xFF));
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | (foreground & 0xFF));
                                             break;
                                         }
                                         case 0: {
                                             ++n11;
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | (n14 & 0xFF));
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | (foreground & 0xFF));
                                             break;
                                         }
                                         case 4: {
                                             ++n9;
                                             this.cLong |= 0x10L;
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | (n14 & 0xFF));
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | (foreground & 0xFF));
                                             break;
                                         }
                                         case 5: {
-                                            this.pByte = (byte) n15;
+                                            this.pByte = (byte) background;
                                             break;
                                         }
                                         case 28: {
-                                            this.qByte = (byte) n15;
+                                            this.qByte = (byte) background;
                                             break;
                                         }
                                         case 3: {
-                                            i.cByteArrArr[n12][n13] = 127;
-                                            if (n15 > 0) {
-                                                i.aIntArrArr[n12][n13] = (n15 + 1 << 8 | 0x3);
+                                            i.cByteArrArr[x][y] = 127;
+                                            if (background > 0) {
+                                                i.crtStageForegrondLayer[x][y] = (background + 1 << 8 | 0x3);
                                                 break;
                                             }
                                             break;
                                         }
                                         case 6: {
-                                            final Integer n23 = n15;
+                                            final Integer n23 = background;
                                             final Integer n24;
                                             hashtable.put(n23, ((n24 = hashtable.get(n23)) == null) ? 1 : n24 + 1);
                                             this.cLong |= 0x20000000L;
-                                            i.aIntArrArr[n12][n13] = (n15 << 8 | 0x6);
+                                            i.crtStageForegrondLayer[x][y] = (background << 8 | 0x6);
                                             break;
                                         }
                                         default: {
-                                            if (n14 >= 20 && n14 < 26) {
-                                                i.aIntArrArr[n12][n13] = n14;
+                                            if (foreground >= 20 && foreground < 26) {
+                                                i.crtStageForegrondLayer[x][y] = foreground;
                                                 while (true) {
                                                     i m = null;
                                                     long n25 = 0L;
                                                     long n26 = 0L;
-                                                    switch (this.aAInt) {
+                                                    switch (this.crtWorldIndex) {
                                                         case 0: {
                                                             m = this;
                                                             n25 = this.cLong;
@@ -3606,8 +3697,8 @@ public final class i extends Canvas implements Runnable {
                                                     continue;
                                                 }
                                             }
-                                            if (n14 < 80 && n14 > -1) {
-                                                i.aIntArrArr[n12][n13] = -1;
+                                            if (foreground < 80 && foreground > -1) {
+                                                i.crtStageForegrondLayer[x][y] = -1;
                                                 break;
                                             }
                                             break;
@@ -3622,52 +3713,52 @@ public final class i extends Canvas implements Runnable {
                             byte[] array3 = null;
                             int n30 = 0;
                             int n31 = 0;
-                            switch (b4) {
+                            switch (player) {
                                 case 48: {
                                     int[] array2;
                                     int n27;
                                     int n28;
-                                    if ((n15 & 0x7) == 0x4) {
-                                        array2 = i.bIntArrArr[n12];
-                                        n27 = n13;
+                                    if ((background & 0x7) == 0x4) {
+                                        array2 = i.bIntArrArr[x];
+                                        n27 = y;
                                         n28 = 16;
                                     } else {
-                                        array2 = i.bIntArrArr[n12];
-                                        n27 = n13;
+                                        array2 = i.bIntArrArr[x];
+                                        n27 = y;
                                         n28 = 0;
                                     }
                                     array2[n27] = n28;
                                     ++this.awInt;
                                     this.cLong |= 0x10000000000L;
                                     this.cLong |= 0x100000000L;
-                                    final int n29 = n13 - 1;
-                                    i.aByteArrArr[n12][n29] = 48;
-                                    i.bIntArrArr[n12][n29] = 8;
-                                    kVoid(n12, n29);
+                                    final int n29 = y - 1;
+                                    i.crtStagePlayerLayer[x][n29] = 48;
+                                    i.bIntArrArr[x][n29] = 8;
+                                    kVoid(x, n29);
                                     continue;
                                 }
                                 case 47: {
-                                    i.cByteArrArr[n12][n13] = 48;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.cByteArrArr[x][y] = 48;
+                                    i.bIntArrArr[x][y] = 0;
                                     this.cLong |= 0x800000L;
                                     continue;
                                 }
                                 case 46: {
-                                    i.bIntArrArr[n12][n13] = 0;
-                                    i.cByteArrArr[n12][n13] = 24;
-                                    i.bByteArrArr[n12][n13] = 0;
+                                    i.bIntArrArr[x][y] = 0;
+                                    i.cByteArrArr[x][y] = 24;
+                                    i.bByteArrArr[x][y] = 0;
                                     this.cLong |= 0x2000000000L;
                                     continue;
                                 }
                                 case 45: {
-                                    i.bIntArrArr[n12][n13] = 0;
-                                    i.cByteArrArr[n12][n13] = 24;
+                                    i.bIntArrArr[x][y] = 0;
+                                    i.cByteArrArr[x][y] = 24;
                                     this.cLong |= 0x800000000L;
                                     continue;
                                 }
                                 case 44: {
-                                    i.cByteArrArr[n12][n13] = 24;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.cByteArrArr[x][y] = 24;
+                                    i.bIntArrArr[x][y] = 0;
                                     this.cLong |= 0x400000000L;
                                     continue;
                                 }
@@ -3676,14 +3767,14 @@ public final class i extends Canvas implements Runnable {
                                     ++n8;
                                     this.cLong |= 0x80000000L;
                                     this.cLong |= 0x40000000L;
-                                    this.iVoid(n12, n13);
+                                    this.iVoid(x, y);
                                     continue;
                                 }
                                 case 41: {
-                                    if (i.bIntArrArr[n12][n13] <= 0) {
-                                        i.bIntArrArr[n12][n13] = 1;
+                                    if (i.bIntArrArr[x][y] <= 0) {
+                                        i.bIntArrArr[x][y] = 1;
                                     }
-                                    this.aYInt += i.bIntArrArr[n12][n13];
+                                    this.aYInt += i.bIntArrArr[x][y];
                                     continue;
                                 }
                                 case 40: {
@@ -3691,20 +3782,20 @@ public final class i extends Canvas implements Runnable {
                                     ++n11;
                                     this.lBoolean = true;
                                     this.cLong |= 0x8000000L;
-                                    this.iVoid(n12, n13);
+                                    this.iVoid(x, y);
                                     ++n8;
                                     continue;
                                 }
                                 case 12: {
-                                    i.aByteArrArr[n12][n13] = -1;
-                                    this.abInt = n12;
-                                    this.acInt = n13;
-                                    this.aaInt = n15;
+                                    i.crtStagePlayerLayer[x][y] = -1;
+                                    this.abInt = x;
+                                    this.acInt = y;
+                                    this.aaInt = background;
                                     continue;
                                 }
                                 case 36: {
-                                    if (i.bIntArrArr[n12][n13] != 1) {
-                                        i.bIntArrArr[n12][n13] = 0;
+                                    if (i.bIntArrArr[x][y] != 1) {
+                                        i.bIntArrArr[x][y] = 0;
                                     }
                                     this.cLong |= 0x100L;
                                     continue;
@@ -3717,16 +3808,16 @@ public final class i extends Canvas implements Runnable {
                                     continue;
                                 }
                                 case 34: {
-                                    i.aByteArrArr[n12][n13] = -1;
-                                    i.aIntArrArr[n12][n13] = 15;
+                                    i.crtStagePlayerLayer[x][y] = -1;
+                                    i.crtStageForegrondLayer[x][y] = 15;
                                     this.cLong |= 0x1000000L;
                                     continue;
                                 }
                                 case 35: {
-                                    i.aByteArrArr[n12][n13] = 35;
-                                    i.aIntArrArr[n12][n13] = -1;
+                                    i.crtStagePlayerLayer[x][y] = 35;
+                                    i.crtStageForegrondLayer[x][y] = -1;
                                     this.cLong |= 0x1000000L;
-                                    this.aiBoolean = true;
+                                    this.crtShouldLoadFanPot = true;
                                 }
                                 case 31:
                                 case 33: {
@@ -3740,73 +3831,73 @@ public final class i extends Canvas implements Runnable {
                                 case 38: {
                                     this.lBoolean = true;
                                     this.cLong |= 0x4000000L;
-                                    i.aIntArrArr[n12][n13] = 27;
+                                    i.crtStageForegrondLayer[x][y] = 27;
                                     this.cLong |= 0x40L;
                                     continue;
                                 }
                                 case 14: {
                                     this.cLong |= 0x1000L;
-                                    i.bIntArrArr[n12][n13] = ((i.bIntArrArr[n12][n13] == 4) ? 8 : 0);
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    i.bIntArrArr[x][y] = ((i.bIntArrArr[x][y] == 4) ? 8 : 0);
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 24;
                                     break;
                                 }
                                 case 28: {
                                     this.cLong |= 0x800L;
-                                    if (n15 > 10) {
-                                        final int[] array4 = i.bIntArrArr[n12];
-                                        final int n32 = n13;
+                                    if (background > 10) {
+                                        final int[] array4 = i.bIntArrArr[x];
+                                        final int n32 = y;
                                         array4[n32] /= 11;
-                                        final int[] array5 = i.bIntArrArr[n12];
-                                        final int n33 = n13;
+                                        final int[] array5 = i.bIntArrArr[x];
+                                        final int n33 = y;
                                         array5[n33] |= 0x8;
                                     }
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 24;
                                     break;
                                 }
                                 case 79: {
-                                    this.hInt = 0;
-                                    this.iInt = n13;
-                                    this.ayInt = n12;
-                                    i.aByteArrArr[n12][n13] = -1;
+                                    this.crtPlayerX = 0;
+                                    this.crtPlayerY = y;
+                                    this.ayInt = x;
+                                    i.crtStagePlayerLayer[x][y] = -1;
                                     final int n34 = 0;
                                     this.cInt = n34;
                                     this.aInt = n34;
-                                    final int n35 = this.iInt * 24 - 160;
+                                    final int n35 = this.crtPlayerY * 24 - 160;
                                     this.dInt = n35;
                                     this.bInt = n35;
                                     continue;
                                 }
                                 case 11: {
-                                    i.bIntArrArr[n12][n13] = ((n15 == 1) ? 16 : 0);
-                                    i.cByteArrArr[n12][n13] = 48;
+                                    i.bIntArrArr[x][y] = ((background == 1) ? 16 : 0);
+                                    i.cByteArrArr[x][y] = 48;
                                     this.cLong |= 0x4000L;
                                     continue;
                                 }
                                 case 49: {
                                     this.cLong |= 0x20000000000L;
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 48;
                                     break;
                                 }
                                 case 43: {
-                                    this.cLong |= 1L << ((this.aAInt == 1) ? 17 : 15);
+                                    this.cLong |= 1L << ((this.crtWorldIndex == 1) ? 17 : 15);
                                     this.buInt |= 0x1;
-                                    i.bIntArrArr[n12][n13] = ((n15 & 0xFFFE7FFF) | 0x10000);
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    i.bIntArrArr[x][y] = ((background & 0xFFFE7FFF) | 0x10000);
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 48;
                                     break;
                                 }
                                 case 19: {
-                                    this.cLong |= 1L << ((this.aAInt == 1) ? 17 : 15);
+                                    this.cLong |= 1L << ((this.crtWorldIndex == 1) ? 17 : 15);
                                     this.buInt |= 0x2;
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 48;
                                     break;
                                 }
@@ -3814,41 +3905,41 @@ public final class i extends Canvas implements Runnable {
                                 case 23: {
                                     this.cLong |= 0x200L;
                                     this.cLong |= 0x400L;
-                                    array3 = i.cByteArrArr[n12];
-                                    n30 = n13;
+                                    array3 = i.cByteArrArr[x];
+                                    n30 = y;
                                     n31 = 48;
                                     break;
                                 }
                                 case 30: {
                                     this.cLong |= 0x80L;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.bIntArrArr[x][y] = 0;
                                     continue;
                                 }
                                 case 37: {
                                     this.cLong |= 0x2000000L;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.bIntArrArr[x][y] = 0;
                                     continue;
                                 }
                                 case 10: {
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.bIntArrArr[x][y] = 0;
                                     this.dLong |= 0x2L;
                                     continue;
                                 }
                                 case 16: {
-                                    if (i.aByteArrArr[n12][n13 + 1] != 16) {
-                                        i.aByteArrArr[n12][n13 - 1] = 16;
-                                        i.bIntArrArr[n12][n13 - 1] = n15;
+                                    if (i.crtStagePlayerLayer[x][y + 1] != 16) {
+                                        i.crtStagePlayerLayer[x][y - 1] = 16;
+                                        i.bIntArrArr[x][y - 1] = background;
                                     }
                                     this.cLong |= 0x2000L;
                                     continue;
                                 }
                                 case 6: {
                                     ++n8;
-                                    this.iVoid(n12, n13);
+                                    this.iVoid(x, y);
                                 }
                                 case 7: {
                                     this.cLong |= 0x10L;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.bIntArrArr[x][y] = 0;
                                     continue;
                                 }
                                 case 26: {
@@ -3860,7 +3951,7 @@ public final class i extends Canvas implements Runnable {
                                     ++n8;
                                     this.cLong |= 0x40000000L;
                                     this.cLong |= 0x80000L;
-                                    this.iVoid(n12, n13);
+                                    this.iVoid(x, y);
                                     continue;
                                 }
                                 case 8: {
@@ -3868,8 +3959,8 @@ public final class i extends Canvas implements Runnable {
                                     this.cLong |= 0x8L;
                                 }
                                 case 4: {
-                                    if (b4 != 8) {
-                                        this.iVoid(n12, n13);
+                                    if (player != 8) {
+                                        this.iVoid(x, y);
                                     }
                                 }
                                 case 5: {
@@ -3879,15 +3970,15 @@ public final class i extends Canvas implements Runnable {
                                     ++n8;
                                 }
                                 case 0: {
-                                    i.cByteArrArr[n12][n13] = 48;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.cByteArrArr[x][y] = 48;
+                                    i.bIntArrArr[x][y] = 0;
                                     this.dLong |= 0x1L;
                                     continue;
                                 }
                                 case 1: {
                                     ++this.aYInt;
-                                    i.cByteArrArr[n12][n13] = 48;
-                                    i.bIntArrArr[n12][n13] = 0;
+                                    i.cByteArrArr[x][y] = 48;
+                                    i.bIntArrArr[x][y] = 0;
                                 }
                                 case 53: {
                                 }
@@ -3897,9 +3988,9 @@ public final class i extends Canvas implements Runnable {
                                     continue;
                                 }
                                 default: {
-                                    if (b4 < 80 && b4 > -1) {
-                                        array3 = i.aByteArrArr[n12];
-                                        n30 = n13;
+                                    if (player < 80 && player > -1) {
+                                        array3 = i.crtStagePlayerLayer[x];
+                                        n30 = y;
                                         n31 = -1;
                                         break;
                                     }
@@ -3928,10 +4019,10 @@ public final class i extends Canvas implements Runnable {
                         i.eByteArr = new byte[this.awInt * 3];
                     }
                     int n39 = 0;
-                    for (int n40 = 0; n40 < this.fInt; ++n40) {
-                        for (int n41 = 0; n41 < this.eInt; ++n41) {
-                            final int n42 = i.aIntArrArr[n41][n40] & 0xFF;
-                            final int n43 = i.aIntArrArr[n41][n40] >> 8;
+                    for (int n40 = 0; n40 < this.crtStageHeight; ++n40) {
+                        for (int n41 = 0; n41 < this.crtStageWidth; ++n41) {
+                            final int n42 = i.crtStageForegrondLayer[n41][n40] & 0xFF;
+                            final int n43 = i.crtStageForegrondLayer[n41][n40] >> 8;
                             Label_5021:
                             {
                                 byte[] array6 = null;
@@ -3951,16 +4042,16 @@ public final class i extends Canvas implements Runnable {
                                         if (n45 != null) {
                                             n46 = ((n46 & 0xFFFFFFF0) | n45);
                                         }
-                                        final boolean b6 = (i.aIntArrArr[n41][n40 - 1] & 0xFF) == 0x11;
-                                        final boolean b7 = (i.aIntArrArr[n41][n40 + 1] & 0xFF) == 0x11 && (i.aIntArrArr[n41 + 1][n40] & 0xFF) != 0x1A && (i.aIntArrArr[n41 - 1][n40] & 0xFF) != 0x1A;
+                                        final boolean b6 = (i.crtStageForegrondLayer[n41][n40 - 1] & 0xFF) == 0x11;
+                                        final boolean b7 = (i.crtStageForegrondLayer[n41][n40 + 1] & 0xFF) == 0x11 && (i.crtStageForegrondLayer[n41 + 1][n40] & 0xFF) != 0x1A && (i.crtStageForegrondLayer[n41 - 1][n40] & 0xFF) != 0x1A;
                                         if (b6 || b7) {
                                             n46 = ((n46 & 0xFFFFFF0F) | 0x30);
                                             i.cByteArrArr[n41][n40] = 24;
                                             if (b6) {
-                                                i.aIntArrArr[n41][n40 - 1] = -1;
+                                                i.crtStageForegrondLayer[n41][n40 - 1] = -1;
                                             }
                                         }
-                                        i.aIntArrArr[n41][n40] = (n46 << 8 | n42);
+                                        i.crtStageForegrondLayer[n41][n40] = (n46 << 8 | n42);
                                         break Label_5021;
                                     }
                                     case 4: {
@@ -4003,7 +4094,7 @@ public final class i extends Canvas implements Runnable {
                             byte[] array8 = null;
                             int n55 = 0;
                             int n56 = 0;
-                            switch (i.aByteArrArr[n41][n40]) {
+                            switch (i.crtStagePlayerLayer[n41][n40]) {
                                 case 48: {
                                     if ((i.bIntArrArr[n41][n40] & 0x8) != 0x0) {
                                         final int n51 = n41 + (((i.bIntArrArr[n41][n40 + 1] & 0x10) == 0x0) ? 1 : -1);
@@ -4062,7 +4153,7 @@ public final class i extends Canvas implements Runnable {
                             array8[n55] = (byte) n56;
                         }
                     }
-                    i.aIntArrArr[this.ayInt - 2][this.iInt] = (-193 << 8 | 0x7);
+                    i.crtStageForegrondLayer[this.ayInt - 2][this.crtPlayerY] = (-193 << 8 | 0x7);
                     if ((this.cLong & 0x100000000L) != 0x0L || i.iByteArr[9] >= 8) {
                         this.cLong |= 0x10000000000L;
                         this.cLong |= 0x2L;
@@ -4085,23 +4176,24 @@ public final class i extends Canvas implements Runnable {
                     }
                 }
                 case 10: {
-                    this.aClassInputStream = this.getClass().getResourceAsStream("/" + this.aAInt + ".f");
-                    this.ccInt = this.aClassInputStream.read();
-                    i.nByteArr = new byte[this.ccInt << 3];
-                    this.aClassInputStream.read(i.nByteArr);
+                    this.tmpInputStream = this.getClass().getResourceAsStream("/" + this.crtWorldIndex + ".f");
+                    this.ccInt = this.tmpInputStream.read();
+                    i.tmpBytes = new byte[this.ccInt << 3];
+                    this.tmpInputStream.read(i.tmpBytes);
                 }
                 default: {
-                    int n57;
-                    if ((n57 = bsInt - 10 - 1) < 4) {
-                        final int n58 = n57;
-                        final byte[] b8 = new byte[bInt(i.nByteArr, (n58 << 3) + 4)];
-                        this.aClassInputStream.read(b8);
-                        final f f;
-                        (f = new f()).aVoid(b8, 0);
-                        f.aVoid(0, 0, -1, -1);
+                    int n57 = bsInt - 10 - 1;
+                    // 0.f, 1.f or 2.f chunks 0-3 loading
+                    if (n57 < 4) {
+                        final int chunkI = n57;
+                        final byte[] b8 = new byte[unpackUint32(i.tmpBytes, (chunkI << 3) + 4)];
+                        this.tmpInputStream.read(b8);
+                        final f_Sprite f;
+                        (f = new f_Sprite()).parseSprite(b8, 0);
+                        f.createImages(0, 0, -1, -1);
                         Label_5745:
                         {
-                            switch (n58) {
+                            switch (chunkI) {
                                 case 0: {
                                     if ((this.dLong & 0x1L) != 0x0L) {
                                         i.aClassfArr[60] = f;
@@ -4122,48 +4214,49 @@ public final class i extends Canvas implements Runnable {
                                     break;
                                 }
                                 case 3: {
-                                    i.textures[8] = f.aClassImageArrArr[0];
+                                    i.textures[8] = f.images[0];
                                     break;
                                 }
                             }
                         }
-                        f.dByteArr = null;
-                        this.btInt = 0;
+                        f.moduleData = null;
+                        this.crtGenFileI = 0;
                         return;
                     }
                     n57 -= 4;
+                    // genx.f chunks 0-42 loading (x = chunkI // 10, chunk = chunkI % 10, e.g., 10 chunks per file)
                     if (n57 >= 0 && n57 < 43) {
-                        final int n60 = n57;
+                        final int chunkI = n57;
                         try {
-                            if (n60 % 10 == 0) {
-                                this.aClassInputStream.close();
-                                this.aClassInputStream = null;
-                                this.aClassInputStream = this.getClass().getResourceAsStream("/gen" + this.btInt + ".f");
-                                this.ccInt = this.aClassInputStream.read();
-                                i.nByteArr = new byte[this.ccInt << 3];
-                                this.aClassInputStream.read(i.nByteArr);
+                            if (chunkI % 10 == 0) {
+                                this.tmpInputStream.close();
+                                this.tmpInputStream = null;
+                                this.tmpInputStream = this.getClass().getResourceAsStream("/gen" + this.crtGenFileI + ".f");
+                                this.ccInt = this.tmpInputStream.read();
+                                i.tmpBytes = new byte[this.ccInt << 3];
+                                this.tmpInputStream.read(i.tmpBytes);
                                 this.cdInt = 0;
-                                ++this.btInt;
+                                ++this.crtGenFileI;
                             }
-                            final int bInt = bInt(i.nByteArr, (n60 - (this.btInt - 1) * 10 << 3) + 4);
-                            if ((this.cLong & 1L << n60) != 0x0L) {
+                            final int chunkLength = unpackUint32(i.tmpBytes, (chunkI - (this.crtGenFileI - 1) * 10 << 3) + 4);
+                            if ((this.cLong & 1L << chunkI) != 0x0L) {
                                 if (this.cdInt != 0) {
-                                    this.aClassInputStream.skip(this.cdInt);
+                                    this.tmpInputStream.skip(this.cdInt);
                                     this.cdInt = 0;
                                 }
-                                final byte[] b9 = new byte[bInt];
-                                this.aClassInputStream.read(b9);
-                                final f dClassf;
-                                (dClassf = new f()).aVoid(b9, 0);
-                                if ((n60 != 28 || this.agBoolean) && (n60 != 24 || this.aiBoolean)) {
-                                    dClassf.aVoid(0, 0, -1, -1);
+                                final byte[] data = new byte[chunkLength];
+                                this.tmpInputStream.read(data);
+                                final f_Sprite sprite = new f_Sprite();
+                                sprite.parseSprite(data, 0);
+                                if ((chunkI != 28 || this.crtShouldLoadWaterBreathingPotion) && (chunkI != 24 || this.crtShouldLoadFanPot)) {
+                                    sprite.createImages(0, 0, -1, -1);
                                 }
                                 int n61 = -1;
                                 int n62 = -1;
                                 Label_6692:
                                 {
                                     int n63 = 0;
-                                    switch (n60) {
+                                    switch (chunkI) {
                                         case 41: {
                                             n61 = 38;
                                             break Label_6692;
@@ -4231,7 +4324,7 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 28: {
                                             if (this.ahBoolean) {
-                                                dClassf.aVoid(1, 0, -1, -1);
+                                                sprite.createImages(1, 0, -1, -1);
                                             }
                                             n61 = 45;
                                             break Label_6692;
@@ -4241,12 +4334,12 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 2: {
-                                            if (this.agBoolean) {
-                                                i.textures[24] = dClassf.aClassImageArrArr[0];
+                                            if (this.crtShouldLoadWaterBreathingPotion) {
+                                                i.textures[24] = sprite.images[0];
                                             }
                                             if (this.ahBoolean) {
-                                                dClassf.aVoid(1, 0, -1, -1);
-                                                i.textures[25] = dClassf.aClassImageArrArr[1];
+                                                sprite.createImages(1, 0, -1, -1);
+                                                i.textures[25] = sprite.images[1];
                                             }
                                             break Label_6692;
                                         }
@@ -4259,7 +4352,7 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 26: {
-                                            i.dClassf = dClassf;
+                                            i.dClassf = sprite;
                                             break Label_6692;
                                         }
                                         case 25: {
@@ -4284,7 +4377,7 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 24: {
                                             i.textures[15] = null;
-                                            dClassf.aVoid(1, 0, -1, -1);
+                                            sprite.createImages(1, 0, -1, -1);
                                             n61 = 57;
                                             i.textures[14] = null;
                                             break Label_6692;
@@ -4299,16 +4392,16 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 4:
                                         case 21: {
-                                            if (this.aAInt != 2) {
+                                            if (this.crtWorldIndex != 2) {
                                                 n61 = 3;
                                             }
                                             break Label_6692;
                                         }
                                         case 7: {
-                                            if (this.aAInt == 2) {
-                                                dClassf.aClassImageArrArr = null;
-                                                dClassf.aVoid(1, 0, -1, -1);
-                                                dClassf.aInt = 1;
+                                            if (this.crtWorldIndex == 2) {
+                                                sprite.images = null;
+                                                sprite.createImages(1, 0, -1, -1);
+                                                sprite.paletteI = 1;
                                             }
                                             n61 = 20;
                                             break Label_6692;
@@ -4318,7 +4411,7 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 10: {
-                                            (i.aClassbArr[4] = new b(dClassf, 0, 0, null)).aVoid(0);
+                                            (i.aClassbArr[4] = new b_SpriteAnimator(sprite, 0, 0, null)).setAnimation(0);
                                             break Label_6692;
                                         }
                                         case 9: {
@@ -4328,18 +4421,18 @@ public final class i extends Canvas implements Runnable {
                                         case 15:
                                         case 17: {
                                             if ((this.buInt & 0x2) != 0x0) {
-                                                if (this.aAInt == 2) {
-                                                    dClassf.aClassImageArrArr = null;
-                                                    dClassf.aVoid(2, 0, -1, -1);
-                                                    dClassf.aInt = 2;
+                                                if (this.crtWorldIndex == 2) {
+                                                    sprite.images = null;
+                                                    sprite.createImages(2, 0, -1, -1);
+                                                    sprite.paletteI = 2;
                                                 }
                                                 n61 = 4;
                                             }
                                             if ((this.buInt & 0x1) != 0x0) {
-                                                (i.aClassfArr[21] = new f()).aVoid(b9, 0);
-                                                i.aClassfArr[21].aVoid(1, 0, -1, -1);
-                                                i.aClassfArr[21].aInt = 1;
-                                                i.aClassfArr[21].dByteArr = null;
+                                                (i.aClassfArr[21] = new f_Sprite()).parseSprite(data, 0);
+                                                i.aClassfArr[21].createImages(1, 0, -1, -1);
+                                                i.aClassfArr[21].paletteI = 1;
+                                                i.aClassfArr[21].moduleData = null;
                                             }
                                             break Label_6692;
                                         }
@@ -4363,65 +4456,66 @@ public final class i extends Canvas implements Runnable {
                                     n62 = n63;
                                 }
                                 if (n61 != -1) {
-                                    i.aClassfArr[n61] = dClassf;
+                                    i.aClassfArr[n61] = sprite;
                                 }
                                 if (n62 != -1) {
-                                    i.textures[n62] = dClassf.aClassImageArrArr[0];
+                                    i.textures[n62] = sprite.images[0];
                                 }
-                                dClassf.dByteArr = null;
+                                sprite.moduleData = null;
                                 return;
                             }
-                            this.cdInt += bInt;
+                            this.cdInt += chunkLength;
                             return;
                         } catch (IOException ex) {
                             return;
                         }
                     }
                     n57 -= 43;
+                    // cm.f chunks 0-8 loading
                     if (n57 >= 0 && n57 < 8) {
-                        final int n64 = n57;
+                        final int chunkI = n57;
                         try {
-                            if (n64 == 0) {
-                                this.aClassInputStream.close();
-                                this.aClassInputStream = null;
+                            if (chunkI == 0) {
+                                this.tmpInputStream.close();
+                                this.tmpInputStream = null;
                                 System.gc();
-                                this.aClassInputStream = this.getClass().getResourceAsStream("/cm.f");
-                                this.ccInt = this.aClassInputStream.read();
-                                i.nByteArr = new byte[this.ccInt << 3];
-                                this.aClassInputStream.read(i.nByteArr);
+                                this.tmpInputStream = this.getClass().getResourceAsStream("/cm.f");
+                                this.ccInt = this.tmpInputStream.read();
+                                i.tmpBytes = new byte[this.ccInt << 3];
+                                this.tmpInputStream.read(i.tmpBytes);
                             }
-                            final byte[] b10 = new byte[bInt(i.nByteArr, (n64 << 3) + 4)];
-                            this.aClassInputStream.read(b10);
-                            final f f2;
-                            (f2 = new f()).aVoid(b10, 0);
-                            f2.aVoid(0, 0, -1, -1);
+                            final byte[] b10 = new byte[unpackUint32(i.tmpBytes, (chunkI << 3) + 4)];
+                            this.tmpInputStream.read(b10);
+                            final f_Sprite f2;
+                            (f2 = new f_Sprite()).parseSprite(b10, 0);
+                            f2.createImages(0, 0, -1, -1);
                             Label_7075:
                             {
                                 Label_7074:
                                 {
-                                    switch (n64) {
+                                    switch (chunkI) {
                                         case 6: {
                                             i.aClassfArr[43] = f2;
                                             i.textures[20] = null;
                                             break Label_7074;
                                         }
                                         case 5: {
-                                            i.textures[18] = f2.aClassImageArrArr[0];
+                                            i.textures[18] = f2.images[0];
                                             break;
                                         }
                                         case 2: {
-                                            f2.aVoid(1, 0, 0, -1);
+                                            f2.createImages(1, 0, 0, -1);
                                             i.aClassfArr[59] = f2;
                                             break Label_7074;
                                         }
                                         case 1: {
-                                            switch (this.aAInt) {
+                                            switch (this.crtWorldIndex) {
                                                 case 1:
                                                 case 2: {
-                                                    if (this.aAInt != 0) {
-                                                        f2.aVoid(this.aAInt, 0, -1, -1);
-                                                        f2.aVoid(0);
-                                                        f2.aInt = this.aAInt;
+                                                    if (this.crtWorldIndex != 0) {
+                                                        f2.createImages(this.crtWorldIndex, 0, -1, -1);
+                                                        f2.freePalette0Images(0);
+                                                        f2.paletteI = this.crtWorldIndex;
                                                         break;
                                                     }
                                                     break;
@@ -4436,27 +4530,28 @@ public final class i extends Canvas implements Runnable {
                                             break Label_7075;
                                         }
                                         case 0: {
-                                            i.textures[11] = f2.aClassImageArrArr[0];
+                                            i.textures[11] = f2.images[0];
                                             break;
                                         }
                                         case 4: {
-                                            i.textures[5] = f2.aClassImageArrArr[0];
+                                            i.textures[5] = f2.images[0];
                                             break;
                                         }
                                     }
                                 }
                             }
-                            f2.dByteArr = null;
+                            f2.moduleData = null;
                         } catch (Exception ex2) {
                         }
                         if (n57 == 7) {
-                            this.aClassInputStream.close();
-                            this.aClassInputStream = null;
+                            this.tmpInputStream.close();
+                            this.tmpInputStream = null;
                             System.gc();
                         }
                         return;
                     }
                     n57 -= 8;
+                    // demo.f all demos loading
                     if (n57 >= 0 && n57 < 16) {
                         if (n57 < i.aClasscArr.length) {
                             (i.aClasscArr[n57] = new c(this)).aVoid((int) i.pByteArr[n57]);
@@ -4473,8 +4568,8 @@ public final class i extends Canvas implements Runnable {
                         n57 -= 3;
                         switch (n57) {
                             case 0: {
-                                i.nByteArr = null;
-                                this.aVoid(i.aClassfArr[12] != null || i.textures[6] != null || i.aClassfArr[58] != null || this.kByte == 1 || this.kByte == 4 || this.kByte == 5);
+                                i.tmpBytes = null;
+                                this.loadHeroSprite(i.aClassfArr[12] != null || i.textures[6] != null || i.aClassfArr[58] != null || this.kByte == 1 || this.kByte == 4 || this.kByte == 5);
                             }
                             case 1: {
                                 this.cLong = 0L;
@@ -4484,11 +4579,12 @@ public final class i extends Canvas implements Runnable {
                                 i.iByteArr[12] = (byte) ((this.agInt < 3) ? this.agInt : 3);
                                 this.uVoid();
                             }
+                            // Clear checkpoint buffers
                             case 2: {
-                                i.cIntArrArr = new int[this.eInt][this.fInt];
-                                i.dByteArrArr = new byte[this.eInt][this.fInt];
-                                i.eByteArrArr = new byte[this.eInt][this.fInt];
-                                i.dIntArrArr = new int[this.eInt][this.fInt];
+                                i.cIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
+                                i.dByteArrArr = new byte[this.crtStageWidth][this.crtStageHeight];
+                                i.eByteArrArr = new byte[this.crtStageWidth][this.crtStageHeight];
+                                i.dIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
                                 if (i.mByteArr != null) {
                                     i.oByteArr = new byte[i.mByteArr.length];
                                     return;
@@ -4498,7 +4594,7 @@ public final class i extends Canvas implements Runnable {
                             case 3: {
                                 if (this.lBoolean) {
                                     this.arVoid();
-                                    i.eIntArrArr = new int[this.eInt][this.fInt];
+                                    i.eIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
                                     this.afVoid();
                                 }
                             }
@@ -4507,7 +4603,7 @@ public final class i extends Canvas implements Runnable {
                                 final int n67 = 0;
                                 this.aeInt = n67;
                                 this.adInt = n67;
-                                this.aoVoid();
+                                this.saveCheckpoint();
                             }
                             case 5: {
                                 this.bnInt = i.aSInt + 60;
@@ -4518,11 +4614,12 @@ public final class i extends Canvas implements Runnable {
                                 i.aClassf = null;
                                 System.gc();
                             }
+                            // Done, play sound etc.
                             case 7: {
                                 this.DBoolean = false;
                                 i.fByteArr = null;
                                 System.gc();
-                                this.aClassj.bVoid(16 + this.aAInt);
+                                this.aClassj.playSound(j_SoundManager.SOUND_M_ANGKOR_WAT + this.crtWorldIndex);
                                 System.out.println("Move to crash.");
                                 i.bByte = 1;
                                 break;
@@ -4534,8 +4631,8 @@ public final class i extends Canvas implements Runnable {
                         case 1: {
                             this.dVoid(n57);
                             if (n57 == 2) {
-                                this.aClassInputStream.close();
-                                this.aClassInputStream = null;
+                                this.tmpInputStream.close();
+                                this.tmpInputStream = null;
                             }
                             return;
                         }
@@ -4543,8 +4640,8 @@ public final class i extends Canvas implements Runnable {
                             if (n57 > 0) {
                                 return;
                             }
-                            i.textures[31] = importTexturesWithPalettes("/mmv.f", 1, 0).aClassImageArrArr[0];
-                            (i.aClassbArr[5] = new b(importTexturesWithPalettes("/mm1.f", 0), 0, 0, null)).aVoid(0);
+                            i.textures[31] = loadSprite("/mmv.f", 1, 0).images[0];
+                            (i.aClassbArr[5] = new b_SpriteAnimator(loadSprite("/mm1.f", 0), 0, 0, null)).setAnimation(0);
                             return;
                         }
                         case 4: {
@@ -4552,18 +4649,18 @@ public final class i extends Canvas implements Runnable {
                                 return;
                             }
                             this.cVoid(n57);
-                            i.textures[32] = importTexturesWithPalettes("/mmv.f", 3, 0).aClassImageArrArr[0];
-                            i.aClassfArr[20] = importTexturesWithPalettes("/gen0.f", 7, 0);
+                            i.textures[32] = loadSprite("/mmv.f", 3, 0).images[0];
+                            i.aClassfArr[20] = loadSprite("/gen0.f", 7, 0);
                             if (n57 == 1) {
-                                this.aClassInputStream.close();
-                                this.aClassInputStream = null;
+                                this.tmpInputStream.close();
+                                this.tmpInputStream = null;
                             }
                             return;
                         }
                         case 5: {
-                            i.textures[30] = importTexturesWithPalettes("/mmv.f", 2, 0).aClassImageArrArr[0];
-                            i.aClassfArr[20] = importTexturesWithPalettes("/gen0.f", 7, 0);
-                            (i.aClassbArr[5] = new b(importTexturesWithPalettes("/b1.f", 0), 0, 0, null)).aVoid(10);
+                            i.textures[30] = loadSprite("/mmv.f", 2, 0).images[0];
+                            i.aClassfArr[20] = loadSprite("/gen0.f", 7, 0);
+                            (i.aClassbArr[5] = new b_SpriteAnimator(loadSprite("/b1.f", 0), 0, 0, null)).setAnimation(10);
                             return;
                         }
                         default: {
@@ -4573,40 +4670,49 @@ public final class i extends Canvas implements Runnable {
 //                    break;
                 }
             }
-        } catch (Exception ex3) {
+        } catch (Exception ignored) {
         }
     }
 
-    private void aVoid(final boolean b) {
+    /**
+     * Loads the hero sprite and animator.
+     * @param loadChunk2 Whether to load the chunk 2, containing the hero on fire animation.
+     * @see <a href="https://kubikaugustyn.github.io/diamondRush/browser/all_files_new/?fileName=o.f">o.f file contents</a>
+     */
+    private void loadHeroSprite(final boolean loadChunk2) {
         try {
-            InputStream resourceAsStream;
-            final byte[] b2 = new byte[(resourceAsStream = this.getClass().getResourceAsStream("/o.f")).read() << 3];
-            resourceAsStream.read(b2);
-            final byte[] b3 = new byte[bInt(b2, 4)];
-            resourceAsStream.read(b3);
-            if (!b) {
-                resourceAsStream.close();
-                resourceAsStream = null;
+            InputStream stream = this.getClass().getResourceAsStream("/o.f");
+            final byte[] chunksHeader = new byte[stream.read() << 3];
+            stream.read(chunksHeader);
+            final byte[] heroData = new byte[unpackUint32(chunksHeader, 4)];
+            stream.read(heroData);
+            if (!loadChunk2) {
+                stream.close();
+                stream = null;
                 System.gc();
             }
-            final f f;
-            (f = new f()).aVoid(b3, 0);
-            f.aVoid(this.cuInt = i.iByteArr[8] - 4, 0, -1, -1);
-            f.aInt = this.cuInt;
-            f.dByteArr = null;
+
+            final f_Sprite hero = new f_Sprite();
+            hero.parseSprite(heroData, 0);
+            this.crtHeroPalette = i.iByteArr[8] - 4;
+            hero.createImages(this.crtHeroPalette, 0, -1, -1);
+            hero.paletteI = this.crtHeroPalette;
+            hero.moduleData = null;
             System.out.println("Set value to i.aClassbArr[0]. new b(f==<TEXTURES /o.f 0>, 0, 0, null)");
-            i.aClassbArr[0] = new b(f, 0, 0, null);
+            i.aClassbArr[0] = new b_SpriteAnimator(hero, 0, 0, null);
             System.gc();
-            if (b) {
-                final byte[] b4 = new byte[bInt(b2, 12)];
-                resourceAsStream.read(b4);
-                resourceAsStream.close();
+
+            if (loadChunk2) {
+                final byte[] fireData = new byte[unpackUint32(chunksHeader, 12)];
+                stream.read(fireData);
+                stream.close();
                 System.gc();
-                final f f2;
-                (f2 = new f()).aVoid(b4, 0);
-                f2.aVoid(0, 0, -1, -1);
-                f2.dByteArr = null;
-                i.aClassbArr[3] = new b(f2, 0, 0, null);
+
+                final f_Sprite fireAnimation = new f_Sprite();
+                fireAnimation.parseSprite(fireData, 0);
+                fireAnimation.createImages(0, 0, -1, -1);
+                fireAnimation.moduleData = null;
+                i.aClassbArr[3] = new b_SpriteAnimator(fireAnimation, 0, 0, null);
                 System.gc();
             }
         } catch (Exception ex) {
@@ -4618,11 +4724,11 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void kVoid() {
-        if (i.dClassString != null) {
-            final String dClassString = i.dClassString;
+        if (i.moreGamesUrl != null) {
+            final String moreGamesUrl = i.moreGamesUrl;
             try {
                 Thread.sleep(10L);
-                new k(dClassString).start();
+                new k(moreGamesUrl).start();
             } catch (Exception ex) {
             }
         }
@@ -4656,13 +4762,13 @@ public final class i extends Canvas implements Runnable {
         this.bLong = 0L;
     }
 
-    private static boolean aBoolean() {
-        String appProperty = null;
+    private static boolean getMoreGamesEnabled() {
+        String more_games_status = null;
         try {
-            appProperty = i.aClassGloftDIRU.getAppProperty("more_games_status");
+            more_games_status = i.aClassGloftDIRU.getAppProperty("more_games_status");
         } catch (Exception ex) {
         }
-        return appProperty != null && appProperty.equals("on");
+        return more_games_status != null && more_games_status.equals("on");
     }
 
     private void mVoid() {
@@ -4709,11 +4815,11 @@ public final class i extends Canvas implements Runnable {
         c.aByteArr = null;
     }
 
-    private static void aVoid(final f f, final boolean b) {
+    private static void aVoid(final f_Sprite f, final boolean b) {
         if (f == null) {
             return;
         }
-        f.aVoid(b);
+        f.free(b);
     }
 
     private void pVoid() {
@@ -4728,8 +4834,8 @@ public final class i extends Canvas implements Runnable {
         this.ajInt = 0;
         i.dByteArr = null;
         i.eByteArr = null;
-        this.aClassInputStream = null;
-        i.nByteArr = null;
+        this.tmpInputStream = null;
+        i.tmpBytes = null;
         i.fClassImage = null;
         i.cClassGraphics = null;
         i.bClassGraphics = null;
@@ -4770,8 +4876,8 @@ public final class i extends Canvas implements Runnable {
         if (i.aClassbArr != null) {
             for (int n = 0; n < 6; ++n) {
                 if (i.aClassbArr[n] != null) {
-                    aVoid(i.aClassbArr[n].aClassf, true);
-                    i.aClassbArr[n].aClassf = null;
+                    aVoid(i.aClassbArr[n].sprite, true);
+                    i.aClassbArr[n].sprite = null;
                     if (n == 0) System.out.println("Set value to i.aClassbArr[0]. null");
                     i.aClassbArr[n] = null;
                 }
@@ -4779,9 +4885,9 @@ public final class i extends Canvas implements Runnable {
             new Exception("Oh no").printStackTrace();
         }
         i.bIntArrArr = null;
-        i.aIntArrArr = null;
+        i.crtStageForegrondLayer = null;
         i.bByteArrArr = null;
-        i.aByteArrArr = null;
+        i.crtStagePlayerLayer = null;
         i.cByteArrArr = null;
         i.cIntArrArr = null;
         i.dIntArrArr = null;
@@ -4816,9 +4922,9 @@ public final class i extends Canvas implements Runnable {
         this.dzInt = -1;
         this.lBoolean = false;
         i.eByteArr = null;
-        i.aClassImage = null;
-        i.bClassImage = null;
-        i.cClassImage = null;
+        i.splashLogoImage = null;
+        i.splashBgGradientImage = null;
+        i.splashCopyrightImage = null;
         i.fClassImage = null;
         i.cClassGraphics = null;
         System.gc();
@@ -4832,28 +4938,28 @@ public final class i extends Canvas implements Runnable {
     private void rVoid() {
         if ((this.dLong & 0x1L) == 0x0L) {
             for (int iInteger = 0; iInteger < 5; ++iInteger) {
-                i.aClassfArr[13].aClassImageArrArr[0][iInteger] = null;
+                i.aClassfArr[13].images[0][iInteger] = null;
             }
         }
     }
 
-    private void cVoid(final int n) {
+    private void cVoid(final int chunkI) {
         try {
-            if (n == 0) {
-                this.aClassInputStream = this.getClass().getResourceAsStream("/b0.f");
-                this.ccInt = this.aClassInputStream.read();
-                i.nByteArr = new byte[this.ccInt << 3];
-                this.aClassInputStream.read(i.nByteArr);
+            if (chunkI == 0) {
+                this.tmpInputStream = this.getClass().getResourceAsStream("/b0.f");
+                this.ccInt = this.tmpInputStream.read();
+                i.tmpBytes = new byte[this.ccInt << 3];
+                this.tmpInputStream.read(i.tmpBytes);
             }
-            final byte[] b = new byte[bInt(i.nByteArr, (n << 3) + 4)];
-            this.aClassInputStream.read(b);
-            final f f;
-            (f = new f()).aVoid(b, 0);
-            f.aVoid(0, 0, -1, -1);
-            f.dByteArr = null;
-            switch (n) {
+            final byte[] b = new byte[unpackUint32(i.tmpBytes, (chunkI << 3) + 4)];
+            this.tmpInputStream.read(b);
+            final f_Sprite f;
+            (f = new f_Sprite()).parseSprite(b, 0);
+            f.createImages(0, 0, -1, -1);
+            f.moduleData = null;
+            switch (chunkI) {
                 case 0: {
-                    i.aClassbArr[5] = new b(f, 0, 0, null);
+                    i.aClassbArr[5] = new b_SpriteAnimator(f, 0, 0, null);
                 }
                 case 1: {
                     i.aClassfArr[40] = f;
@@ -4864,29 +4970,29 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private void dVoid(final int n) {
+    private void dVoid(final int chunkI) {
         try {
-            if (n == 0) {
-                this.aClassInputStream = this.getClass().getResourceAsStream("/mm0.f");
-                this.ccInt = this.aClassInputStream.read();
-                i.nByteArr = new byte[this.ccInt << 3];
-                this.aClassInputStream.read(i.nByteArr);
+            if (chunkI == 0) {
+                this.tmpInputStream = this.getClass().getResourceAsStream("/mm0.f");
+                this.ccInt = this.tmpInputStream.read();
+                i.tmpBytes = new byte[this.ccInt << 3];
+                this.tmpInputStream.read(i.tmpBytes);
             }
-            final byte[] b = new byte[bInt(i.nByteArr, (n << 3) + 4)];
-            this.aClassInputStream.read(b);
-            final f f;
-            (f = new f()).aVoid(b, 0);
-            f.aVoid(0, 0, -1, -1);
-            f.dByteArr = null;
-            switch (n) {
+            final byte[] b = new byte[unpackUint32(i.tmpBytes, (chunkI << 3) + 4)];
+            this.tmpInputStream.read(b);
+            final f_Sprite f;
+            (f = new f_Sprite()).parseSprite(b, 0);
+            f.createImages(0, 0, -1, -1);
+            f.moduleData = null;
+            switch (chunkI) {
                 case 2: {
-                    i.textures[27] = f.aClassImageArrArr[0];
+                    i.textures[27] = f.images[0]; // mm0.f, chunk 3, palette 0, all modules
                 }
                 case 1: {
-                    (i.aClassbArr[2] = new b(f, 0, 0, null)).aVoid(0);
+                    (i.aClassbArr[2] = new b_SpriteAnimator(f, 0, 0, null)).setAnimation(0); // mm0.f, chunk 2, palette 0, all animations
                 }
                 case 0: {
-                    (i.aClassbArr[1] = new b(f, 0, 0, null)).aVoid(2);
+                    (i.aClassbArr[1] = new b_SpriteAnimator(f, 0, 0, null)).setAnimation(2); // mm0.f, chunk 1, palette 0, all animations
                     break;
                 }
             }
@@ -4912,9 +5018,9 @@ public final class i extends Canvas implements Runnable {
         this.bVoid(true);
         this.wVoid();
         this.vVoid();
-        aVoid(this.aAInt, i.dZInt);
+        aVoid(this.crtWorldIndex, i.dZInt);
         if (b) {
-            i.iByteArr[aInt(this.aAInt, this.aBInt)] = (byte) (this.bbInt + this.bInt(this.aAInt, this.aBInt));
+            i.iByteArr[aInt(this.crtWorldIndex, this.crtStageI)] = (byte) (this.bbInt + this.bInt(this.crtWorldIndex, this.crtStageI));
         }
         this.uVoid();
     }
@@ -5041,12 +5147,12 @@ public final class i extends Canvas implements Runnable {
                     if (s == null) {
                         s = "/map_tibet.out";
                     }
-                    (this.aClassInputStream = this.getClass().getResourceAsStream(i.dClassStringArr[read - 2])).read();
+                    (this.tmpInputStream = this.getClass().getResourceAsStream(i.worldFiles[read - 2])).read();
                     read -= 2;
                     final int cwInt = this.cwInt;
                     i.iByteArr[14 + (read << 1)] = (byte) this.cwInt;
                     i.iByteArr[14 + (read << 1) + 1] = (byte) (this.cwInt >> 8);
-                    read = this.aClassInputStream.read();
+                    read = this.tmpInputStream.read();
                     i.iByteArr[this.cwInt++] = (byte) read;
                     i.iByteArr[this.cwInt++] = 0;
                     this.awVoid();
@@ -5060,10 +5166,10 @@ public final class i extends Canvas implements Runnable {
                         i.iByteArr[cwInt + 3 + (j << 1) + 1] = (byte) (cwInt2 >> 8);
                         byte b = 0;
                         byte b2 = 0;
-                        final int aInt = aInt(this.aClassInputStream);
-                        final int aInt2 = aInt(this.aClassInputStream);
+                        final int aInt = aInt(this.tmpInputStream);
+                        final int aInt2 = aInt(this.tmpInputStream);
                         final byte[] array = new byte[aInt * aInt2];
-                        this.aClassInputStream.read(array);
+                        this.tmpInputStream.read(array);
                         for (int k = 0; k < aInt2; ++k) {
                             for (int l = 0; l < aInt; ++l) {
                                 if (array[l + k * aInt] == 2) {
@@ -5077,10 +5183,10 @@ public final class i extends Canvas implements Runnable {
                         i.iByteArr[this.cwInt++] = 0;
                         i.iByteArr[this.cwInt++] = b2;
                         i.iByteArr[this.cwInt++] = 0;
-                        this.aClassInputStream.skip(aInt * aInt2);
+                        this.tmpInputStream.skip(aInt * aInt2);
                         final int cwInt3 = this.cwInt;
                         this.cwInt += 2;
-                        this.aClassInputStream.read(array);
+                        this.tmpInputStream.read(array);
                         for (int n2 = 0; n2 < aInt2; ++n2) {
                             for (int n3 = 0; n3 < aInt; ++n3) {
                                 if (array[n3 + n2 * aInt] == 14 || array[n3 + n2 * aInt] == 33) {
@@ -5093,8 +5199,8 @@ public final class i extends Canvas implements Runnable {
                         i.iByteArr[cwInt3] = 0;
                         i.iByteArr[cwInt3 + 1] = b;
                     }
-                    this.aClassInputStream.close();
-                    this.aClassInputStream = null;
+                    this.tmpInputStream.close();
+                    this.tmpInputStream = null;
                     System.gc();
                     break;
                 }
@@ -5131,11 +5237,11 @@ public final class i extends Canvas implements Runnable {
         this.MBoolean = false;
         this.azInt = i.iByteArr[3];
         this.rByte = i.iByteArr[11];
-        this.aZInt = aInt(i.iByteArr, 4);
+        this.aZInt = unpackUint16(i.iByteArr, 4);
     }
 
-    private byte aByte(final int n, final int n2) {
-        return i.iByteArr[aInt(n, n2) + 2];
+    private byte aByte(final int worldIndex, final int stageIndex) {
+        return i.iByteArr[aInt(worldIndex, stageIndex) + 2];
     }
 
     private void aVoid(final int n, final int n2, final byte b) {
@@ -5160,18 +5266,18 @@ public final class i extends Canvas implements Runnable {
         return 0;
     }
 
-    private static int cInt(int n) {
-        int n2;
-        if (n < 0) {
-            n2 = 0;
+    private static int cInt(int worldIndex) {
+        int clampedIndex;
+        if (worldIndex < 0) {
+            clampedIndex = 0;
         } else {
-            if (n < 3) {
-                return aInt(i.iByteArr, 14 + (n << 1));
+            if (worldIndex < 3) {
+                return unpackUint16(i.iByteArr, 14 + (worldIndex << 1));
             }
-            n2 = 2;
+            clampedIndex = 2;
         }
-        n = n2;
-        return aInt(i.iByteArr, 14 + (n << 1));
+         worldIndex = clampedIndex;
+        return unpackUint16(i.iByteArr, 14 + (worldIndex << 1));
     }
 
     private static int dInt(final int n) {
@@ -5186,8 +5292,8 @@ public final class i extends Canvas implements Runnable {
         return i.iByteArr[cInt(n) + 2];
     }
 
-    private static int aInt(final int n, final int n2) {
-        return aInt(i.iByteArr, cInt(n) + 3 + (n2 << 1));
+    private static int aInt(final int worldIndex, final int stageIndex) {
+        return unpackUint16(i.iByteArr, cInt(worldIndex) + 3 + (stageIndex << 1));
     }
 
     private int bInt(final int n, final int n2) {
@@ -5245,8 +5351,8 @@ public final class i extends Canvas implements Runnable {
         final int aInt = aInt(n = i.aLongArrArr[dvInt][dwInt], (byte) 6, (byte) 5);
         final int aInt2 = aInt(n, (byte) 11, (byte) 3);
         int n2 = 14;
-        if (this.aBInt >= this.dKInt) {
-            this.aVoid(this.aAInt, this.aBInt, (byte) 2);
+        if (this.crtStageI >= this.dKInt) {
+            this.aVoid(this.crtWorldIndex, this.crtStageI, (byte) 2);
         }
         if (aInt2 > 1) {
             for (int iInteger = 0; iInteger < aInt2; ++iInteger, n2 += 4) {
@@ -5258,12 +5364,12 @@ public final class i extends Canvas implements Runnable {
                     i.dZInt = aInt4;
                     this.cxInt = dvInt;
                     this.cyInt = dwInt;
-                    this.aVoid(this.aAInt, i.dZInt, (byte) 64);
+                    this.aVoid(this.crtWorldIndex, i.dZInt, (byte) 64);
                     this.acBoolean = true;
                 }
             }
         } else {
-            i.dZInt = this.aBInt;
+            i.dZInt = this.crtStageI;
         }
         this.cVoid(false);
     }
@@ -5277,11 +5383,11 @@ public final class i extends Canvas implements Runnable {
                         aClassGraphics.setClip(0, 0, ((Displayable) this).getWidth(), ((Displayable) this).getHeight());
                         aClassGraphics.fillRect(0, 0, ((Displayable) this).getWidth(), ((Displayable) this).getHeight());
                         aClassGraphics.setColor(16777215);
-                        c.aInt(aClassGraphics, d.aClassString(34), ((Displayable) this).getWidth() >> 1, (((Displayable) this).getHeight() >> 1) - 40, ((Displayable) this).getWidth() - 100);
+                        c.aInt(aClassGraphics, d.getLocalizedText(34), ((Displayable) this).getWidth() >> 1, (((Displayable) this).getHeight() >> 1) - 40, ((Displayable) this).getWidth() - 100);
                     } catch (Exception ex2) {
                     }
-                    this.hideNotifyVoid();
-                    this.showNotifyVoid();
+                    this.hideNotify();
+                    this.showNotify();
                     return;
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -5291,10 +5397,11 @@ public final class i extends Canvas implements Runnable {
             try {
                 (this.aClassGraphics = aClassGraphics).setClip(0, 0, 240, 320);
                 switch (i.bByte) {
+                    // Paint cheat page
                     case 24: {
                         String s = null;
                         final h aClassh;
-                        (aClassh = i.aClassh).dInt = 15;
+                        (aClassh = i.textSize8).dInt = 15;
                         this.aClassGraphics.setColor(0);
                         this.aClassGraphics.fillRect(0, 0, 240, 320);
                         int iInteger = 0;
@@ -5321,12 +5428,12 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     case 3: {
                                         n = 11;
-                                        s2 = " 9 - " + i.aClassStringArr[this.SBoolean ? 43 : 42];
+                                        s2 = " 9 - " + i.texts[this.SBoolean ? 43 : 42];
                                         break;
                                     }
                                     case 4: {
                                         n = 10;
-                                        s2 = " 0 - " + i.aClassStringArr[this.TBoolean ? 43 : 42];
+                                        s2 = " 0 - " + i.texts[this.TBoolean ? 43 : 42];
                                         break;
                                     }
                                     case 5: {
@@ -5337,7 +5444,7 @@ public final class i extends Canvas implements Runnable {
                                     default: {
                                         final int n2 = (iInteger + 1) * 35;
                                         if (n >= 0) {
-                                            aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[n], 110, n2, 17);
+                                            aClassh.drawTextWithFlags(this.aClassGraphics, i.texts[n], 110, n2, 17);
                                         }
                                         final int n3 = n2 + aClassh.dInt;
                                         h h;
@@ -5354,7 +5461,7 @@ public final class i extends Canvas implements Runnable {
                                             n5 = n3;
                                             n6 = 17;
                                         } else {
-                                            aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[9], 110, n3, 24);
+                                            aClassh.drawTextWithFlags(this.aClassGraphics, i.texts[9], 110, n3, 24);
                                             h = aClassh;
                                             graphics = this.aClassGraphics;
                                             s3 = s;
@@ -5362,7 +5469,7 @@ public final class i extends Canvas implements Runnable {
                                             n5 = n3;
                                             n6 = 20;
                                         }
-                                        h.bVoid(graphics, s3, n4, n5, n6);
+                                        h.drawTextWithFlags(graphics, s3, n4, n5, n6);
                                         ++iInteger;
                                         continue Label_0590_Outer;
                                     }
@@ -5381,16 +5488,17 @@ public final class i extends Canvas implements Runnable {
                             sb = new StringBuffer().append(s4);
                             str = "off";
                         }
-                        aClassh.bVoid(this.aClassGraphics, sb.append(str).toString(), 110, 250, 17);
-                        aClassh.bVoid(this.aClassGraphics, "(Press 9 while gameplay to", 110, 265, 17);
-                        aClassh.bVoid(this.aClassGraphics, "skip the level)", 110, 280, 17);
+                        aClassh.drawTextWithFlags(this.aClassGraphics, sb.append(str).toString(), 110, 250, 17);
+                        aClassh.drawTextWithFlags(this.aClassGraphics, "(Press 9 while gameplay to", 110, 265, 17);
+                        aClassh.drawTextWithFlags(this.aClassGraphics, "skip the level)", 110, 280, 17);
                         this.IVoid();
                         this.JVoid();
                         break;
                     }
+                    // Paint cheat page - tips
                     case 34: {
                         final h aClassh2;
-                        (aClassh2 = i.aClassh).dInt = 2;
+                        (aClassh2 = i.textSize8).dInt = 2;
                         this.aClassGraphics.setColor(0);
                         this.aClassGraphics.fillRect(0, 0, 240, 320);
                         String s5 = null;
@@ -5403,7 +5511,7 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 0: {
                                 s5 = "Mix";
-                                aClassh2.aVoid(this.aClassGraphics, i.aClassStringArr[this.aIntArr[0]], 10, 15, 20);
+                                aClassh2.drawText(this.aClassGraphics, i.texts[this.aIntArr[0]], 10, 15, 20);
                                 break;
                             }
                             default: {
@@ -5412,10 +5520,10 @@ public final class i extends Canvas implements Runnable {
                             }
                         }
                         aClassh2.dInt = 2;
-                        aClassh2.bVoid(this.aClassGraphics, s5, 40, 308, 20);
-                        aClassh2.bVoid(this.aClassGraphics, "" + this.aIntArr[this.ddInt], 120, 308, 20);
-                        aClassh2.aVoid(this.aClassGraphics, "Use up, down, left and right", 10, 270, 20);
-                        aClassh2.aVoid(this.aClassGraphics, "to navigate", 10, 285, 20);
+                        aClassh2.drawTextWithFlags(this.aClassGraphics, s5, 40, 308, 20);
+                        aClassh2.drawTextWithFlags(this.aClassGraphics, "" + this.aIntArr[this.ddInt], 120, 308, 20);
+                        aClassh2.drawText(this.aClassGraphics, "Use up, down, left and right", 10, 270, 20);
+                        aClassh2.drawText(this.aClassGraphics, "to navigate", 10, 285, 20);
                         this.IVoid();
                         this.JVoid();
                         break;
@@ -5424,24 +5532,25 @@ public final class i extends Canvas implements Runnable {
                         this.azVoid();
                         break;
                     }
+                    // Paint help page
                     case 33: {
                         if (this.avBoolean) {
                             this.aClassGraphics.setColor(0);
                             this.aClassGraphics.setClip(0, 0, 240, 320);
                             this.aClassGraphics.fillRect(0, 0, 240, 320);
-                            i.aClassh.aVoid(this.aClassGraphics, i.aClassStringArr[18] + "\n\n" + i.aClassStringArr[29] + "\n" + i.aClassStringArr[37] + "\n" + i.aClassStringArr[38] + "\n\n" + i.aClassStringArr[119] + "\n\n" + aClassString(i.aClassStringArr[118]) + "\n" + aClassString(i.aClassStringArr[67]), 120, 10, 17);
+                            i.textSize8.drawText(this.aClassGraphics, i.texts[18] + "\n\n" + i.texts[29] + "\n" + i.texts[37] + "\n" + i.texts[38] + "\n\n" + i.texts[119] + "\n\n" + aClassString(i.texts[118]) + "\n" + aClassString(i.texts[67]), 120, 10, 17);
                             this.IVoid();
                             this.avBoolean = false;
                         }
                         break;
                     }
                     case 20: {
-                        aVoid(this.aClassGraphics, i.aClassh, aClassString(i.aClassStringArr[61]), 120, 180, 17, 20, true);
+                        aVoid(this.aClassGraphics, i.textSize8, aClassString(i.texts[61]), 120, 180, 17, 20, true);
                         break;
                     }
                     case 17: {
                         final int arInt = this.aRInt;
-                        final h aClassh3 = i.aClassh;
+                        final h aClassh3 = i.textSize8;
                         final Graphics aClassGraphics2;
                         (aClassGraphics2 = this.aClassGraphics).setColor(2496263);
                         aClassGraphics2.fillRect(0, 0, 240, 320);
@@ -5450,9 +5559,9 @@ public final class i extends Canvas implements Runnable {
                                 if (this.bdInt == 0) {
                                     if ((this.uByte & 0x20) != 0x0) {
                                         aClassGraphics2.drawImage(i.textures[5][0], 200, 237, 0);
-                                        final f f;
-                                        if (arInt == 5 && i.aSInt < (f = i.aClassfArr[9]).aInt(0) << 1) {
-                                            f.aVoid(aClassGraphics2, 0, i.aSInt << 1, 200, 237, 0, 0, 0);
+                                        final f_Sprite f;
+                                        if (arInt == 5 && i.aSInt < (f = i.aClassfArr[9]).getAnimationFrameCount(0) << 1) {
+                                            f.drawAnimationFrame(aClassGraphics2, 0, i.aSInt << 1, 200, 237, 0, 0, 0);
                                         }
                                     }
                                     aClassGraphics2.drawImage(i.textures[28][0], 180, 254, 0);
@@ -5463,15 +5572,15 @@ public final class i extends Canvas implements Runnable {
                                 if (arInt != 4 || (n7 = -100 + i.aSInt * 10) > 0) {
                                     n7 = 0;
                                 }
-                                i.aClassbArr[0].aClassf.aVoid(aClassGraphics2, 12, 0, n7 + 7, 243, 0, 0, 0);
-                                aClassh3.aVoid(aClassGraphics2, i.aClassStringArr[78], 120, 243, 17);
-                                aClassh3.aVoid(aClassGraphics2, String.valueOf(this.bdInt), 120, 259, 17);
+                                i.aClassbArr[0].sprite.drawAnimationFrame(aClassGraphics2, 12, 0, n7 + 7, 243, 0, 0, 0);
+                                aClassh3.drawText(aClassGraphics2, i.texts[78], 120, 243, 17);
+                                aClassh3.drawText(aClassGraphics2, String.valueOf(this.bdInt), 120, 259, 17);
                                 if (this.bcInt == 0) {
                                     if ((this.uByte & 0x10) != 0x0) {
                                         aClassGraphics2.drawImage(i.textures[5][0], 200, 181, 0);
-                                        final f f2;
-                                        if (arInt == 4 && i.aSInt < (f2 = i.aClassfArr[9]).aInt(0) << 1) {
-                                            f2.aVoid(aClassGraphics2, 0, i.aSInt >> 1, 200, 181, 0, 0, 0);
+                                        final f_Sprite f2;
+                                        if (arInt == 4 && i.aSInt < (f2 = i.aClassfArr[9]).getAnimationFrameCount(0) << 1) {
+                                            f2.drawAnimationFrame(aClassGraphics2, 0, i.aSInt >> 1, 200, 181, 0, 0, 0);
                                         }
                                     }
                                     aClassGraphics2.drawImage(i.textures[28][0], 180, 198, 0);
@@ -5482,15 +5591,15 @@ public final class i extends Canvas implements Runnable {
                                 if (arInt != 3 || (n8 = -100 + i.aSInt * 10) > 0) {
                                     n8 = 0;
                                 }
-                                i.aClassbArr[0].aClassf.aVoid(aClassGraphics2, 10, 0, n8 + 7, 191, 0, 0, 0);
-                                aClassh3.aVoid(aClassGraphics2, i.aClassStringArr[68], 120, 187, 17);
-                                aClassh3.aVoid(aClassGraphics2, String.valueOf(this.bcInt), 120, 203, 17);
+                                i.aClassbArr[0].sprite.drawAnimationFrame(aClassGraphics2, 10, 0, n8 + 7, 191, 0, 0, 0);
+                                aClassh3.drawText(aClassGraphics2, i.texts[68], 120, 187, 17);
+                                aClassh3.drawText(aClassGraphics2, String.valueOf(this.bcInt), 120, 203, 17);
                                 if (this.bbInt == this.baInt) {
                                     if ((this.uByte & 0x8) != 0x0) {
                                         aClassGraphics2.drawImage(i.textures[5][0], 200, 125, 0);
-                                        final f f3;
-                                        if (arInt == 3 && i.aSInt < (f3 = i.aClassfArr[9]).aInt(0) << 1) {
-                                            f3.aVoid(aClassGraphics2, 0, i.aSInt >> 1, 200, 125, 0, 0, 0);
+                                        final f_Sprite f3;
+                                        if (arInt == 3 && i.aSInt < (f3 = i.aClassfArr[9]).getAnimationFrameCount(0) << 1) {
+                                            f3.drawAnimationFrame(aClassGraphics2, 0, i.aSInt >> 1, 200, 125, 0, 0, 0);
                                         }
                                     }
                                     aClassGraphics2.drawImage(i.textures[28][0], 180, 142, 0);
@@ -5501,15 +5610,15 @@ public final class i extends Canvas implements Runnable {
                                 if (arInt != 2 || (n9 = -100 + i.aSInt * 10) > 0) {
                                     n9 = 0;
                                 }
-                                i.aClassfArr[aInt(3)].aVoid(aClassGraphics2, 0, n9 + 7, 131, 0);
-                                aClassh3.aVoid(aClassGraphics2, i.aClassStringArr[48], 120, 131, 17);
-                                aClassh3.aVoid(aClassGraphics2, this.bbInt + "/" + this.baInt, 120, 147, 17);
+                                i.aClassfArr[aInt(3)].drawFrame(aClassGraphics2, 0, n9 + 7, 131, 0);
+                                aClassh3.drawText(aClassGraphics2, i.texts[48], 120, 131, 17);
+                                aClassh3.drawText(aClassGraphics2, this.bbInt + "/" + this.baInt, 120, 147, 17);
                                 if (this.aZInt == this.aYInt) {
                                     if ((this.uByte & 0x4) != 0x0) {
                                         aClassGraphics2.drawImage(i.textures[5][0], 200, 69, 0);
-                                        final f f4;
-                                        if (arInt == 2 && i.aSInt < (f4 = i.aClassfArr[9]).aInt(0) >> 1) {
-                                            f4.aVoid(aClassGraphics2, 0, i.aSInt << 1, 200, 69, 0, 0, 0);
+                                        final f_Sprite f4;
+                                        if (arInt == 2 && i.aSInt < (f4 = i.aClassfArr[9]).getAnimationFrameCount(0) >> 1) {
+                                            f4.drawAnimationFrame(aClassGraphics2, 0, i.aSInt << 1, 200, 69, 0, 0, 0);
                                         }
                                     }
                                     aClassGraphics2.drawImage(i.textures[28][0], 180, 86, 0);
@@ -5520,13 +5629,13 @@ public final class i extends Canvas implements Runnable {
                                 if (arInt != 1 || (n10 = -100 + i.aSInt * 10) > 0) {
                                     n10 = 0;
                                 }
-                                i.aClassfArr[aInt(2)].aVoid(aClassGraphics2, 0, n10 + 7, 75, 0);
-                                aClassh3.aVoid(aClassGraphics2, i.aClassStringArr[19], 120, 75, 17);
+                                i.aClassfArr[aInt(2)].drawFrame(aClassGraphics2, 0, n10 + 7, 75, 0);
+                                aClassh3.drawText(aClassGraphics2, i.texts[19], 120, 75, 17);
                                 int azInt;
                                 if (arInt != 1 || (azInt = i.aSInt >> 1) > this.aZInt) {
                                     azInt = this.aZInt;
                                 }
-                                aClassh3.aVoid(aClassGraphics2, azInt + "/" + this.aYInt, 120, 91, 17);
+                                aClassh3.drawText(aClassGraphics2, azInt + "/" + this.aYInt, 120, 91, 17);
                             }
                             case 0: {
                                 int n12 = 0;
@@ -5546,12 +5655,12 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     n11 = 0;
                                 }
-                                aClassh3.bVoid(aClassGraphics2, i.cClassStringArr[i.gIntArrArr[this.aAInt][this.aBInt] - 1], n12 + 120, 15, 17);
-                                aClassh3.bVoid(aClassGraphics2, i.aClassStringArr[14], n11 + 120, 32, 17);
+                                aClassh3.drawTextWithFlags(aClassGraphics2, i.stageTitles[i.gIntArrArr[this.crtWorldIndex][this.crtStageI] - 1], n12 + 120, 15, 17);
+                                aClassh3.drawTextWithFlags(aClassGraphics2, i.texts[14], n11 + 120, 32, 17);
                                 break;
                             }
                         }
-                        i.aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[(this.aRInt == 5) ? 17 : 65], 5, 320 - (aClassh3.aClassFont.getHeight() - 10), 36);
+                        i.textSize8.drawTextWithFlags(this.aClassGraphics, i.texts[(this.aRInt == 5) ? 17 : 65], 5, 320 - (aClassh3.font.getHeight() - 10), 36);
                         break;
                     }
                     case 4: {
@@ -5566,7 +5675,7 @@ public final class i extends Canvas implements Runnable {
                         bVoid(this.aClassGraphics, true);
                         this.fVoid(280);
                         if (i.aSInt % 15 >= 7) {
-                            i.bClassh.bVoid(this.aClassGraphics, i.aClassStringArr[46], 120, 280, 17);
+                            i.textSize0.drawTextWithFlags(this.aClassGraphics, i.texts[46], 120, 280, 17);
                             break;
                         }
                         break;
@@ -5577,7 +5686,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     case 5: {
                         if (!this.RBoolean) {
-                            this.aClassGraphics.setClip(0, a.eInt, 240, 320 - a.eInt);
+                            this.aClassGraphics.setClip(0, a_Config.eInt, 240, 320 - a_Config.eInt);
                             this.KVoid();
                             this.aClassGraphics.setClip(0, 0, 240, 320);
                         } else {
@@ -5602,18 +5711,18 @@ public final class i extends Canvas implements Runnable {
                         break;
                     }
                     case 6: {
-                        final b b = i.aClassbArr[0];
+                        final b_SpriteAnimator b = i.aClassbArr[0];
                         this.aClassGraphics.setColor(0);
                         this.aClassGraphics.fillRect(0, 0, 240, 320);
-                        b.bInt = 136;
+                        b.y = 136;
                         int n13 = 0;
                         if (i.aSInt > 30) {
-                            b.aInt = 139;
-                            b.aVoid(1);
+                            b.x = 139;
+                            b.setAnimation(1);
                             int n14;
                             if ((n14 = i.aSInt - 30 << 2) > 29) {
                                 n14 = 29;
-                                f f5;
+                                f_Sprite f5;
                                 Graphics graphics2;
                                 int n16;
                                 int n17;
@@ -5621,31 +5730,31 @@ public final class i extends Canvas implements Runnable {
                                 if (i.aSInt < 42) {
                                     final int n15 = 42 - i.aSInt;
                                     n13 = 0 + n15 * n15 % ((n15 >> 1) + 1);
-                                    f5 = b.aClassf;
+                                    f5 = b.sprite;
                                     graphics2 = this.aClassGraphics;
                                     n16 = 10;
                                     n17 = 138;
                                     n18 = n13 + 136;
                                 } else {
-                                    f5 = b.aClassf;
+                                    f5 = b.sprite;
                                     graphics2 = this.aClassGraphics;
                                     n16 = 4;
                                     n17 = 138;
                                     n18 = 136;
                                 }
-                                f5.aVoid(graphics2, n16, n17, n18, 0);
-                                b.eInt = 0;
+                                f5.drawFrame(graphics2, n16, n17, n18, 0);
+                                b.crtAnimationFrame = 0;
                             } else {
-                                b.aClassf.aVoid(this.aClassGraphics, 10, 138, 136, 0);
+                                b.sprite.drawFrame(this.aClassGraphics, 10, 138, 136, 0);
                             }
-                            b.bInt = n14 + 136;
+                            b.y = n14 + 136;
                         } else {
-                            b.aInt = (i.aSInt << 2) - 1 + 18;
+                            b.x = (i.aSInt << 2) - 1 + 18;
                         }
-                        final b b2 = b;
-                        b2.bInt += n13;
-                        b.aVoid(this.aClassGraphics);
-                        b.aClassf.aVoid(this.aClassGraphics, 5, 138, n13 + 160, 0);
+                        final b_SpriteAnimator b2 = b;
+                        b2.y += n13;
+                        b.draw(this.aClassGraphics);
+                        b.sprite.drawFrame(this.aClassGraphics, 5, 138, n13 + 160, 0);
                         break;
                     }
                     case 1: {
@@ -5656,7 +5765,7 @@ public final class i extends Canvas implements Runnable {
                         this.aClassGraphics.setColor(0);
                         this.aClassGraphics.fillRect(0, 0, 240, 320);
                         final h aClassh4;
-                        (aClassh4 = i.aClassh).bVoid(this.aClassGraphics, i.aClassStringArr[26], 120, 50, 17);
+                        (aClassh4 = i.textSize8).drawTextWithFlags(this.aClassGraphics, i.texts[26], 120, 50, 17);
                         h h2;
                         Graphics graphics3;
                         String s6;
@@ -5666,13 +5775,13 @@ public final class i extends Canvas implements Runnable {
                         if (this.kByte == 2) {
                             h2 = aClassh4;
                             graphics3 = this.aClassGraphics;
-                            s6 = i.aClassStringArr[49];
+                            s6 = i.texts[49];
                             n19 = 0;
-                            n20 = 320 - (aClassh4.aClassFont.getHeight() - 10);
+                            n20 = 320 - (aClassh4.font.getHeight() - 10);
                             n21 = 36;
                         } else {
-                            aClassh4.bVoid(this.aClassGraphics, i.aClassStringArr[16], 0, 320 - (aClassh4.aClassFont.getHeight() - 10), 36);
-                            final String string = i.aClassStringArr[126] + " " + ((aInt(i.iByteArr, 4) < 500) ? aInt(i.iByteArr, 4) : 500) + " " + i.aClassStringArr[19];
+                            aClassh4.drawTextWithFlags(this.aClassGraphics, i.texts[16], 0, 320 - (aClassh4.font.getHeight() - 10), 36);
+                            final String string = i.texts[126] + " " + ((unpackUint16(i.iByteArr, 4) < 500) ? unpackUint16(i.iByteArr, 4) : 500) + " " + i.texts[19];
                             h2 = aClassh4;
                             graphics3 = this.aClassGraphics;
                             s6 = string;
@@ -5680,7 +5789,7 @@ public final class i extends Canvas implements Runnable {
                             n20 = 160;
                             n21 = 17;
                         }
-                        h2.bVoid(graphics3, s6, n19, n20, n21);
+                        h2.drawTextWithFlags(graphics3, s6, n19, n20, n21);
                     }
                     case 15: {
                         if (this.auBoolean) {
@@ -5699,7 +5808,7 @@ public final class i extends Canvas implements Runnable {
                                 int n24 = 0;
                                 while (true) {
                                     int n25 = 0;
-                                    switch (this.aAInt) {
+                                    switch (this.crtWorldIndex) {
                                         case 0: {
                                             n22 = 939282;
                                             color = 3111750;
@@ -5727,38 +5836,38 @@ public final class i extends Canvas implements Runnable {
                                         default: {
                                             this.aClassGraphics.setColor(n22);
                                             this.aClassGraphics.fillRect(0, 0, 240, 320);
-                                            i.aClassfArr[n24].aVoid(this.aClassGraphics, 0, 120, 0, 0);
-                                            i.bClassh.bVoid(this.aClassGraphics, i.aClassStringArr[n23], 120, 12, 17);
+                                            i.aClassfArr[n24].drawFrame(this.aClassGraphics, 0, 120, 0, 0);
+                                            i.textSize0.drawTextWithFlags(this.aClassGraphics, i.texts[n23], 120, 12, 17);
                                             (i.cClassGraphics = i.fClassImage.getGraphics()).setColor(n22);
                                             i.cClassGraphics.fillRect(0, 0, 200, 204);
-                                            i.aClassfArr[23].aVoid(i.cClassGraphics, 0, 100, 102, 0);
+                                            i.aClassfArr[23].drawFrame(i.cClassGraphics, 0, 100, 102, 0);
                                             this.aClassGraphics.setColor(color);
-                                            this.aClassGraphics.fillRoundRect(2, 275, 236, a.hInt, 8, 8);
+                                            this.aClassGraphics.fillRoundRect(2, 275, 236, a_Config.hInt, 8, 8);
                                             this.aClassGraphics.setColor(color2);
-                                            this.aClassGraphics.drawRoundRect(2, 275, 236, a.hInt, 8, 8);
+                                            this.aClassGraphics.drawRoundRect(2, 275, 236, a_Config.hInt, 8, 8);
                                             this.IVoid();
                                             this.JVoid();
-                                            i.aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[60], 218, 314, 40);
+                                            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.texts[60], 218, 314, 40);
                                             if (i.aClassfArr[17] != null) {
-                                                i.aClassfArr[17].aVoid(this.aClassGraphics, 12, 10, 278, 0);
-                                                i.aClassfArr[17].aVoid(this.aClassGraphics, 10, 155, 280, 0);
-                                                i.aClassfArr[17].aVoid(this.aClassGraphics, 11, 80, 280, 0);
+                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, 12, 10, 278, 0);
+                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, 10, 155, 280, 0);
+                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, 11, 80, 280, 0);
                                             }
-                                            i.cClassStringBuffer.delete(0, i.cClassStringBuffer.length());
-                                            i.cClassStringBuffer.append(this.azInt);
-                                            i.aClassh.bVoid(this.aClassGraphics, i.cClassStringBuffer.toString(), 41, 290, 20);
-                                            i.cClassStringBuffer.delete(0, i.cClassStringBuffer.length());
-                                            i.cClassStringBuffer.append(aInt(i.iByteArr, 4));
-                                            i.aClassh.bVoid(this.aClassGraphics, i.cClassStringBuffer.toString(), 99, 290, 20);
-                                            i.cClassStringBuffer.delete(0, i.cClassStringBuffer.length());
-                                            final int aInt = aInt(i.iByteArr, 6);
+                                            i.crtWorldMapFileName.delete(0, i.crtWorldMapFileName.length());
+                                            i.crtWorldMapFileName.append(this.azInt);
+                                            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.crtWorldMapFileName.toString(), 41, 290, 20);
+                                            i.crtWorldMapFileName.delete(0, i.crtWorldMapFileName.length());
+                                            i.crtWorldMapFileName.append(unpackUint16(i.iByteArr, 4));
+                                            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.crtWorldMapFileName.toString(), 99, 290, 20);
+                                            i.crtWorldMapFileName.delete(0, i.crtWorldMapFileName.length());
+                                            final int aInt = unpackUint16(i.iByteArr, 6);
                                             final byte j = i.iByteArr[0];
                                             if (aInt >= j) {
-                                                i.cClassStringBuffer.append(aInt).append("/").append(aInt);
+                                                i.crtWorldMapFileName.append(aInt).append("/").append(aInt);
                                             } else {
-                                                i.cClassStringBuffer.append(aInt).append("/").append(j);
+                                                i.crtWorldMapFileName.append(aInt).append("/").append(j);
                                             }
-                                            i.aClassh.bVoid(this.aClassGraphics, i.cClassStringBuffer.toString(), 174, 290, 20);
+                                            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.crtWorldMapFileName.toString(), 174, 290, 20);
                                             this.auBoolean = false;
                                             this.axVoid();
                                             break Label_3607;
@@ -5777,7 +5886,7 @@ public final class i extends Canvas implements Runnable {
                                 int color4 = 0;
                                 while (true) {
                                     int n26 = 0;
-                                    switch (this.aAInt) {
+                                    switch (this.crtWorldIndex) {
                                         case 0: {
                                             color3 = 3111750;
                                             n26 = 8635434;
@@ -5795,15 +5904,15 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         default: {
                                             this.aClassGraphics.setColor(color3);
-                                            this.aClassGraphics.fillRoundRect(2, a.gInt, 236, a.fInt, 8, 8);
+                                            this.aClassGraphics.fillRoundRect(2, a_Config.gInt, 236, a_Config.fInt, 8, 8);
                                             this.aClassGraphics.setColor(color4);
-                                            this.aClassGraphics.drawRoundRect(2, a.gInt, 236, a.fInt, 8, 8);
+                                            this.aClassGraphics.drawRoundRect(2, a_Config.gInt, 236, a_Config.fInt, 8, 8);
                                             final int n27 = 37 + this.dVInt * 13 + 6;
                                             final int n28 = 73 + this.dWInt * 13 + 6;
                                             if (this.dVInt != this.dXInt || this.dWInt != this.dYInt) {
                                                 final int n29 = 37 + this.dXInt * 13 + 6;
                                                 final int n30 = 73 + this.dYInt * 13 + 6;
-                                                if (((this.aByte(this.aAInt, this.aBInt + 1) & 0x2) != 0x0 && this.aBInt + 1 == i.dZInt) || this.aBInt == i.dZInt) {
+                                                if (((this.aByte(this.crtWorldIndex, this.crtStageI + 1) & 0x2) != 0x0 && this.crtStageI + 1 == i.dZInt) || this.crtStageI == i.dZInt) {
                                                     this.apBoolean = true;
                                                 }
                                                 if (!this.apBoolean) {
@@ -5850,12 +5959,12 @@ public final class i extends Canvas implements Runnable {
                                                                 this.dRInt = 2 * this.dPInt;
                                                                 this.dSInt = 2 * this.dQInt;
                                                                 if ((this.dTInt < 0 && this.dMInt <= n35) || (this.dTInt > 0 && this.dMInt >= n35)) {
-                                                                    i.aClassfArr[17].aVoid(this.aClassGraphics, n36, 37 + this.dXInt * 13 + 6, 73 + this.dYInt * 13 + 6, 0);
+                                                                    i.aClassfArr[17].drawFrame(this.aClassGraphics, n36, 37 + this.dXInt * 13 + 6, 73 + this.dYInt * 13 + 6, 0);
                                                                     this.anBoolean = true;
                                                                     b3 = true;
                                                                     break Label_4533;
                                                                 }
-                                                                i.aClassfArr[17].aVoid(this.aClassGraphics, n36, this.dMInt, this.dNInt, 0);
+                                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, n36, this.dMInt, this.dNInt, 0);
                                                                 this.dMInt += this.dTInt;
                                                                 this.dOInt += this.dSInt;
                                                                 if (this.dOInt <= this.dPInt) {
@@ -5866,12 +5975,12 @@ public final class i extends Canvas implements Runnable {
                                                                 this.dRInt = 2 * this.dQInt;
                                                                 this.dSInt = 2 * this.dPInt;
                                                                 if ((this.dUInt < 0 && this.dNInt <= n34) || (this.dUInt > 0 && this.dNInt >= n34)) {
-                                                                    i.aClassfArr[17].aVoid(this.aClassGraphics, n36, 37 + this.dXInt * 13 + 6, 73 + this.dYInt * 13 + 6, 0);
+                                                                    i.aClassfArr[17].drawFrame(this.aClassGraphics, n36, 37 + this.dXInt * 13 + 6, 73 + this.dYInt * 13 + 6, 0);
                                                                     this.anBoolean = true;
                                                                     b3 = true;
                                                                     break Label_4533;
                                                                 }
-                                                                i.aClassfArr[17].aVoid(this.aClassGraphics, n36, this.dMInt, this.dNInt, 0);
+                                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, n36, this.dMInt, this.dNInt, 0);
                                                                 this.dNInt += this.dUInt;
                                                                 this.dOInt += this.dSInt;
                                                                 if (this.dOInt <= this.dQInt) {
@@ -5889,7 +5998,7 @@ public final class i extends Canvas implements Runnable {
                                                     }
                                                 }
                                             } else if (this.awBoolean) {
-                                                i.aClassfArr[17].aVoid(this.aClassGraphics, this.aoBoolean ? 7 : 6, n27, n28, 0);
+                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, this.aoBoolean ? 7 : 6, n27, n28, 0);
                                             }
                                             h h3 = null;
                                             Graphics graphics4 = null;
@@ -5904,54 +6013,54 @@ public final class i extends Canvas implements Runnable {
                                                 int n40;
                                                 if ((aInt2 = aInt(i.aLongArrArr[this.dVInt][this.dWInt], (byte) 6, (byte) 5)) < this.dKInt) {
                                                     if (i.bBoolean) {
-                                                        h3 = i.bClassh;
+                                                        h3 = i.textSize0;
                                                         graphics4 = this.aClassGraphics;
-                                                        s7 = i.cClassStringArr[aInt2];
+                                                        s7 = i.stageTitles[aInt2];
                                                         n37 = 234;
-                                                        n38 = a.iInt;
+                                                        n38 = a_Config.iInt;
                                                         n39 = 40;
                                                         break Label_4743;
                                                     }
-                                                    h3 = i.bClassh;
+                                                    h3 = i.textSize0;
                                                     graphics4 = this.aClassGraphics;
-                                                    array = i.cClassStringArr;
+                                                    array = i.stageTitles;
                                                     n40 = aInt2;
                                                 } else {
                                                     if (i.bBoolean) {
-                                                        h3 = i.bClassh;
+                                                        h3 = i.textSize0;
                                                         graphics4 = this.aClassGraphics;
-                                                        s7 = i.cClassStringArr[aInt2 + 10 - this.dKInt + 1];
+                                                        s7 = i.stageTitles[aInt2 + 10 - this.dKInt + 1];
                                                         n37 = 234;
-                                                        n38 = a.iInt;
+                                                        n38 = a_Config.iInt;
                                                         n39 = 40;
                                                         break Label_4743;
                                                     }
-                                                    h3 = i.bClassh;
+                                                    h3 = i.textSize0;
                                                     graphics4 = this.aClassGraphics;
-                                                    array = i.cClassStringArr;
+                                                    array = i.stageTitles;
                                                     n40 = aInt2 + 10 - this.dKInt + 1;
                                                 }
                                                 s7 = array[n40];
                                                 n37 = 8;
-                                                n38 = a.iInt;
+                                                n38 = a_Config.iInt;
                                                 n39 = 36;
                                             }
-                                            h3.bVoid(graphics4, s7, n37, n38, n39);
+                                            h3.drawTextWithFlags(graphics4, s7, n37, n38, n39);
                                             if (this.dVInt != this.dXInt || this.dWInt != this.dYInt) {
                                                 break Label_5087;
                                             }
                                             final int aInt3 = aInt(i.aLongArrArr[this.dVInt][this.dWInt], (byte) 6, (byte) 5);
-                                            int bInt = this.bInt(this.aAInt, aInt3);
-                                            final int cInt = this.cInt(this.aAInt, aInt3);
+                                            int bInt = this.bInt(this.crtWorldIndex, aInt3);
+                                            final int cInt = this.cInt(this.crtWorldIndex, aInt3);
                                             if (bInt > cInt) {
                                                 bInt = cInt;
                                             }
-                                            i.cClassStringBuffer.delete(0, i.cClassStringBuffer.length());
-                                            i.cClassStringBuffer.append(bInt);
-                                            i.cClassStringBuffer.append('/');
-                                            i.cClassStringBuffer.append(cInt);
-                                            i.aClassh.aVoid(i.cClassStringBuffer.toString());
-                                            final int n41 = h.aInt + 6 + 14;
+                                            i.crtWorldMapFileName.delete(0, i.crtWorldMapFileName.length());
+                                            i.crtWorldMapFileName.append(bInt);
+                                            i.crtWorldMapFileName.append('/');
+                                            i.crtWorldMapFileName.append(cInt);
+                                            i.textSize8.calculateStringSize(i.crtWorldMapFileName.toString());
+                                            final int n41 = h.stringWidth + 6 + 14;
                                             final int n42 = 37 + this.dVInt * 13 + 6;
                                             final int n43 = 73 + this.dWInt * 13 + 6;
                                             int n44 = n42 - (n41 >> 1);
@@ -5969,9 +6078,9 @@ public final class i extends Canvas implements Runnable {
                                                 n44 = 170;
                                             }
                                             aVoid(this.aClassGraphics, n44, n45 - 15, n41, 17, 37042, 0);
-                                            i.aClassh.bVoid(this.aClassGraphics, i.cClassStringBuffer.toString(), n44 + 2, n45 + 2 + 8, 20);
+                                            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.crtWorldMapFileName.toString(), n44 + 2, n45 + 2 + 8, 20);
                                             if (i.aClassfArr[17] != null) {
-                                                i.aClassfArr[17].aVoid(this.aClassGraphics, 10, n44 + n41 - 2 - 14, n45 + 2 - 1, 0);
+                                                i.aClassfArr[17].drawFrame(this.aClassGraphics, 10, n44 + n41 - 2 - 14, n45 + 2 - 1, 0);
                                             }
                                             break Label_5087;
                                         }
@@ -5987,12 +6096,12 @@ public final class i extends Canvas implements Runnable {
                         break;
                     }
                     case 18: {
-                        i.aClassfArr[17] = importTexturesWithPalettes("/ms.f", 0, 0, 0);
+                        i.aClassfArr[17] = loadSprite("/ms.f", 0, 0, 0);
                         this.PVoid();
                         this.avBoolean = true;
                         i.bByte = 25;
                         this.enInt = this.nInt;
-                        this.gClassString = i.aClassStringArr[125] + " " + aInt(i.iByteArr, 4) + " " + i.aClassStringArr[19];
+                        this.gClassString = i.texts[125] + " " + unpackUint16(i.iByteArr, 4) + " " + i.texts[19];
                     }
                     case 25: {
                         this.ayVoid();
@@ -6006,7 +6115,7 @@ public final class i extends Canvas implements Runnable {
                             this.QBoolean = false;
                             this.aClassGraphics.setColor(0);
                             this.aClassGraphics.fillRect(0, 0, 240, 320);
-                            i.aClassh.aVoid(this.aClassGraphics, aClassString(i.aClassStringArr[this.OBoolean ? 39 : 21]), 120, 160, 3);
+                            i.textSize8.drawText(this.aClassGraphics, aClassString(i.texts[this.OBoolean ? 39 : 21]), 120, 160, 3);
                             this.JVoid();
                             this.IVoid();
                             break;
@@ -6022,11 +6131,11 @@ public final class i extends Canvas implements Runnable {
                         break;
                     }
                 }
-                final h aClassh5 = i.aClassh;
+                final h aClassh5 = i.textSize8;
                 if (i.eqInt > 0) {
-                    aClassh5.aVoid(this.hClassString);
-                    final int bInt2 = h.bInt;
-                    final int aInt4 = h.aInt;
+                    aClassh5.calculateStringSize(this.hClassString);
+                    final int bInt2 = h.stringHeight;
+                    final int aInt4 = h.stringWidth;
                     if (this.erInt == -1) {
                         this.erInt = 240 - aInt4 >> 1;
                     }
@@ -6035,7 +6144,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     this.aClassGraphics.setClip(this.erInt - 6, this.esInt - 3, aInt4 + 12, bInt2 + 26 + 6);
                     aVoid(this.aClassGraphics, this.erInt - 6, this.esInt - 3, aInt4 + 12, bInt2 + 6, this.etInt, this.euInt);
-                    aClassh5.aVoid(this.aClassGraphics, this.hClassString, this.erInt, this.esInt + 26, 0);
+                    aClassh5.drawText(this.aClassGraphics, this.hClassString, this.erInt, this.esInt + 26, 0);
                 }
             } catch (Throwable t) {
             }
@@ -6065,11 +6174,11 @@ public final class i extends Canvas implements Runnable {
                 graphics.drawImage(i.textures[8][0], j + n, iInteger + n2, 0);
             }
         }
-        i.aClassfArr[10].aVoid(graphics, 0, this.zInt + n, this.AInt + n2, 0);
+        i.aClassfArr[10].drawFrame(graphics, 0, this.zInt + n, this.AInt + n2, 0);
         if (b) {
             for (int k = 0; k < 320; k += 24) {
                 for (int l = 0; l < 240; l += 24) {
-                    i.aClassfArr[17].aVoid(graphics, 16, l, k, 0);
+                    i.aClassfArr[17].drawFrame(graphics, 16, l, k, 0);
                 }
             }
         }
@@ -6082,9 +6191,9 @@ public final class i extends Canvas implements Runnable {
     private void AVoid() {
         if (this.avBoolean) {
             this.aVoid(this.aClassGraphics, false, this.YInt, this.ZInt);
-            i.aClassfArr[17].aVoid(this.aClassGraphics, 11, 120 + a.cIntArr[6] + this.YInt, 136 + a.cIntArr[7] + this.ZInt, 0);
+            i.aClassfArr[17].drawFrame(this.aClassGraphics, 11, 120 + a_Config.sealItemPosOffsets[6] + this.YInt, 136 + a_Config.sealItemPosOffsets[7] + this.ZInt, 0);
             for (int iInteger = 0; iInteger < 3; ++iInteger) {
-                i.aClassfArr[iInteger + 52].aVoid(this.aClassGraphics, 0, a.cIntArr[iInteger << 1] + 120 - this.GInt + this.YInt, a.cIntArr[(iInteger << 1) + 1] + 136 - this.HInt + this.ZInt, 0);
+                i.aClassfArr[iInteger + 52].drawFrame(this.aClassGraphics, 0, a_Config.sealItemPosOffsets[iInteger << 1] + 120 - this.GInt + this.YInt, a_Config.sealItemPosOffsets[(iInteger << 1) + 1] + 136 - this.HInt + this.ZInt, 0);
             }
         }
         switch (this.WInt) {
@@ -6093,7 +6202,7 @@ public final class i extends Canvas implements Runnable {
                     this.aClassGraphics.setColor(this.XInt);
                     this.aClassGraphics.fillRect(0, 0, 240, 320);
                     for (int j = 0; j < 3; ++j) {
-                        i.aClassfArr[j + 52].aVoid(this.aClassGraphics, 0, a.cIntArr[j << 1] + 120 - this.GInt, a.cIntArr[(j << 1) + 1] + 136 - this.HInt, 0);
+                        i.aClassfArr[j + 52].drawFrame(this.aClassGraphics, 0, a_Config.sealItemPosOffsets[j << 1] + 120 - this.GInt, a_Config.sealItemPosOffsets[(j << 1) + 1] + 136 - this.HInt, 0);
                     }
                     break;
                 }
@@ -6117,10 +6226,10 @@ public final class i extends Canvas implements Runnable {
             case 9:
             case 10: {
                 g.aVoid(this.aClassGraphics);
-                final String aClassString = aClassString(i.aClassStringArr[15] + "\n" + i.aClassStringArr[20]);
-                i.aClassh.aVoid(aClassString);
-                aVoid(this.aClassGraphics, (240 - h.aInt >> 1) - 3, (320 - h.bInt >> 1) - 3, h.aInt + 6, h.bInt + 6, 7096587, 0);
-                i.aClassh.aVoid(this.aClassGraphics, aClassString, 120, (320 - h.bInt >> 1) + 24, 17);
+                final String aClassString = aClassString(i.texts[15] + "\n" + i.texts[20]);
+                i.textSize8.calculateStringSize(aClassString);
+                aVoid(this.aClassGraphics, (240 - h.stringWidth >> 1) - 3, (320 - h.stringHeight >> 1) - 3, h.stringWidth + 6, h.stringHeight + 6, 7096587, 0);
+                i.textSize8.drawText(this.aClassGraphics, aClassString, 120, (320 - h.stringHeight >> 1) + 24, 17);
                 break;
             }
         }
@@ -6130,30 +6239,30 @@ public final class i extends Canvas implements Runnable {
         if (this.avBoolean || this.gBoolean) {
             this.aClassGraphics.setClip(0, 0, 240, 320);
             this.aVoid(this.aClassGraphics, false);
-            i.aClassfArr[17].aVoid(this.aClassGraphics, 11, 120 + a.cIntArr[6], 136 + a.cIntArr[7], 0);
+            i.aClassfArr[17].drawFrame(this.aClassGraphics, 11, 120 + a_Config.sealItemPosOffsets[6], 136 + a_Config.sealItemPosOffsets[7], 0);
             this.IVoid();
             this.JVoid();
-            i.aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[36], 218, 314, 10);
+            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.texts[36], 218, 314, 10);
             this.avBoolean = false;
         } else {
             this.aClassGraphics.setClip(this.sInt + 120, this.tInt + 136, 14, 22);
-            i.aClassfArr[10].aVoid(this.aClassGraphics, 0, this.zInt, this.AInt, 0);
+            i.aClassfArr[10].drawFrame(this.aClassGraphics, 0, this.zInt, this.AInt, 0);
         }
         if (this.BInt != 0) {
             this.gBoolean = false;
             this.avBoolean = true;
             for (int iInteger = 0; iInteger < this.BInt; ++iInteger) {
-                if (bBoolean(iInteger)) {
-                    i.aClassfArr[10].aVoid(this.aClassGraphics, iInteger + 1, this.zInt, this.AInt, 0);
+                if (isSealPositionUnlocked(iInteger)) {
+                    i.aClassfArr[10].drawFrame(this.aClassGraphics, iInteger + 1, this.zInt, this.AInt, 0);
                 }
             }
             this.aClassGraphics.setClip(0, 0, 240, 320);
             if (this.KInt < this.JInt) {
-                i.aClassfArr[9].aVoid(this.aClassGraphics, 5, this.KInt, a.cIntArr[this.BInt << 1] + 120 - 12, a.cIntArr[(this.BInt << 1) + 1] + 124, 0, 0, 0);
+                i.aClassfArr[9].drawAnimationFrame(this.aClassGraphics, 5, this.KInt, a_Config.sealItemPosOffsets[this.BInt << 1] + 120 - 12, a_Config.sealItemPosOffsets[(this.BInt << 1) + 1] + 124, 0, 0, 0);
                 ++this.KInt;
             } else {
                 if (this.yInt % this.xInt >= this.xInt >> 1) {
-                    i.aClassfArr[10].aVoid(this.aClassGraphics, this.BInt + 1, this.zInt, this.AInt, 0);
+                    i.aClassfArr[10].drawFrame(this.aClassGraphics, this.BInt + 1, this.zInt, this.AInt, 0);
                     ++this.CInt;
                 }
                 if (this.CInt >= 15) {
@@ -6169,7 +6278,7 @@ public final class i extends Canvas implements Runnable {
         } else {
             for (int j = 0; j < 3; ++j) {
                 if (i.aBooleanArr[j]) {
-                    i.aClassfArr[10].aVoid(this.aClassGraphics, j + 1, this.zInt, this.AInt, 0);
+                    i.aClassfArr[10].drawFrame(this.aClassGraphics, j + 1, this.zInt, this.AInt, 0);
                 }
             }
         }
@@ -6177,7 +6286,7 @@ public final class i extends Canvas implements Runnable {
             if (i.bBooleanArr[k]) {
                 final int n = k + 52;
                 if (this.DInt != k) {
-                    i.aClassfArr[n].aVoid(this.aClassGraphics, 0, a.cIntArr[k << 1] + 120 - this.GInt, a.cIntArr[(k << 1) + 1] + 136 - this.HInt, 0);
+                    i.aClassfArr[n].drawFrame(this.aClassGraphics, 0, a_Config.sealItemPosOffsets[k << 1] + 120 - this.GInt, a_Config.sealItemPosOffsets[(k << 1) + 1] + 136 - this.HInt, 0);
                 }
             }
         }
@@ -6185,9 +6294,9 @@ public final class i extends Canvas implements Runnable {
             this.avBoolean = true;
             final int dInt = this.DInt;
             final int n2 = dInt + 52;
-            final int n3 = a.cIntArr[dInt << 1] + 120;
+            final int n3 = a_Config.sealItemPosOffsets[dInt << 1] + 120;
             final int n5;
-            final int n4 = (n5 = a.cIntArr[(dInt << 1) + 1] + 136) - this.FInt;
+            final int n4 = (n5 = a_Config.sealItemPosOffsets[(dInt << 1) + 1] + 136) - this.FInt;
             final int n6 = n3 - this.EInt;
             Label_0677:
             {
@@ -6225,7 +6334,7 @@ public final class i extends Canvas implements Runnable {
                 }
                 this.EInt = n3;
             }
-            i.aClassfArr[n2].aVoid(this.aClassGraphics, 0, this.EInt - this.GInt, this.FInt - this.HInt, 0);
+            i.aClassfArr[n2].drawFrame(this.aClassGraphics, 0, this.EInt - this.GInt, this.FInt - this.HInt, 0);
             boolean b = false;
             Label_0946:
             {
@@ -6245,7 +6354,7 @@ public final class i extends Canvas implements Runnable {
                             b = true;
                             break Label_0946;
                         }
-                        i.aClassfArr[9].aVoid(this.aClassGraphics, 5, this.KInt, a.cIntArr[dInt << 1] + 120 - 12, a.cIntArr[(dInt << 1) + 1] + 124, 0, 0, 0);
+                        i.aClassfArr[9].drawAnimationFrame(this.aClassGraphics, 5, this.KInt, a_Config.sealItemPosOffsets[dInt << 1] + 120 - 12, a_Config.sealItemPosOffsets[(dInt << 1) + 1] + 124, 0, 0, 0);
                         ++this.KInt;
                     }
                 }
@@ -6264,27 +6373,27 @@ public final class i extends Canvas implements Runnable {
         }
         this.yInt %= this.xInt;
         this.aClassGraphics.setClip(this.qInt + 120, 136 + this.rInt, 14, 22);
-        i.aClassfArr[55].aVoid(this.aClassGraphics, 0, this.yInt, 120 + this.qInt, 136 + this.rInt, 0, 0, 0);
+        i.aClassfArr[55].drawAnimationFrame(this.aClassGraphics, 0, this.yInt, 120 + this.qInt, 136 + this.rInt, 0, 0, 0);
         ++this.yInt;
         if (this.gBoolean) {
             final String s = (c.aClassStringArr(this.bClassString, 220).length > 1) ? aClassString(this.bClassString + "\n" + this.cClassString) : (aClassString(this.bClassString) + this.cClassString);
-            i.aClassh.aVoid(s);
-            final int n7 = (240 - h.aInt >> 1) - 3;
-            final int n8 = 240 - (i.aClassh.aClassFont.getHeight() >> 1) - 3;
-            final int n9 = h.aInt + 6;
-            final int n10 = h.bInt + 3;
+            i.textSize8.calculateStringSize(s);
+            final int n7 = (240 - h.stringWidth >> 1) - 3;
+            final int n8 = 240 - (i.textSize8.font.getHeight() >> 1) - 3;
+            final int n9 = h.stringWidth + 6;
+            final int n10 = h.stringHeight + 3;
             this.aClassGraphics.setClip(n7, n8 - 15, n9, n10 + 20);
             aVoid(this.aClassGraphics, n7, n8 - 15, n9, n10, 7096587, 0);
-            i.aClassh.aVoid(this.aClassGraphics, s, 120, 240, 3);
+            i.textSize8.drawText(this.aClassGraphics, s, 120, 240, 3);
             this.gBoolean = false;
         }
     }
 
     private static void bVoid(final Graphics graphics, final boolean b) {
-        graphics.drawImage(i.bClassImage, 0, 0, 20);
-        graphics.drawImage(i.aClassImage, 0, 0, 20);
+        graphics.drawImage(i.splashBgGradientImage, 0, 0, 20);
+        graphics.drawImage(i.splashLogoImage, 0, 0, 20);
         if (b) {
-            graphics.drawImage(i.cClassImage, 120, 319, 33);
+            graphics.drawImage(i.splashCopyrightImage, 120, 319, 33);
         }
     }
 
@@ -6300,8 +6409,8 @@ public final class i extends Canvas implements Runnable {
         final int n7 = n * 24;
         final int n8 = n2 * 24;
         if (n7 >= n3 && n7 <= n5 && n8 >= n4 && n8 <= n6) {
-            final int n9 = i.aIntArrArr[n][n2] & 0xFF;
-            if (i.aByteArrArr[n][n2] < 80) {
+            final int n9 = i.crtStageForegrondLayer[n][n2] & 0xFF;
+            if (i.crtStagePlayerLayer[n][n2] < 80) {
                 if (n9 == 4 || n9 == 16 || n9 == 15) {
                     this.cVoid(n, n2);
                     return;
@@ -6332,33 +6441,33 @@ public final class i extends Canvas implements Runnable {
                 return 43;
             }
             case 22: {
-                i.aClassfArr[45].aInt = 0;
+                i.aClassfArr[45].paletteI = 0;
                 return 45;
             }
             case 23: {
-                i.aClassfArr[45].aInt = 1;
+                i.aClassfArr[45].paletteI = 1;
                 return 45;
             }
             case 4: {
                 return 56;
             }
             case 15: {
-                i.aClassfArr[57].aInt = 0;
+                i.aClassfArr[57].paletteI = 0;
                 return 57;
             }
             case 14: {
-                i.aClassfArr[57].aInt = 1;
+                i.aClassfArr[57].paletteI = 1;
                 return 57;
             }
             case 16: {
                 return 58;
             }
             case 2: {
-                i.aClassfArr[59].aInt = 0;
+                i.aClassfArr[59].paletteI = 0;
                 return 59;
             }
             case 3: {
-                i.aClassfArr[59].aInt = 1;
+                i.aClassfArr[59].paletteI = 1;
                 return 59;
             }
             case 1: {
@@ -6402,9 +6511,9 @@ public final class i extends Canvas implements Runnable {
                 if (this.bxInt >= ccInt) {
                     this.bxInt = 0;
                 }
-                if (this.bGInt >= 0 && this.bGInt < this.eInt && this.bHInt >= 0 && this.bHInt < this.fInt) {
-                    this.bIInt = i.aByteArrArr[this.bGInt][this.bHInt];
-                    this.bJInt = (i.aIntArrArr[this.bGInt][this.bHInt] & 0xFF);
+                if (this.bGInt >= 0 && this.bGInt < this.crtStageWidth && this.bHInt >= 0 && this.bHInt < this.crtStageHeight) {
+                    this.bIInt = i.crtStagePlayerLayer[this.bGInt][this.bHInt];
+                    this.bJInt = (i.crtStageForegrondLayer[this.bGInt][this.bHInt] & 0xFF);
                     if (this.bIInt < 80) {
                         bClassGraphics.drawImage(i.textures[8][0], this.bxInt, this.byInt, 0);
                     }
@@ -6456,7 +6565,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     if (this.aJInt != -1) {
                         if (i.textures[this.aJInt] == null) {
-                            i.aClassfArr[aInt(this.aJInt)].aVoid(bClassGraphics, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                            i.aClassfArr[aInt(this.aJInt)].drawFrame(bClassGraphics, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                         } else {
                             bClassGraphics.drawImage(i.textures[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                         }
@@ -6476,7 +6585,7 @@ public final class i extends Canvas implements Runnable {
                             } else {
                                 switch (this.bIInt) {
                                     case 10: {
-                                        i.aClassfArr[16].aVoid(bClassGraphics, 0, this.bxInt, this.byInt, 0);
+                                        i.aClassfArr[16].drawFrame(bClassGraphics, 0, this.bxInt, this.byInt, 0);
                                         break Label_0854;
                                     }
                                     case 1: {
@@ -6521,7 +6630,7 @@ public final class i extends Canvas implements Runnable {
                         }
                         if (this.aLInt != -1) {
                             if (i.textures[this.aLInt] == null) {
-                                i.aClassfArr[aInt(this.aLInt)].aVoid(bClassGraphics, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                i.aClassfArr[aInt(this.aLInt)].drawFrame(bClassGraphics, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             } else {
                                 bClassGraphics.drawImage(i.textures[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             }
@@ -6535,10 +6644,10 @@ public final class i extends Canvas implements Runnable {
                     if (this.kByte == 2) {
                         graphics = bClassGraphics;
                         if (i.aClassfArr[10] == null) {
-                            i.aClassfArr[10] = importTexturesWithPalettes("/mmv.f", 0, 0, 0);
+                            i.aClassfArr[10] = loadSprite("/mmv.f", 0, 0, 0);
                         }
                         if (this.bGInt >= 60 && this.bGInt < 65 && this.bHInt >= 2 && this.bHInt < 7) {
-                            i.aClassfArr[10].aVoid(graphics, 4 + (this.bHInt - 2) * 5 + this.bGInt - 60, this.bxInt, this.byInt, 0);
+                            i.aClassfArr[10].drawFrame(graphics, 4 + (this.bHInt - 2) * 5 + this.bGInt - 60, this.bxInt, this.byInt, 0);
                         }
                     }
                 }
@@ -6726,7 +6835,7 @@ public final class i extends Canvas implements Runnable {
             Image[] array;
             int n39;
             int n40;
-            f f;
+            f_Sprite f;
             i i12;
             int blInt6;
             int n41;
@@ -6735,13 +6844,13 @@ public final class i extends Canvas implements Runnable {
             int n44;
             int n45;
             int n46;
-            f f2;
+            f_Sprite f2;
             Graphics graphics4;
             int n48;
             int n49;
             int n50;
             int n51;
-            f f3;
+            f_Sprite f3;
             byte b4;
             int n52;
             short blInt7;
@@ -6773,9 +6882,9 @@ public final class i extends Canvas implements Runnable {
             for (int j = -1; j < 12; ++j) {
                 this.bGInt = j + this.cIInt;
                 this.bHInt = iInteger + this.cJInt;
-                if (this.bGInt >= 0 && this.bGInt < this.eInt && this.bHInt >= 0 && this.bHInt < this.fInt) {
-                    this.bIInt = i.aByteArrArr[this.bGInt][this.bHInt];
-                    this.bJInt = (i.aIntArrArr[this.bGInt][this.bHInt] & 0xFF);
+                if (this.bGInt >= 0 && this.bGInt < this.crtStageWidth && this.bHInt >= 0 && this.bHInt < this.crtStageHeight) {
+                    this.bIInt = i.crtStagePlayerLayer[this.bGInt][this.bHInt];
+                    this.bJInt = (i.crtStageForegrondLayer[this.bGInt][this.bHInt] & 0xFF);
                     this.bxInt = j * 24 - this.cKInt;
                     this.byInt = iInteger * 24 - this.cLInt;
                     this.CVoid();
@@ -6790,18 +6899,18 @@ public final class i extends Canvas implements Runnable {
                                         break;
                                     }
                                     case 34: {
-                                        i.aClassfArr[27].aVoid(graphics3, 2, 0, this.bxInt, this.byInt, 0, 0, 0);
+                                        i.aClassfArr[27].drawAnimationFrame(graphics3, 2, 0, this.bxInt, this.byInt, 0, 0, 0);
                                         break Label_1934;
                                     }
                                     case 14:
                                     case 33: {
                                         bjInt = this.bJInt;
-                                        if ((n17 = i.aIntArrArr[this.bGInt][this.bHInt] >> 8) == 255) {
+                                        if ((n17 = i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8) == 255) {
                                             n17 = 0;
                                         }
                                         n18 = ((14 == bjInt) ? 8 : 22);
                                         if (i.aClassfArr[n18] != null) {
-                                            i.aClassfArr[n18].aVoid(this.aClassGraphics, 0, n17, this.bxInt, this.byInt, 0, 0, 0);
+                                            i.aClassfArr[n18].drawAnimationFrame(this.aClassGraphics, 0, n17, this.bxInt, this.byInt, 0, 0, 0);
                                         }
                                         break Label_1934;
                                     }
@@ -6815,7 +6924,7 @@ public final class i extends Canvas implements Runnable {
                                             if (iBoolean(bgInt, bhInt) && i.bByteArrArr[bgInt][bhInt] <= 12) {
                                                 l = this;
                                                 boInt = -(i.bByteArrArr[bgInt][bhInt] - 12);
-                                            } else if (this.cBoolean(bgInt, bhInt)) {
+                                            } else if (this.isPlayerAtPosition(bgInt, bhInt)) {
                                                 if ((this.kInt & 0x1000) == 0x0) {
                                                     if (this.jInt > 12) {
                                                         break Label_1272;
@@ -6827,11 +6936,11 @@ public final class i extends Canvas implements Runnable {
                                                     boInt = 12;
                                                 }
                                             } else {
-                                                if (this.cBoolean(bgInt - 1, bhInt)) {
+                                                if (this.isPlayerAtPosition(bgInt - 1, bhInt)) {
                                                     if (this.bQInt != 4 || this.jInt <= 12) {
                                                         break Label_1272;
                                                     }
-                                                } else if (!this.cBoolean(bgInt + 1, bhInt) || this.bQInt != 2 || this.jInt <= 12) {
+                                                } else if (!this.isPlayerAtPosition(bgInt + 1, bhInt) || this.bQInt != 2 || this.jInt <= 12) {
                                                     break Label_1272;
                                                 }
                                                 l = this;
@@ -6867,20 +6976,20 @@ public final class i extends Canvas implements Runnable {
                                     case 7: {
                                         bgInt2 = this.bGInt;
                                         bhInt2 = this.bHInt;
-                                        if ((n19 = ((i.aIntArrArr[bgInt2][bhInt2] >> 8 & 0xF0) >> 4) - 1) < 0) {
+                                        if ((n19 = ((i.crtStageForegrondLayer[bgInt2][bhInt2] >> 8 & 0xF0) >> 4) - 1) < 0) {
                                             n19 = 0;
                                         }
-                                        if ((i.aIntArrArr[bgInt2][bhInt2 - 1] & 0xFF) != 0x9 && (i.aIntArrArr[bgInt2][bhInt2 - 1] & 0xFF) != 0x8) {
-                                            i.aClassfArr[56].aVoid(this.aClassGraphics, n19, this.bxInt, this.byInt, 0);
+                                        if ((i.crtStageForegrondLayer[bgInt2][bhInt2 - 1] & 0xFF) != 0x9 && (i.crtStageForegrondLayer[bgInt2][bhInt2 - 1] & 0xFF) != 0x8) {
+                                            i.aClassfArr[56].drawFrame(this.aClassGraphics, n19, this.bxInt, this.byInt, 0);
                                         }
                                         this.aJInt = 4;
                                         this.aKInt = (byte) (n19 + 3);
                                         break Label_1934;
                                     }
                                     case 4: {
-                                        if (i.aIntArrArr[this.bGInt][this.bHInt] >> 8 >= this.aCInt) {
+                                        if (i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8 >= this.aCInt) {
                                             this.aJInt = 20;
-                                            if (i.aIntArrArr[this.bGInt][this.bHInt] >> 8 >= this.aCInt) {
+                                            if (i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8 >= this.aCInt) {
                                                 m = this;
                                                 akInt = 0 + (i.aSInt >> 1) % 7;
                                             } else {
@@ -6894,7 +7003,7 @@ public final class i extends Canvas implements Runnable {
                                     case 5:
                                     case 28: {
                                         this.aJInt = 11;
-                                        if ((this.aAInt == 0 && (this.aBInt == 4 || this.aBInt == 7)) || (this.aAInt == 1 && this.aBInt == 8) || (this.aAInt == 2 && (this.aBInt == 1 || this.aBInt == 2 || this.aBInt == 6 || this.aBInt == 7))) {
+                                        if ((this.crtWorldIndex == 0 && (this.crtStageI == 4 || this.crtStageI == 7)) || (this.crtWorldIndex == 1 && this.crtStageI == 8) || (this.crtWorldIndex == 2 && (this.crtStageI == 1 || this.crtStageI == 2 || this.crtStageI == 6 || this.crtStageI == 7))) {
                                             this.aKInt = 1;
                                             break Label_1934;
                                         }
@@ -6903,7 +7012,7 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     case 8:
                                     case 9: {
-                                        n20 = i.aIntArrArr[this.bGInt][this.bHInt] >> 8;
+                                        n20 = i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8;
                                         this.aJInt = ((this.bJInt == 9) ? 22 : 23);
                                         if ((n20 & 0x200) != 0x0) {
                                             i2 = this;
@@ -6919,14 +7028,14 @@ public final class i extends Canvas implements Runnable {
                                         break Label_1934;
                                     }
                                     case 3: {
-                                        if ((n21 = (i.aIntArrArr[this.bGInt][this.bHInt] >> 8) - 1) >= 0) {
+                                        if ((n21 = (i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8) - 1) >= 0) {
                                             this.aJInt = 12;
                                             this.aKInt = (byte) n21;
                                         }
                                         break Label_1934;
                                     }
                                     case 37: {
-                                        i.aClassfArr[27].aVoid(graphics3, 2, 0, this.bxInt, this.byInt, 0, 0, 0);
+                                        i.aClassfArr[27].drawAnimationFrame(graphics3, 2, 0, this.bxInt, this.byInt, 0, 0, 0);
                                         k = this;
                                         break;
                                     }
@@ -6938,7 +7047,7 @@ public final class i extends Canvas implements Runnable {
                             }
                             if (this.aJInt != -1) {
                                 if (i.textures[this.aJInt] == null) {
-                                    i.aClassfArr[aInt(this.aJInt)].aVoid(graphics3, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                    i.aClassfArr[aInt(this.aJInt)].drawFrame(graphics3, this.aKInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                                 } else {
                                     graphics3.drawImage(i.textures[this.aJInt][this.aKInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                                 }
@@ -6950,7 +7059,7 @@ public final class i extends Canvas implements Runnable {
                                     break Label_2138;
                                 }
                                 if (this.bKInt != -1) {
-                                    i.bClassf.aVoid(graphics3, this.bKInt, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0, 0, 0);
+                                    i.bClassf.drawAnimationFrame(graphics3, this.bKInt, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0, 0, 0);
                                     this.bKInt = -1;
                                 }
                                 i.bClassf = null;
@@ -6977,7 +7086,7 @@ public final class i extends Canvas implements Runnable {
                                             this.bNInt = b * i.gByteArr[n25];
                                             this.bOInt = b * i.gByteArr[n25 + 8];
                                             i.bClassf = i.aClassfArr[38];
-                                            if ((((n26 = (n24 & 0x7000) >> 12) == 2 || n26 == 4 || n25 == 2 || n25 == 4) && i.aByteArrArr[bgInt3 - 1][bhInt3] >= 0 && i.aByteArrArr[bgInt3 + 1][bhInt3] >= 0) || ((n26 == 1 || n26 == 3 || n25 == 1 || n25 == 3) && i.aByteArrArr[bgInt3][bhInt3 - 1] >= 0 && i.aByteArrArr[bgInt3][bhInt3 + 1] >= 0)) {
+                                            if ((((n26 = (n24 & 0x7000) >> 12) == 2 || n26 == 4 || n25 == 2 || n25 == 4) && i.crtStagePlayerLayer[bgInt3 - 1][bhInt3] >= 0 && i.crtStagePlayerLayer[bgInt3 + 1][bhInt3] >= 0) || ((n26 == 1 || n26 == 3 || n25 == 1 || n25 == 3) && i.crtStagePlayerLayer[bgInt3][bhInt3 - 1] >= 0 && i.crtStagePlayerLayer[bgInt3][bhInt3 + 1] >= 0)) {
                                                 this.bKInt = 1;
                                                 i4 = this;
                                                 blInt = 0;
@@ -6991,7 +7100,7 @@ public final class i extends Canvas implements Runnable {
                                                 }
                                                 i5.bKInt = bkInt;
                                                 i4 = this;
-                                                blInt = (i.aSInt >> 1) % i.bClassf.aInt(this.bKInt);
+                                                blInt = (i.aSInt >> 1) % i.bClassf.getAnimationFrameCount(this.bKInt);
                                             }
                                             i4.bLInt = blInt;
                                             this.FVoid();
@@ -7069,10 +7178,10 @@ public final class i extends Canvas implements Runnable {
                                                         }
                                                         default: {
                                                             this.bLInt = aInt(i.bClassf, this.bKInt, i.bByteArrArr[this.bGInt][this.bHInt]);
-                                                            n30 = (i.bClassf.aShortArr[this.bKInt] + this.bLInt) * 5;
-                                                            this.bNInt = i.bClassf.cByteArr[n30 + 2];
+                                                            n30 = (i.bClassf.animationFirstAnimationFrameIndices[this.bKInt] + this.bLInt) * 5;
+                                                            this.bNInt = i.bClassf.animationFrames[n30 + 2];
                                                             i8 = this;
-                                                            boInt2 = i.bClassf.cByteArr[n30 + 3];
+                                                            boInt2 = i.bClassf.animationFrames[n30 + 3];
                                                             break Label_3107;
                                                         }
                                                     }
@@ -7088,16 +7197,16 @@ public final class i extends Canvas implements Runnable {
                                             this.bKInt = (i.bIntArrArr[this.bGInt][this.bHInt] & 0x1F);
                                             if (this.bKInt == 8 || this.bKInt == 9) {
                                                 this.bLInt = 0;
-                                                this.bNInt = i.bClassf.cByteArr[i.bClassf.aShortArr[this.bKInt] * 5 + 2];
+                                                this.bNInt = i.bClassf.animationFrames[i.bClassf.animationFirstAnimationFrameIndices[this.bKInt] * 5 + 2];
                                                 i10 = this;
                                                 boInt3 = (byte) (-i.bByteArrArr[this.bGInt][this.bHInt]);
                                             } else {
                                                 aInt = aInt(i.bClassf, this.bKInt, (i.bIntArrArr[this.bGInt][this.bHInt] & 0x1FE0) >> 5);
                                                 this.bLInt = aInt;
-                                                n31 = (i.bClassf.aShortArr[this.bKInt] + aInt) * 5;
-                                                this.bNInt = i.bClassf.cByteArr[n31 + 2];
+                                                n31 = (i.bClassf.animationFirstAnimationFrameIndices[this.bKInt] + aInt) * 5;
+                                                this.bNInt = i.bClassf.animationFrames[n31 + 2];
                                                 i10 = this;
-                                                boInt3 = i.bClassf.cByteArr[n31 + 3];
+                                                boInt3 = i.bClassf.animationFrames[n31 + 3];
                                             }
                                             i10.bOInt = boInt3;
                                             break Label_5612;
@@ -7110,14 +7219,14 @@ public final class i extends Canvas implements Runnable {
                                             if (this.bKInt == 10) {
                                                 n34 = n33;
                                                 blInt4 = 0;
-                                                a = i.bClassf.aInt(this.bKInt);
+                                                a = i.bClassf.getAnimationFrameCount(this.bKInt);
                                                 n35 = 0;
                                                 while (true) {
                                                     n36 = n35;
                                                     if (n34 <= 0) {
                                                         break;
                                                     }
-                                                    n34 -= i.bClassf.aInt(this.bKInt, n36);
+                                                    n34 -= i.bClassf.getAnimationFrameTime(this.bKInt, n36);
                                                     blInt4 = n36;
                                                     n35 = (n36 + 1) % a;
                                                 }
@@ -7125,9 +7234,9 @@ public final class i extends Canvas implements Runnable {
                                             } else {
                                                 aInt2 = aInt(i.bClassf, this.bKInt, n33);
                                                 this.bLInt = aInt2;
-                                                n37 = (i.bClassf.aShortArr[this.bKInt] + aInt2) * 5;
-                                                this.bNInt = i.bClassf.cByteArr[n37 + 2];
-                                                this.bOInt = i.bClassf.cByteArr[n37 + 3];
+                                                n37 = (i.bClassf.animationFirstAnimationFrameIndices[this.bKInt] + aInt2) * 5;
+                                                this.bNInt = i.bClassf.animationFrames[n37 + 2];
+                                                this.bOInt = i.bClassf.animationFrames[n37 + 3];
                                             }
                                             this.FVoid();
                                             break Label_5612;
@@ -7145,7 +7254,7 @@ public final class i extends Canvas implements Runnable {
                                                     }
                                                     case 1: {
                                                         i11 = this;
-                                                        blInt5 = (i.bByteArrArr[this.bGInt][this.bHInt] >> 1) % i.aClassfArr[27].aInt(1);
+                                                        blInt5 = (i.bByteArrArr[this.bGInt][this.bHInt] >> 1) % i.aClassfArr[27].getAnimationFrameCount(1);
                                                         break;
                                                     }
                                                     default: {
@@ -7168,16 +7277,16 @@ public final class i extends Canvas implements Runnable {
                                             this.aClassGraphics.drawImage(array[0], n38 + 3, byInt + 7, 0);
                                             n39 = 0;
                                             if (this.aaInt < 10) {
-                                                n39 = i.aClassfArr[0].aClassImageArrArr[0][0].getWidth() >> 1;
+                                                n39 = i.aClassfArr[0].images[0][0].getWidth() >> 1;
                                                 ++n39;
                                             }
-                                            aVoid(this.aClassGraphics, n38 + 19 - n39, byInt + 13, this.aaInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+                                            aVoid(this.aClassGraphics, n38 + 19 - n39, byInt + 13, this.aaInt, i.aClassfArr[0].images[0], 0);
                                             break Label_5612;
                                         }
                                         case 36: {
                                             n40 = ((i.bIntArrArr[this.bGInt][this.bHInt] == 1) ? 1 : 0);
                                             f = i.aClassfArr[5];
-                                            f.aVoid(this.aClassGraphics, n40, (i.aSInt >> 1) % f.aInt(n40), this.bxInt, this.byInt, 0, 0, 0);
+                                            f.drawAnimationFrame(this.aClassGraphics, n40, (i.aSInt >> 1) % f.getAnimationFrameCount(n40), this.bxInt, this.byInt, 0, 0, 0);
                                             break Label_5612;
                                         }
                                         case 18: {
@@ -7230,26 +7339,26 @@ public final class i extends Canvas implements Runnable {
                                             }
                                             n46 = n45;
                                             for (int n47 = 0; n47 < n44; ++n47) {
-                                                i.aClassfArr[11].aVoid(this.aClassGraphics, n42 + n47 * n41, this.bxInt + 3, this.byInt + n41 * (n46 - n47 * 24), 0);
+                                                i.aClassfArr[11].drawFrame(this.aClassGraphics, n42 + n47 * n41, this.bxInt + 3, this.byInt + n41 * (n46 - n47 * 24), 0);
                                             }
                                             if (n41 == 1) {
                                                 f2 = i.aClassfArr[42];
                                                 graphics4 = this.aClassGraphics;
-                                                n48 = i.aByteArrArr[this.bGInt][this.bHInt - 1] - 80;
+                                                n48 = i.crtStagePlayerLayer[this.bGInt][this.bHInt - 1] - 80;
                                                 n49 = this.bxInt;
                                                 n50 = this.byInt - 24;
                                             } else {
                                                 f2 = i.aClassfArr[42];
                                                 graphics4 = this.aClassGraphics;
-                                                n48 = i.aByteArrArr[this.bGInt][this.bHInt + 1] - 80;
+                                                n48 = i.crtStagePlayerLayer[this.bGInt][this.bHInt + 1] - 80;
                                                 n49 = this.bxInt;
                                                 n50 = this.byInt + 24;
                                             }
-                                            f2.aVoid(graphics4, n48, n49, n50, 0);
+                                            f2.drawFrame(graphics4, n48, n49, n50, 0);
                                             break Label_5612;
                                         }
                                         case 16: {
-                                            if (i.aByteArrArr[this.bGInt][this.bHInt + 1] != 16) {
+                                            if (i.crtStagePlayerLayer[this.bGInt][this.bHInt + 1] != 16) {
                                                 n51 = i.bIntArrArr[this.bGInt][this.bHInt];
                                                 f3 = (i.bClassf = i.aClassfArr[1]);
                                                 b4 = i.bByteArrArr[this.bGInt][this.bHInt];
@@ -7257,11 +7366,11 @@ public final class i extends Canvas implements Runnable {
                                                 blInt7 = 0;
                                                 this.bKInt = (((n51 & 0x7) == 0x4) ? 1 : 0);
                                                 if (b4 != 0) {
-                                                    for (short n53 = 0; n52 > 0; n52 -= f3.aInt(this.bKInt, (int) n53), blInt7 = n53, ++n53) {
+                                                    for (short n53 = 0; n52 > 0; n52 -= f3.getAnimationFrameTime(this.bKInt, (int) n53), blInt7 = n53, ++n53) {
                                                     }
                                                 }
                                                 this.bLInt = blInt7;
-                                                this.bNInt = f3.cByteArr[(f3.aShortArr[this.bKInt] + blInt7) * 5 + 2];
+                                                this.bNInt = f3.animationFrames[(f3.animationFirstAnimationFrameIndices[this.bKInt] + blInt7) * 5 + 2];
                                             }
                                             break Label_5612;
                                         }
@@ -7287,7 +7396,7 @@ public final class i extends Canvas implements Runnable {
                                                 if (n55 != 3) {
                                                     n57 = (asInt2 >> 1) % 5;
                                                     this.aClassGraphics.drawImage(i.textures[10][n57 + 8], this.bxInt + 24 - 12 + this.bNInt + n57 * 3, this.byInt + (this.bOInt + 24), 36);
-                                                    if ((asInt2 >> 1 & 0x1) == 0x0 && i.aByteArrArr[this.bGInt - 1][this.bHInt] >= 0) {
+                                                    if ((asInt2 >> 1 & 0x1) == 0x0 && i.crtStagePlayerLayer[this.bGInt - 1][this.bHInt] >= 0) {
                                                         --this.bNInt;
                                                         ++this.bOInt;
                                                     }
@@ -7312,7 +7421,7 @@ public final class i extends Canvas implements Runnable {
                                             i13.bLInt = blInt8;
                                             this.aClassGraphics.drawLine(bxInt2, this.byInt + 12, n58, this.byInt + 12);
                                             if (b6 > 0) {
-                                                i.aClassbArr[0].aClassf.bVoid(this.aClassGraphics, this.bLInt, n58, this.byInt + 12 - 2, 0);
+                                                i.aClassbArr[0].sprite.drawModule(this.aClassGraphics, this.bLInt, n58, this.byInt + 12 - 2, 0);
                                             }
                                             break Label_5612;
                                         }
@@ -7473,7 +7582,7 @@ public final class i extends Canvas implements Runnable {
                         }
                         if (this.aLInt != -1) {
                             if (i.textures[this.aLInt] == null) {
-                                i.aClassfArr[aInt(this.aLInt)].aVoid(graphics3, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
+                                i.aClassfArr[aInt(this.aLInt)].drawFrame(graphics3, this.aMInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             } else {
                                 graphics3.drawImage(i.textures[this.aLInt][this.aMInt], this.bxInt + this.bNInt, this.byInt + this.bOInt, this.bPInt);
                             }
@@ -7491,10 +7600,10 @@ public final class i extends Canvas implements Runnable {
                                 this.cqInt = this.byInt + this.bOInt;
                             }
                             if (this.bKInt != -1) {
-                                i.bClassf.aVoid(graphics3, this.bKInt, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0, 0, 0);
+                                i.bClassf.drawAnimationFrame(graphics3, this.bKInt, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0, 0, 0);
                                 this.bKInt = -1;
                             } else {
-                                i.bClassf.aVoid(graphics3, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0);
+                                i.bClassf.drawFrame(graphics3, this.bLInt, this.bxInt + this.bNInt, this.byInt + this.bOInt, 0);
                             }
                             i.bClassf = null;
                             this.bMInt = 0;
@@ -7520,12 +7629,12 @@ public final class i extends Canvas implements Runnable {
                     }
                     final int n64 = i.aByteArr[n63 << 1] * 24 - this.aInt;
                     final int n65 = i.aByteArr[(n63 << 1) + 1] * 24 - this.bInt;
-                    f f4;
+                    f_Sprite f4;
                     Graphics graphics5;
                     int n66;
                     int aInt3;
                     if (i.cByteArr[n63] < 0) {
-                        final f f5;
+                        final f_Sprite f5;
                         f4 = (f5 = i.aClassfArr[2]);
                         graphics5 = aClassGraphics;
                         n66 = 0;
@@ -7536,7 +7645,7 @@ public final class i extends Canvas implements Runnable {
                         n66 = i.cByteArr[n63];
                         aInt3 = i.bByteArr[n63];
                     }
-                    f4.aVoid(graphics5, n66, aInt3, n64, n65, 0, 0, 0);
+                    f4.drawAnimationFrame(graphics5, n66, aInt3, n64, n65, 0, 0, 0);
                     n62 = (adInt = (++n63 & 0x7));
                 }
             }
@@ -7555,7 +7664,7 @@ public final class i extends Canvas implements Runnable {
                 for (int n69 = 0; n69 < 12; ++n69) {
                     final int n70 = n69 + this.aInt / 24;
                     final int n71 = n68 + this.bInt / 24;
-                    if (n70 >= 0 && n70 < this.eInt && n71 >= 0 && n71 < this.fInt) {
+                    if (n70 >= 0 && n70 < this.crtStageWidth && n71 >= 0 && n71 < this.crtStageHeight) {
                         final int n72 = i.eIntArrArr[n70][n71];
                         final int n73 = n69 * 24 - n67;
                         final int n74 = n68 * 24 - clInt;
@@ -7580,13 +7689,13 @@ public final class i extends Canvas implements Runnable {
                                         final int n77;
                                         final int n76 = (((n77 = (aInt4 = aInt(n70, n71, n72, b8)) >> 1) == 7) ? (i.aSInt >> 3) : i.aSInt) & 0x1;
                                         if (n77 == 15) {
-                                            i.dClassf.aVoid(aClassGraphics2, aInt4 + this.cBInt, n73 + b9 - 8, n74 + (b8 << 3) + 8, 36);
+                                            i.dClassf.drawFrame(aClassGraphics2, aInt4 + this.cBInt, n73 + b9 - 8, n74 + (b8 << 3) + 8, 36);
                                             ++this.cBInt;
                                             if (this.cBInt > 2) {
                                                 this.cBInt = 0;
                                             }
                                         } else {
-                                            f f6;
+                                            f_Sprite f6;
                                             Graphics graphics6;
                                             int n78;
                                             int n79;
@@ -7599,7 +7708,7 @@ public final class i extends Canvas implements Runnable {
                                                 n80 = n74;
                                             } else {
                                                 if (n77 == 8 && b8 == 0 && i.eIntArrArr[n70][n71 - 1] > 0) {
-                                                    i.dClassf.aVoid(aClassGraphics2, 33, n73 + b9, n74, 20);
+                                                    i.dClassf.drawFrame(aClassGraphics2, 33, n73 + b9, n74, 20);
                                                     b8 = 3;
                                                     break Label_6562;
                                                 }
@@ -7609,7 +7718,7 @@ public final class i extends Canvas implements Runnable {
                                                 n79 = n73 + b9;
                                                 n80 = n74 + (b8 << 3);
                                             }
-                                            f6.aVoid(graphics6, n78, n79, n80, 20);
+                                            f6.drawFrame(graphics6, n78, n79, n80, 20);
                                             this.CVoid();
                                         }
                                     }
@@ -7631,15 +7740,15 @@ public final class i extends Canvas implements Runnable {
             for (int n82 = -1; n82 < 12; ++n82) {
                 final int n83 = n82 + this.cIInt;
                 final int n84 = n81 + this.cJInt;
-                if (n83 >= 0 && n83 < this.eInt && n84 >= 0 && n84 < this.fInt) {
-                    final int n85 = i.aIntArrArr[n83][n84] & 0xFF;
-                    final byte b10 = i.aByteArrArr[n83][n84];
+                if (n83 >= 0 && n83 < this.crtStageWidth && n84 >= 0 && n84 < this.crtStageHeight) {
+                    final int n85 = i.crtStageForegrondLayer[n83][n84] & 0xFF;
+                    final byte b10 = i.crtStagePlayerLayer[n83][n84];
                     if (n85 < 38 || n85 >= 80) {
                         final int n86 = n82 * 24 - this.cKInt;
                         final int n87 = n81 * 24 - this.cLInt;
                         Label_7042:
                         {
-                            f f7;
+                            f_Sprite f7;
                             Graphics graphics7;
                             int n89;
                             int n90;
@@ -7648,34 +7757,34 @@ public final class i extends Canvas implements Runnable {
                                 f7 = i.aClassfArr[3];
                                 graphics7 = aClassGraphics;
                                 n89 = n88;
-                                n90 = (asInt >> 2) % (i.aClassfArr[3].bByteArr[n88] & 0xFF);
+                                n90 = (asInt >> 2) % (i.aClassfArr[3].animationAnimationFrameCounts[n88] & 0xFF);
                             } else {
                                 switch (n85) {
                                     case 36: {
-                                        i.aClassfArr[20].aVoid(aClassGraphics, 0, (0 + ((i.aIntArrArr[n83][n84] >> 8) - 1) * 7) / 16, n86, n87, 0, 0, 0);
+                                        i.aClassfArr[20].drawAnimationFrame(aClassGraphics, 0, (0 + ((i.crtStageForegrondLayer[n83][n84] >> 8) - 1) * 7) / 16, n86, n87, 0, 0, 0);
                                         break;
                                     }
                                     case 31: {
-                                        final int n91 = i.aIntArrArr[n83][n84] >> 8;
-                                        final f f8 = i.aClassfArr[15];
-                                        f8.aVoid(this.aClassGraphics, n91, (i.aSInt >> 1) % (f8.bByteArr[n91] & 0xFF), n86, n87, 0, 0, 0);
+                                        final int n91 = i.crtStageForegrondLayer[n83][n84] >> 8;
+                                        final f_Sprite f8 = i.aClassfArr[15];
+                                        f8.drawAnimationFrame(this.aClassGraphics, n91, (i.aSInt >> 1) % (f8.animationAnimationFrameCounts[n91] & 0xFF), n86, n87, 0, 0, 0);
                                         break;
                                     }
                                     case 32: {
-                                        i.aClassfArr[16].aVoid(this.aClassGraphics, 0, i.aIntArrArr[n83][n84] >> 8 & 0xFF, n86, n87, 0, 0, 0);
+                                        i.aClassfArr[16].drawAnimationFrame(this.aClassGraphics, 0, i.crtStageForegrondLayer[n83][n84] >> 8 & 0xFF, n86, n87, 0, 0, 0);
                                         break;
                                     }
                                     default: {
                                         final byte b11;
                                         if ((b11 = (byte) (n85 - 80)) >= 0) {
-                                            i.aClassfArr[42].aVoid(aClassGraphics, (int) b11, n86, n87, 0);
+                                            i.aClassfArr[42].drawFrame(aClassGraphics, (int) b11, n86, n87, 0);
                                             break;
                                         }
                                         break;
                                     }
                                 }
                                 final int n92;
-                                if ((n92 = (i.aIntArrArr[n83][n84] & 0xF0000000) >> 28) <= 0) {
+                                if ((n92 = (i.crtStageForegrondLayer[n83][n84] & 0xF0000000) >> 28) <= 0) {
                                     break Label_7042;
                                 }
                                 f7 = i.aClassfArr[13];
@@ -7683,17 +7792,17 @@ public final class i extends Canvas implements Runnable {
                                 n89 = 0;
                                 n90 = n92;
                             }
-                            f7.aVoid(graphics7, n89, n90, n86, n87, 0, 0, 0);
+                            f7.drawAnimationFrame(graphics7, n89, n90, n86, n87, 0, 0, 0);
                         }
                         if (b10 == 54) {
-                            i.aClassfArr[7].aVoid(aClassGraphics, 0, aInt(i.aClassfArr[7], 0, i.bIntArrArr[n83][n84]), n86, n87, 0, 0, 0);
+                            i.aClassfArr[7].drawAnimationFrame(aClassGraphics, 0, aInt(i.aClassfArr[7], 0, i.bIntArrArr[n83][n84]), n86, n87, 0, 0, 0);
                         }
                     }
                 }
             }
         }
         if (this.ABoolean) {
-            aClassGraphics.drawImage(i.aClassfArr[13].aClassImageArrArr[0][0 + this.bDInt], (this.bBInt - this.cIInt) * 24 - this.cKInt + this.bzInt, (this.bCInt - this.cJInt + 1) * 24 - this.cLInt + this.bAInt, 0);
+            aClassGraphics.drawImage(i.aClassfArr[13].images[0][0 + this.bDInt], (this.bBInt - this.cIInt) * 24 - this.cKInt + this.bzInt, (this.bCInt - this.cJInt + 1) * 24 - this.cLInt + this.bAInt, 0);
             this.ABoolean = false;
         }
         if (this.aDInt != -1) {
@@ -7710,12 +7819,12 @@ public final class i extends Canvas implements Runnable {
                 }
                 final int n95 = i.aByteArr[n94 << 1] * 24 - this.aInt;
                 final int n96 = i.aByteArr[(n94 << 1) + 1] * 24 - this.bInt;
-                f f9;
+                f_Sprite f9;
                 Graphics graphics8;
                 int n97;
                 int aInt5;
                 if (i.cByteArr[n94] < 0) {
-                    final f f10;
+                    final f_Sprite f10;
                     f9 = (f10 = i.aClassfArr[2]);
                     graphics8 = aClassGraphics;
                     n97 = 0;
@@ -7726,24 +7835,24 @@ public final class i extends Canvas implements Runnable {
                     n97 = i.cByteArr[n94];
                     aInt5 = i.bByteArr[n94];
                 }
-                f9.aVoid(graphics8, n97, aInt5, n95, n96, 0, 0, 0);
+                f9.drawAnimationFrame(graphics8, n97, aInt5, n95, n96, 0, 0, 0);
                 n93 = (adInt2 = (++n94 & 0x7));
             }
         }
         this.bInt += this.bkInt;
         if (this.xBoolean) {
-            aVoid(aClassGraphics, i.bClassh, i.aClassStringArr[15], 120, 160, 17, 19, false);
+            aVoid(aClassGraphics, i.textSize0, i.texts[15], 120, 160, 17, 19, false);
         }
         if (this.bnInt > i.aSInt && this.kByte != 2) {
             if (!this.ajBoolean && !this.hBoolean) {
                 final int n99;
                 final int n98 = ((n99 = this.bnInt - i.aSInt) < 20) ? ((n99 - 10) * 240 / 20) : ((n99 >= 50) ? ((60 - n99) * 240 / 15) : 120);
                 final int n100 = 240 - n98;
-                aVoid(aClassGraphics, i.bClassh, i.aClassStringArr[i.dIntArr[this.aAInt]], n98, 15, 17, 20, false);
-                aVoid(aClassGraphics, i.bClassh, i.cClassStringArr[i.gIntArrArr[this.aAInt][this.aBInt] - 1], n100, 50, 17, 20, false);
+                aVoid(aClassGraphics, i.textSize0, i.texts[i.dIntArr[this.crtWorldIndex]], n98, 15, 17, 20, false);
+                aVoid(aClassGraphics, i.textSize0, i.stageTitles[i.gIntArrArr[this.crtWorldIndex][this.crtStageI] - 1], n100, 50, 17, 20, false);
             }
         } else if (this.akInt > i.aSInt) {
-            aVoid(aClassGraphics, i.bClassh, i.aClassStringArr[13], 120, a.cInt, 17, 20, false);
+            aVoid(aClassGraphics, i.textSize0, i.texts[13], 120, a_Config.cInt, 17, 20, false);
         } else if (this.akInt == i.aSInt && this.rByte <= 2) {
             ++this.rByte;
             this.wVoid();
@@ -7785,14 +7894,17 @@ public final class i extends Canvas implements Runnable {
             this.GVoid();
         }
         if (this.eClassString != null) {
+            // Renders the loading message? e.g. Do not hold up rocks too long or you will be crushed
             this.oBoolean = true;
-            aVoid(aClassGraphics, i.aClassh, aClassString(this.eClassString), 120, 223, 17, 4, true);
+            aVoid(aClassGraphics, i.textSize8, aClassString(this.eClassString), 120, 223, 17, 4, true);
         }
         if (this.aClassc != null && !i.aBoolean) {
+            // Renders the loading icon from demo.f and demoSpr.bin?
             this.oBoolean = true;
             this.aClassc.aVoid(aClassGraphics);
         }
         if (this.blInt > 0) {
+            // Renders the loading bar?
             this.oBoolean = true;
             aClassGraphics.setColor(0);
             aClassGraphics.fillRect(0, 0, 240, this.blInt);
@@ -7801,9 +7913,9 @@ public final class i extends Canvas implements Runnable {
             this.NVoid();
             if (i.cClassf != null) {
                 if (this.ctInt != -1) {
-                    i.cClassf.aVoid(aClassGraphics, this.ctInt, this.csInt, (this.coInt - this.cIInt) * 24 - this.cKInt, (this.cpInt - this.cJInt) * 24 - this.cLInt, 0, 0, 0);
+                    i.cClassf.drawAnimationFrame(aClassGraphics, this.ctInt, this.csInt, (this.coInt - this.cIInt) * 24 - this.cKInt, (this.cpInt - this.cJInt) * 24 - this.cLInt, 0, 0, 0);
                 } else {
-                    i.cClassf.aVoid(aClassGraphics, this.csInt, this.crInt, this.cqInt, 0);
+                    i.cClassf.drawFrame(aClassGraphics, this.csInt, this.crInt, this.cqInt, 0);
                 }
             }
             aClassGraphics.translate(0, -40);
@@ -7815,7 +7927,7 @@ public final class i extends Canvas implements Runnable {
         final int n2 = this.bInt + 320;
         final int aInt = this.aInt;
         final int n3 = this.aInt + 240;
-        final int n4 = (i.aSInt >> 1) % i.aClassfArr[2].aInt(1);
+        final int n4 = (i.aSInt >> 1) % i.aClassfArr[2].getAnimationFrameCount(1);
         for (int iInteger = 0; iInteger < i.eByteArr.length; iInteger += 3) {
             int n5 = 0;
             final byte b;
@@ -7829,7 +7941,7 @@ public final class i extends Canvas implements Runnable {
                     int n9 = n7 - aInt;
                     final int n10 = b2 + ((b2 != 0) ? -1 : 0);
                     boolean b4 = true;
-                    if (i.aByteArrArr[n10][b] == 48 && (i.bIntArrArr[n10][b] & 0x8) != 0x0) {
+                    if (i.crtStagePlayerLayer[n10][b] == 48 && (i.bIntArrArr[n10][b] & 0x8) != 0x0) {
                         n9 -= 12;
                         b4 = false;
                         if ((i.bIntArrArr[n10][b + 1] & 0x7) == 0x3) {
@@ -7839,9 +7951,9 @@ public final class i extends Canvas implements Runnable {
                         }
                     }
                     int n11 = n8 - aInt;
-                    final int n12 = b3 + ((b3 < this.eInt - 1) ? 1 : 0);
+                    final int n12 = b3 + ((b3 < this.crtStageWidth - 1) ? 1 : 0);
                     boolean b6 = true;
-                    if (i.aByteArrArr[n12][b] == 48 && (i.bIntArrArr[n12][b] & 0x8) != 0x0) {
+                    if (i.crtStagePlayerLayer[n12][b] == 48 && (i.bIntArrArr[n12][b] & 0x8) != 0x0) {
                         n11 += 12;
                         b6 = false;
                         if ((i.bIntArrArr[n12][b + 1] & 0x7) == 0x3) {
@@ -7858,7 +7970,7 @@ public final class i extends Canvas implements Runnable {
                     --n13;
                     this.aClassGraphics.setColor(14153215);
                     this.aClassGraphics.drawLine(n9, n13, n11, n13);
-                    f f;
+                    f_Sprite f;
                     Graphics graphics;
                     int n14;
                     int n15;
@@ -7885,14 +7997,14 @@ public final class i extends Canvas implements Runnable {
                         n16 = n13;
                         n17 = 0;
                     }
-                    f.aVoid(graphics, n14, n15, (int) b7, n16, n17, 0, 0);
+                    f.drawAnimationFrame(graphics, n14, n15, (int) b7, n16, n17, 0, 0);
                 }
             }
         }
     }
 
     private void FVoid() {
-        if ((i.bIntArrArr[this.bGInt][this.bHInt] & 0x7) == 0x1 && (i.aIntArrArr[this.bGInt][this.bHInt] & 0xFF) == 0x23) {
+        if ((i.bIntArrArr[this.bGInt][this.bHInt] & 0x7) == 0x1 && (i.crtStageForegrondLayer[this.bGInt][this.bHInt] & 0xFF) == 0x23) {
             this.bNInt = 0;
             this.bOInt = i.bByteArrArr[this.bGInt][this.bHInt];
         }
@@ -7901,16 +8013,16 @@ public final class i extends Canvas implements Runnable {
     private void GVoid() {
         boolean b = false;
         final Graphics aClassGraphics = this.aClassGraphics;
-        final f f;
+        final f_Sprite f;
         if ((f = i.aClassfArr[0]) == null) {
             return;
         }
         aClassGraphics.translate(120, 320);
-        f f2;
+        f_Sprite f2;
         if (this.oBoolean || i.bByte == 2) {
-            f.aVoid(aClassGraphics, 0, 0, 0, 0);
+            f.drawFrame(aClassGraphics, 0, 0, 0, 0);
             if (this.UBoolean) {
-                f.aVoid(aClassGraphics, 19, 0, 0, 0);
+                f.drawFrame(aClassGraphics, 19, 0, 0, 0);
             }
             f2 = f;
         } else {
@@ -7918,16 +8030,16 @@ public final class i extends Canvas implements Runnable {
             aClassGraphics.setClip(-120, -320, 240, 320);
             f2 = f;
         }
-        f2.aVoid(aClassGraphics, 1, 0, 0, 0);
+        f2.drawFrame(aClassGraphics, 1, 0, 0, 0);
         if (this.pBoolean) {
-            f.aVoid(aClassGraphics, 2, 2, 0, 0);
-            f.aVoid(aClassGraphics, 3 + this.anInt, 2, 0, 0);
+            f.drawFrame(aClassGraphics, 2, 2, 0, 0);
+            f.drawFrame(aClassGraphics, 3 + this.anInt, 2, 0, 0);
         }
         if (b) {
             aClassGraphics.setClip(-120, -320, 240, 320);
         }
         if (this.nByte != this.cPInt || this.oBoolean || this.nByte <= 1) {
-            final Image[] array = i.aClassfArr[0].aClassImageArrArr[0];
+            final Image[] array = i.aClassfArr[0].images[0];
             final int n = (this.nByte <= 1) ? 1 : 0;
             final int n2 = -33 - (i.iByteArr[8] - 4) * array[n + 11].getWidth() / 2;
             aClassGraphics.drawImage(array[n + 11], n2, -29, 0);
@@ -7953,34 +8065,34 @@ public final class i extends Canvas implements Runnable {
             this.cPInt = this.nByte;
         }
         if (this.cQInt != this.aZInt || this.cTInt != this.aaInt || this.oBoolean) {
-            aVoid(aClassGraphics, 70, -12, this.aZInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+            aVoid(aClassGraphics, 70, -12, this.aZInt, i.aClassfArr[0].images[0], 0);
         }
         if (this.cRInt != this.bbInt || this.oBoolean) {
             this.cRInt = this.bbInt;
-            aVoid(aClassGraphics, 107, -12, this.bbInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+            aVoid(aClassGraphics, 107, -12, this.bbInt, i.aClassfArr[0].images[0], 0);
         }
         aClassGraphics.translate(-120, -320);
         aClassGraphics.translate(120, 0);
         int n5 = 0;
         if (this.oBoolean || i.bByte == 2) {
-            f.aVoid(aClassGraphics, 20, 0, 0, 0);
+            f.drawFrame(aClassGraphics, 20, 0, 0, 0);
             n5 = 1;
         }
         if (this.cUInt != this.aUInt || this.cVInt != this.aVInt || this.oBoolean || i.bByte == 2 || n5 != 0) {
             if (n5 == 0) {
-                f.aVoid(aClassGraphics, 20, 0, 0, 0);
+                f.drawFrame(aClassGraphics, 20, 0, 0, 0);
                 n5 = 1;
             }
-            aVoid(aClassGraphics, 47, 18, this.aUInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
-            aVoid(aClassGraphics, 87, 18, this.aVInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+            aVoid(aClassGraphics, 47, 18, this.aUInt, i.aClassfArr[0].images[0], 0);
+            aVoid(aClassGraphics, 87, 18, this.aVInt, i.aClassfArr[0].images[0], 0);
             this.cUInt = this.aUInt;
             this.cVInt = this.aVInt;
         }
         if (this.cSInt != this.azInt || this.oBoolean || n5 != 0) {
             if (n5 == 0) {
-                f.aVoid(aClassGraphics, 20, 0, 0, 0);
+                f.drawFrame(aClassGraphics, 20, 0, 0, 0);
             }
-            aVoid(aClassGraphics, -29, 18, this.azInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+            aVoid(aClassGraphics, -29, 18, this.azInt, i.aClassfArr[0].images[0], 0);
             this.cSInt = this.azInt;
         }
         aClassGraphics.translate(-120, 0);
@@ -7990,23 +8102,23 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void bVoid(final byte b) {
-        final b b2 = i.aClassbArr[4];
+        final b_SpriteAnimator b2 = i.aClassbArr[4];
         if (b == 23) {
-            b2.aInt = this.bxInt;
-            final b b3 = b2;
-            b3.cInt |= 0x1;
+            b2.x = this.bxInt;
+            final b_SpriteAnimator b3 = b2;
+            b3.flags |= 0x1;
         } else {
-            b2.cInt &= 0xFFFFFFFE;
-            b2.aInt = this.bxInt + 24;
+            b2.flags &= 0xFFFFFFFE;
+            b2.x = this.bxInt + 24;
         }
-        b2.bInt = this.byInt;
-        b2.aVoid();
-        b2.aVoid(this.aClassGraphics);
+        b2.y = this.byInt;
+        b2.applyFrameOffset();
+        b2.draw(this.aClassGraphics);
     }
 
     private void fVoid(final int n) {
         for (int iInteger = n - 8 - 1; iInteger < n + 15 - 2; ++iInteger) {
-            i.aClassfArr[18].aVoid(this.aClassGraphics, 4, iInteger % 2, iInteger, 0);
+            i.aClassfArr[18].drawFrame(this.aClassGraphics, 4, iInteger % 2, iInteger, 0);
         }
         this.aClassGraphics.setColor(16777215);
         this.aClassGraphics.drawLine(0, n - 8 - 1 - 1, 240, n - 8 - 1 - 1);
@@ -8021,8 +8133,8 @@ public final class i extends Canvas implements Runnable {
             this.YBoolean = false;
             this.XBoolean = bBoolean();
         }
-        int n = 320 - ((this.cXInt + 1) * a.dInt + 1 + 2) + ((!this.XBoolean && this.boInt == 0) ? a.dInt : 0);
-        int n2 = 320 - a.dInt + 1 + 1;
+        int n = 320 - ((this.cXInt + 1) * a_Config.dInt + 1 + 2) + ((!this.XBoolean && this.boInt == 0) ? a_Config.dInt : 0);
+        int n2 = 320 - a_Config.dInt + 1 + 1;
         this.aClassGraphics.setClip(0, 0, 240, 320);
         if (i.bByte == 2 && i.VBoolean && i.WBoolean) {
             this.UBoolean = false;
@@ -8037,7 +8149,7 @@ public final class i extends Canvas implements Runnable {
         }
         if (this.boInt == 7) {
             this.fVoid(n - 22);
-            i.bClassh.bVoid(this.aClassGraphics, i.aClassStringArr[(this.aRInt == 5) ? 23 : 2], 120, n - 20, 17);
+            i.textSize0.drawTextWithFlags(this.aClassGraphics, i.texts[(this.aRInt == 5) ? 23 : 2], 120, n - 20, 17);
         }
         if (i.bByte == 7) {
             Graphics graphics;
@@ -8046,13 +8158,13 @@ public final class i extends Canvas implements Runnable {
             int n7;
             int n8;
             if (this.dcInt != -1 && !i.VBoolean) {
-                final int n4 = n + this.dcInt * a.dInt;
+                final int n4 = n + this.dcInt * a_Config.dInt;
                 this.aClassGraphics.setColor(0);
                 graphics = this.aClassGraphics;
                 n5 = 0;
                 n6 = n4;
                 n7 = 240;
-                n8 = a.dInt + 1;
+                n8 = a_Config.dInt + 1;
             } else {
                 this.aClassGraphics.setColor(0);
                 graphics = this.aClassGraphics;
@@ -8069,7 +8181,7 @@ public final class i extends Canvas implements Runnable {
             this.gLong = currentTimeMillis;
         }
         if (this.dcInt != -1 && !i.VBoolean) {
-            this.aClassGraphics.setClip(0, n + this.dcInt * a.dInt - ((this.boInt == 0 && this.dcInt > 0 && !this.XBoolean) ? a.dInt : 0), 240, a.dInt + 1);
+            this.aClassGraphics.setClip(0, n + this.dcInt * a_Config.dInt - ((this.boInt == 0 && this.dcInt > 0 && !this.XBoolean) ? a_Config.dInt : 0), 240, a_Config.dInt + 1);
         }
         if (this.dcInt != this.bqInt || i.VBoolean) {
             final int n9 = n;
@@ -8078,7 +8190,7 @@ public final class i extends Canvas implements Runnable {
             if (i.bByte == 4) {
                 bVoid(this.aClassGraphics, false);
                 for (int iInteger = n11 - 1; iInteger < n10 - 2; ++iInteger) {
-                    i.aClassfArr[18].aVoid(this.aClassGraphics, 4, iInteger % 2, iInteger, 0);
+                    i.aClassfArr[18].drawFrame(this.aClassGraphics, 4, iInteger % 2, iInteger, 0);
                 }
             }
             if (i.bByte == 2) {
@@ -8097,15 +8209,15 @@ public final class i extends Canvas implements Runnable {
         }
         for (int j = 0; j < this.cXInt; ++j) {
             if ((this.dcInt == -1 || j == this.dcInt || j == this.bqInt || i.VBoolean) && (this.boInt != 0 || j != 0 || this.XBoolean)) {
-                int n12 = n + j * a.dInt + a.dInt / 2;
+                int n12 = n + j * a_Config.dInt + a_Config.dInt / 2;
                 if (this.boInt == 0 && j > 0 && !this.XBoolean) {
-                    n12 -= a.dInt;
+                    n12 -= a_Config.dInt;
                 }
                 int n13 = 16777215;
-                if (j == 2 && this.boInt == 0 && aBoolean()) {
+                if (j == 2 && this.boInt == 0 && getMoreGamesEnabled()) {
                     n13 = 16711680;
                 }
-                if (j == 0 && this.boInt == 8 && aBoolean()) {
+                if (j == 0 && this.boInt == 8 && getMoreGamesEnabled()) {
                     n13 = 16711680;
                 }
                 Label_0925:
@@ -8125,9 +8237,9 @@ public final class i extends Canvas implements Runnable {
                                 this.aClassGraphics.setColor(13421772);
                                 graphics2 = this.aClassGraphics;
                                 n14 = 0;
-                                n15 = n12 - a.dInt / 2 + 1;
+                                n15 = n12 - a_Config.dInt / 2 + 1;
                                 n16 = 240;
-                                n17 = a.dInt - 1;
+                                n17 = a_Config.dInt - 1;
                                 break Label_0922;
                             }
                             graphics3 = this.aClassGraphics;
@@ -8142,23 +8254,23 @@ public final class i extends Canvas implements Runnable {
                         graphics3.setColor(color);
                         graphics2 = this.aClassGraphics;
                         n14 = 0;
-                        n15 = n12 - a.dInt / 2;
+                        n15 = n12 - a_Config.dInt / 2;
                         n16 = 240;
-                        n17 = a.dInt + 1;
+                        n17 = a_Config.dInt + 1;
                     }
                     graphics2.fillRect(n14, n15, n16, n17);
                 }
-                i.bClassh.aVoid(i.aClassStringArr[i.aShortArrArr[this.boInt][(j << 1) + 1]]);
-                final int aInt = h.aInt;
-                if ((j != 2 || this.boInt != 0 || !aBoolean()) && j == 0 && this.boInt == 8) {
-                    aBoolean();
+                i.textSize0.calculateStringSize(i.texts[i.aShortArrArr[this.boInt][(j << 1) + 1]]);
+                final int aInt = h.stringWidth;
+                if ((j != 2 || this.boInt != 0 || !getMoreGamesEnabled()) && j == 0 && this.boInt == 8) {
+                    getMoreGamesEnabled();
                 }
-                h.aVoid(n13);
-                i.bClassh.aVoid(this.aClassGraphics, i.aClassStringArr[i.aShortArrArr[this.boInt][(j << 1) + 1]], 120 - aInt / 2, n12 + 1, n13, 6);
+                h.setColor(n13);
+                i.textSize0.drawText(this.aClassGraphics, i.texts[i.aShortArrArr[this.boInt][(j << 1) + 1]], 120 - aInt / 2, n12 + 1, n13, 6);
                 if (j == this.bqInt) {
                     this.aClassGraphics.setColor(16777215);
-                    i.aClassfArr[18].aVoid(this.aClassGraphics, 2, 120 - aInt / 2 - 8, n12, 0);
-                    i.aClassfArr[18].aVoid(this.aClassGraphics, 2, 120 + aInt / 2 + 8, n12, 0);
+                    i.aClassfArr[18].drawFrame(this.aClassGraphics, 2, 120 - aInt / 2 - 8, n12, 0);
+                    i.aClassfArr[18].drawFrame(this.aClassGraphics, 2, 120 + aInt / 2 + 8, n12, 0);
                 }
             }
         }
@@ -8193,13 +8305,13 @@ public final class i extends Canvas implements Runnable {
                 this.dbInt = -1;
                 this.oBoolean = true;
                 this.dcInt = -1;
-                h.aVoid(16777215);
+                h.setColor(16777215);
                 this.zBoolean = true;
                 switch (this.boInt) {
                     case 0: {
                         switch (this.aInt()) {
                             case 0: {
-                                this.aClassj.eVoid();
+                                this.aClassj.freeCrtPlayerResource();
                                 this.tVoid();
                                 if (i.iByteArr != null && bBoolean()) {
                                     this.agInt = 0;
@@ -8211,7 +8323,7 @@ public final class i extends Canvas implements Runnable {
                                 }
                             }
                             case 1: {
-                                this.aClassj.eVoid();
+                                this.aClassj.freeCrtPlayerResource();
                                 if (!bBoolean()) {
                                     this.QVoid();
                                     break Label_2264;
@@ -8232,18 +8344,18 @@ public final class i extends Canvas implements Runnable {
                             }
                             case 2: {
                                 this.aVoid(5);
-                                this.aClassj.eVoid();
+                                this.aClassj.freeCrtPlayerResource();
                                 break Label_2264;
                             }
                             case 4: {
                                 i.bByte = 22;
                                 this.aRInt = 0;
-                                this.aClassj.eVoid();
+                                this.aClassj.freeCrtPlayerResource();
                                 break Label_2264;
                             }
                             case 3: {
                                 i.bByte = 33;
-                                this.aClassj.eVoid();
+                                this.aClassj.freeCrtPlayerResource();
                                 this.avBoolean = true;
                                 break Label_2264;
                             }
@@ -8311,21 +8423,21 @@ public final class i extends Canvas implements Runnable {
                     case 2: {
                         switch (this.aInt()) {
                             case 0: {
-                                this.aClassj.eVoid();
-                                this.aAInt = 0;
+                                this.aClassj.freeCrtPlayerResource();
+                                this.crtWorldIndex = 0;
                                 this.lBoolean = false;
                                 i.bByte = 15;
-                                i.dZInt = bInt(this.aAInt);
+                                i.dZInt = bInt(this.crtWorldIndex);
                                 this.HBoolean = true;
                                 this.avVoid();
                                 break Label_2264;
                             }
                             case 1: {
-                                this.aClassj.eVoid();
-                                this.aAInt = 1;
-                                this.aBInt = 0;
+                                this.aClassj.freeCrtPlayerResource();
+                                this.crtWorldIndex = 1;
+                                this.crtStageI = 0;
                                 i.bByte = 15;
-                                i.dZInt = bInt(this.aAInt);
+                                i.dZInt = bInt(this.crtWorldIndex);
                                 this.HBoolean = true;
                                 this.avVoid();
                                 this.pBoolean = true;
@@ -8337,12 +8449,12 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             case 2: {
-                                this.aClassj.eVoid();
-                                this.aAInt = 2;
-                                this.aBInt = 0;
+                                this.aClassj.freeCrtPlayerResource();
+                                this.crtWorldIndex = 2;
+                                this.crtStageI = 0;
                                 this.lBoolean = false;
                                 i.bByte = 15;
-                                i.dZInt = bInt(this.aAInt);
+                                i.dZInt = bInt(this.crtWorldIndex);
                                 this.HBoolean = true;
                                 this.avVoid();
                                 this.pBoolean = true;
@@ -8381,7 +8493,7 @@ public final class i extends Canvas implements Runnable {
                                 break Label_2264;
                             }
                             case 3: {
-                                if (this.aBInt != 13 || this.aAInt != 0) {
+                                if (this.crtStageI != 13 || this.crtWorldIndex != 0) {
                                     this.aVoid(7);
                                     this.aRInt = 3;
                                     break Label_2264;
@@ -8437,11 +8549,11 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void IVoid() {
-        i.aClassfArr[18].aVoid(this.aClassGraphics, 0, 223, 308, 0);
+        i.aClassfArr[18].drawFrame(this.aClassGraphics, 0, 223, 308, 0);
     }
 
     private void JVoid() {
-        i.aClassfArr[18].aVoid(this.aClassGraphics, 3, 2, 308, 0);
+        i.aClassfArr[18].drawFrame(this.aClassGraphics, 3, 2, 308, 0);
     }
 
     private void KVoid() {
@@ -8456,42 +8568,42 @@ public final class i extends Canvas implements Runnable {
         this.aClassGraphics.fillRect(5, 310, n, 6);
         aClassGraphics.setColor(16554500);
         this.aClassGraphics.drawRoundRect(4, 309, 231, 6, 2, 2);
-        h.aVoid(16777215);
-        i.bClassh.bVoid(this.aClassGraphics, i.aClassStringArr[35], 120, a.eInt, 1);
+        h.setColor(16777215);
+        i.textSize0.drawTextWithFlags(this.aClassGraphics, i.texts[35], 120, a_Config.eInt, 1);
     }
 
     private void LVoid() {
         switch (this.kByte) {
             case 2: {
                 if (this.tBoolean && this.aClassc == null && this.bmInt == -1) {
-                    i.aClassfArr[15].aVoid(this.aClassGraphics, 0, i.aSInt >> 1 & 0x3, this.bvInt, this.bwInt - 24, 0, 0, 0);
+                    i.aClassfArr[15].drawAnimationFrame(this.aClassGraphics, 0, i.aSInt >> 1 & 0x3, this.bvInt, this.bwInt - 24, 0, 0, 0);
                 }
                 if (this.aInt + 240 > 1440 && this.bInt + 320 > 48) {
                     if (i.aClassfArr[10] == null) {
-                        i.aClassfArr[10] = importTexturesWithPalettes("/mmv.f", 0, 0, 0);
+                        i.aClassfArr[10] = loadSprite("/mmv.f", 0, 0, 0);
                     }
-                    final f f = i.aClassfArr[10];
-                    if (this.cBoolean(60, 3) || this.cBoolean(61, 3)) {
-                        f.aVoid(this.aClassGraphics, 1, 1440 - this.aInt, 48 - this.bInt, 0);
+                    final f_Sprite f = i.aClassfArr[10];
+                    if (this.isPlayerAtPosition(60, 3) || this.isPlayerAtPosition(61, 3)) {
+                        f.drawFrame(this.aClassGraphics, 1, 1440 - this.aInt, 48 - this.bInt, 0);
                     }
                 }
-                if (this.hInt > 55 && this.eBoolean) {
-                    i.aClassbArr[0].aVoid(this.aClassGraphics);
+                if (this.crtPlayerX > 55 && this.eBoolean) {
+                    i.aClassbArr[0].draw(this.aClassGraphics);
                 }
             }
             case 1: {
                 final int asInt = i.aSInt;
-                final b b = i.aClassbArr[2];
+                final b_SpriteAnimator b = i.aClassbArr[2];
                 if (this.bInt + this.bkInt < 1008 && this.bInt + this.bkInt > 592) {
-                    b.aInt = 240 - this.aInt;
-                    b.bInt = 1008 - this.bInt;
-                    b.aVoid();
-                    b.aVoid(this.aClassGraphics);
-                    b.aInt = 336 - this.aInt;
-                    b.bInt = 1008 - this.bInt;
-                    b.aVoid();
-                    b.cInt = 1;
-                    b.aVoid(this.aClassGraphics);
+                    b.x = 240 - this.aInt;
+                    b.y = 1008 - this.bInt;
+                    b.applyFrameOffset();
+                    b.draw(this.aClassGraphics);
+                    b.x = 336 - this.aInt;
+                    b.y = 1008 - this.bInt;
+                    b.applyFrameOffset();
+                    b.flags = 1;
+                    b.draw(this.aClassGraphics);
                 }
                 if (this.bjInt > 10) {
                     for (int iInteger = 3; iInteger < 13; iInteger += 2) {
@@ -8499,29 +8611,29 @@ public final class i extends Canvas implements Runnable {
                         this.aClassGraphics.drawImage(i.textures[27][iInteger & 0x1], ((n = 10 * (iInteger * 2 / 5 + 1)) + i.aSInt / n) * iInteger % 240, 320 / n * i.aSInt % 320, 0);
                     }
                 }
-                final int bInt = this.fInt * 24 - this.alInt - this.bInt;
+                final int bInt = this.crtStageHeight * 24 - this.alInt - this.bInt;
                 final int n2;
                 int j = n2 = 168 - this.aInt;
                 final int n3 = j + 240;
                 while (j <= -24) {
                     j += 24;
                 }
-                final b b2 = i.aClassbArr[1];
-                if ((this.alInt >= 816 || b2.dInt == 2) && this.alInt > 816) {
+                final b_SpriteAnimator b2 = i.aClassbArr[1];
+                if ((this.alInt >= 816 || b2.crtAnimationI == 2) && this.alInt > 816) {
                     for (int k = bInt + 20; k < 320; k += 24) {
                         for (int l = j; l < n3; l += 24) {
-                            b2.aClassf.aVoid(this.aClassGraphics, 1, ((asInt >> 1) + l + k) % 2, l, k, 0, 0, 0);
+                            b2.sprite.drawAnimationFrame(this.aClassGraphics, 1, ((asInt >> 1) + l + k) % 2, l, k, 0, 0, 0);
                         }
                     }
                 }
-                if (b.dInt == 2) {
-                    b2.cInt = 0;
-                    b2.aInt = n2 + 120;
-                    b2.bInt = bInt;
-                    b2.aVoid();
-                    b2.aVoid(this.aClassGraphics);
-                    b2.cInt = 1;
-                    b2.aVoid(this.aClassGraphics);
+                if (b.crtAnimationI == 2) {
+                    b2.flags = 0;
+                    b2.x = n2 + 120;
+                    b2.y = bInt;
+                    b2.applyFrameOffset();
+                    b2.draw(this.aClassGraphics);
+                    b2.flags = 1;
+                    b2.draw(this.aClassGraphics);
                     final Graphics aClassGraphics = this.aClassGraphics;
                     final int n4 = (i.aSInt << 3) % 160;
                     aClassGraphics.setColor(255, ((i.aSInt / 160 & 0x1) == 0x0) ? (160 - n4) : (n4 + 0), 0);
@@ -8532,8 +8644,8 @@ public final class i extends Canvas implements Runnable {
                 if (this.kByte == 3 && i.aSInt >= this.kLong + 80L) {
                     for (int n5 = 14; n5 <= 21; ++n5) {
                         i.bIntArrArr[n5][15] = 0;
-                        i.aIntArrArr[n5][15] = -1;
-                        i.aByteArrArr[n5][15] = 44;
+                        i.crtStageForegrondLayer[n5][15] = -1;
+                        i.crtStagePlayerLayer[n5][15] = 44;
                         i.bByteArrArr[n5][15] = 0;
                         i.cByteArrArr[n5][15] = 24;
                     }
@@ -8541,24 +8653,24 @@ public final class i extends Canvas implements Runnable {
                 }
                 if (this.aoInt != 15) {
                     if (this.aInt + 240 + 48 >= this.asInt && this.bInt + 320 + 48 >= 504) {
-                        final b b3;
-                        (b3 = i.aClassbArr[5]).aInt = this.asInt - this.aInt;
-                        b3.bInt = 504 - this.bInt;
-                        b3.aVoid();
-                        b3.aVoid(this.aClassGraphics);
+                        final b_SpriteAnimator b3;
+                        (b3 = i.aClassbArr[5]).x = this.asInt - this.aInt;
+                        b3.y = 504 - this.bInt;
+                        b3.applyFrameOffset();
+                        b3.draw(this.aClassGraphics);
                     }
                     if (this.aoInt == 12) {
                         final int n6 = this.asInt - this.aInt + i.aSInt * this.apInt % 48;
-                        final int n7 = i.aClassbArr[5].bInt + 24;
-                        i.aClassfArr[7].aVoid(this.aClassGraphics, 0, i.aSInt % i.aClassfArr[7].aInt(0), n6, n7, 0, 0, 0);
+                        final int n7 = i.aClassbArr[5].y + 24;
+                        i.aClassfArr[7].drawAnimationFrame(this.aClassGraphics, 0, i.aSInt % i.aClassfArr[7].getAnimationFrameCount(0), n6, n7, 0, 0, 0);
                         this.fVoid(n6, n7);
                     }
                 }
             }
             case 4: {
                 final Graphics aClassGraphics2 = this.aClassGraphics;
-                final b b4 = i.aClassbArr[5];
-                final b b5 = i.aClassbArr[4];
+                final b_SpriteAnimator b4 = i.aClassbArr[5];
+                final b_SpriteAnimator b5 = i.aClassbArr[4];
                 int n8 = 0;
                 Label_1183:
                 {
@@ -8605,14 +8717,14 @@ public final class i extends Canvas implements Runnable {
                     }
                     n8 = apInt;
                 }
-                b4.aInt = (10 + this.arInt * (2 + ((this.arInt > 0) ? 1 : 0))) * 24 - this.aInt;
+                b4.x = (10 + this.arInt * (2 + ((this.arInt > 0) ? 1 : 0))) * 24 - this.aInt;
                 Label_1275:
                 {
-                    b b6;
+                    b_SpriteAnimator b6;
                     int bInt3;
                     if (this.aoInt == 5) {
-                        final int bInt2 = b4.bInt;
-                        b4.bInt = 256 - this.bInt - 15;
+                        final int bInt2 = b4.y;
+                        b4.y = 256 - this.bInt - 15;
                         if (this.eInt() != 3) {
                             break Label_1275;
                         }
@@ -8622,18 +8734,18 @@ public final class i extends Canvas implements Runnable {
                         b6 = b4;
                         bInt3 = 256 - n8 - this.bInt;
                     }
-                    b6.bInt = bInt3;
+                    b6.y = bInt3;
                 }
-                b4.aVoid(aClassGraphics2);
+                b4.draw(aClassGraphics2);
                 if (this.kBoolean) {
-                    b5.bInt = 96 - this.bInt;
-                    b5.aInt = (this.dInt() + 1) * 24 - this.aInt;
-                    b5.aVoid(aClassGraphics2);
+                    b5.y = 96 - this.bInt;
+                    b5.x = (this.dInt() + 1) * 24 - this.aInt;
+                    b5.draw(aClassGraphics2);
                 }
                 for (int n9 = 0; n9 < 3; ++n9) {
                     final int n10;
                     if ((n10 = (n9 * (2 + ((n9 > 0) ? 1 : 0)) + 10) * 24 - this.aInt) < 240 && n10 > -48 && this.bInt > -80) {
-                        i.aClassfArr[40].aVoid(aClassGraphics2, 1, n10, 216 - this.bInt, 0);
+                        i.aClassfArr[40].drawFrame(aClassGraphics2, 1, n10, 216 - this.bInt, 0);
                     }
                 }
             }
@@ -8641,15 +8753,15 @@ public final class i extends Canvas implements Runnable {
                 if (this.aoInt == -1) {
                     break;
                 }
-                final b b7;
-                (b7 = i.aClassbArr[5]).aInt = this.atInt - this.aInt;
-                b7.bInt = 504 - this.bInt;
-                b7.aVoid();
-                b7.aVoid(this.aClassGraphics);
+                final b_SpriteAnimator b7;
+                (b7 = i.aClassbArr[5]).x = this.atInt - this.aInt;
+                b7.y = 504 - this.bInt;
+                b7.applyFrameOffset();
+                b7.draw(this.aClassGraphics);
                 if (this.aoInt == 12) {
                     final int n11 = this.atInt - this.aInt + i.aSInt * this.apInt % 48;
-                    final int n12 = i.aClassbArr[5].bInt + 24;
-                    i.aClassfArr[7].aVoid(this.aClassGraphics, 0, i.aSInt % i.aClassfArr[7].aInt(1), n11, n12, 0, 0, 0);
+                    final int n12 = i.aClassbArr[5].y + 24;
+                    i.aClassfArr[7].drawAnimationFrame(this.aClassGraphics, 0, i.aSInt % i.aClassfArr[7].getAnimationFrameCount(1), n11, n12, 0, 0, 0);
                     this.fVoid(n11, n12);
                     break;
                 }
@@ -8660,14 +8772,14 @@ public final class i extends Canvas implements Runnable {
 
     private void MVoid() {
         final Graphics aClassGraphics = this.aClassGraphics;
-        final b b = i.aClassbArr[5];
+        final b_SpriteAnimator b = i.aClassbArr[5];
         if (this.aoInt == 7) {
-            final int n = b.aInt + i.aSInt * this.apInt % 48;
-            int bInt = b.bInt;
+            final int n = b.x + i.aSInt * this.apInt % 48;
+            int bInt = b.y;
             if (this.SInt == 10) {
                 bInt -= 144;
             }
-            i.aClassfArr[7].aVoid(aClassGraphics, 1, i.aSInt % i.aClassfArr[7].aInt(1), n, bInt, 0, 0, 0);
+            i.aClassfArr[7].drawAnimationFrame(aClassGraphics, 1, i.aSInt % i.aClassfArr[7].getAnimationFrameCount(1), n, bInt, 0, 0, 0);
             this.fVoid(n, bInt);
             return;
         }
@@ -8693,12 +8805,12 @@ public final class i extends Canvas implements Runnable {
         if (this.EBoolean) {
             return;
         }
-        final int hInt = this.hInt;
-        final int iInt = this.iInt;
+        final int hInt = this.crtPlayerX;
+        final int iInt = this.crtPlayerY;
         final int asInt = i.aSInt;
         final int n = this.kInt & 0x7;
-        final b b = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3];
-        final boolean cBoolean = this.cBoolean();
+        final b_SpriteAnimator b = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3];
+        final boolean cBoolean = this.isPlayerWithinStageBounds();
         final int n2 = ((this.kInt & 0x800) == 0x0) ? this.bQInt : (this.kInt & 0x7);
         if (!this.eBoolean) {
             return;
@@ -8706,26 +8818,26 @@ public final class i extends Canvas implements Runnable {
         this.bvInt = hInt * 24 + i.gByteArr[n2] * this.jInt - this.aInt;
         this.bwInt = iInt * 24 + i.gByteArr[n2 + 8] * this.jInt - this.bInt;
         if ((this.bLong <= 0L || (asInt >> 1 & 0x1) == 0x0) && this.aTInt <= 0) {
-            b.aInt = this.bvInt;
-            b.bInt = this.bwInt;
+            b.x = this.bvInt;
+            b.y = this.bwInt;
             if (i.eIntArrArr != null && cBoolean && n != 1 && n != 3 && i.eIntArrArr[hInt][iInt + 1] != 0 && iBoolean(hInt, iInt + 1)) {
                 final int n4;
                 int n3 = (n4 = (asInt >> 1) + hInt) % 4;
                 if ((n4 / 4 & 0x1) == 0x1) {
                     n3 = 4 - n3;
                 }
-                final b b2 = b;
-                b2.bInt += n3;
+                final b_SpriteAnimator b2 = b;
+                b2.y += n3;
             }
-            b.aVoid();
-            b.aVoid(this.aClassGraphics);
+            b.applyFrameOffset();
+            b.draw(this.aClassGraphics);
             final int dInt;
-            i.aBoolean = ((dInt = b.dInt) == 47 && b.eInt == 0);
+            i.aBoolean = ((dInt = b.crtAnimationI) == 47 && b.crtAnimationFrame == 0);
             switch (dInt) {
                 case 40:
                 case 47:
                 case 48: {
-                    if (b.eInt <= ((dInt == 40) ? 13 : 6)) {
+                    if (b.crtAnimationFrame <= ((dInt == 40) ? 13 : 6)) {
                         if (dInt != 47) {
                             break;
                         }
@@ -8736,34 +8848,34 @@ public final class i extends Canvas implements Runnable {
                             n5 = -2;
                         }
                         if (i.textures[this.aFInt] == null) {
-                            i.aClassfArr[aInt(this.aFInt)].aVoid(this.aClassGraphics, this.aGInt, b.aInt + n5, b.bInt - 24, 0);
+                            i.aClassfArr[aInt(this.aFInt)].drawFrame(this.aClassGraphics, this.aGInt, b.x + n5, b.y - 24, 0);
                         } else {
-                            this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.aInt + n5, b.bInt - 24, 0);
+                            this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.x + n5, b.y - 24, 0);
                         }
                     } catch (Exception x) {
                         System.out.println(x);
                     }
                     if (this.aHInt > 0) {
-                        aVoid(this.aClassGraphics, b.aInt + 24, b.bInt - 10, this.aHInt, i.aClassfArr[0].aClassImageArrArr[0], 0);
+                        aVoid(this.aClassGraphics, b.x + 24, b.y - 10, this.aHInt, i.aClassfArr[0].images[0], 0);
                         break;
                     }
                     break;
                 }
                 case 17:
                 case 18: {
-                    if (b.eInt == 0) {
-                        this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.aInt, b.bInt - 12, 0);
+                    if (b.crtAnimationFrame == 0) {
+                        this.aClassGraphics.drawImage(i.textures[this.aFInt][this.aGInt], b.x, b.y - 12, 0);
                         break;
                     }
                     break;
                 }
             }
         }
-        if (cBoolean && i.aByteArrArr[hInt][iInt] == 0) {
+        if (cBoolean && i.crtStagePlayerLayer[hInt][iInt] == 0) {
             final int n6 = i.bIntArrArr[hInt][iInt] & 0x7;
             final byte b3 = i.bByteArrArr[hInt][iInt];
             try {
-                i.aClassfArr[aInt(1)].aVoid(this.aClassGraphics, 0 + (i.bIntArrArr[hInt][iInt] & 0x38), hInt * 24 - this.aInt + i.gByteArr[n6] * b3, iInt * 24 - this.bInt + i.gByteArr[n6 + 8] * b3, 0);
+                i.aClassfArr[aInt(1)].drawFrame(this.aClassGraphics, 0 + (i.bIntArrArr[hInt][iInt] & 0x38), hInt * 24 - this.aInt + i.gByteArr[n6] * b3, iInt * 24 - this.bInt + i.gByteArr[n6 + 8] * b3, 0);
             } catch (Exception ex) {
             }
         }
@@ -8849,13 +8961,13 @@ public final class i extends Canvas implements Runnable {
                 break;
             }
             case 2: {
-                final int n6 = i.aIntArrArr[this.bGInt][this.bHInt] & 0xFF;
-                final int n7 = i.aIntArrArr[this.bGInt][this.bHInt] >> 8;
+                final int n6 = i.crtStageForegrondLayer[this.bGInt][this.bHInt] & 0xFF;
+                final int n7 = i.crtStageForegrondLayer[this.bGInt][this.bHInt] >> 8;
                 if ((n6 != 14 && n6 != 33) || n7 > 11) {
                     this.aLInt = 3;
                     this.aMInt = 0 + this.bRInt;
                     i i;
-                    f[] array;
+                    f_Sprite[] array;
                     int n8;
                     if (n6 == 14) {
                         i = this;
@@ -8869,7 +8981,7 @@ public final class i extends Canvas implements Runnable {
                         array = i.aClassfArr;
                         n8 = 22;
                     }
-                    i.bOInt = -(array[n8].aInt(0) - n7);
+                    i.bOInt = -(array[n8].getAnimationFrameCount(0) - n7);
                     break;
                 }
                 break;
@@ -8883,7 +8995,7 @@ public final class i extends Canvas implements Runnable {
             }
             this.bOInt += n9;
         }
-        if (((n3 & 0x200) != 0x0 || (i.aByteArrArr[bgInt - i.gByteArr[n2]][n] < 0 && iBoolean(bgInt, n) && (i.bIntArrArr[bgInt][n] & 0x7) == 0x0 && bgInt != this.bgInt && bhInt != this.bhInt)) && (this.kInt & 0x8) == 0x0) {
+        if (((n3 & 0x200) != 0x0 || (i.crtStagePlayerLayer[bgInt - i.gByteArr[n2]][n] < 0 && iBoolean(bgInt, n) && (i.bIntArrArr[bgInt][n] & 0x7) == 0x0 && bgInt != this.bgInt && bhInt != this.bhInt)) && (this.kInt & 0x8) == 0x0) {
             this.bOInt += b * b / 24;
             if (this.bIInt != 9) {
                 this.bNInt += -1 + i.aSInt % 3;
@@ -8933,11 +9045,11 @@ public final class i extends Canvas implements Runnable {
         i.bClassf = i.aClassfArr[(b == 19) ? 4 : 21];
         i j = null;
         int asInt = 0;
-        f f = null;
+        f_Sprite f = null;
         int bkInt3 = 0;
         Label_0188:
         {
-            if (this.aAInt == 1) {
+            if (this.crtWorldIndex == 1) {
                 i i;
                 int bkInt;
                 if ((n & 0xF8) >> 3 > 0) {
@@ -8979,28 +9091,28 @@ public final class i extends Canvas implements Runnable {
             }
             bkInt3 = this.bKInt;
         }
-        j.bLInt = asInt % f.aInt(bkInt3);
+        j.bLInt = asInt % f.getAnimationFrameCount(bkInt3);
         this.FVoid();
     }
 
-    private static int aInt(final f f, final int n, int i) {
+    private static int aInt(final f_Sprite f, final int n, int i) {
         int n2 = 0;
-        for (int n3 = 0; i > 0; i -= f.aInt(n, n3), n2 = n3, ++n3) {
+        for (int n3 = 0; i > 0; i -= f.getAnimationFrameTime(n, n3), n2 = n3, ++n3) {
         }
         return n2;
     }
 
-    private static int bInt(final f f, final int n, int n2) {
+    private static int bInt(final f_Sprite f, final int n, int n2) {
         n2 = 0;
         for (int i = 0; i < 1; ++i) {
-            n2 = 0 + f.aInt(n, 0);
+            n2 = 0 + f.getAnimationFrameTime(n, 0);
         }
         return n2;
     }
 
     private static void aVoid(final Graphics graphics, int n, final int n2, int iInteger, final Image[] array, int n3) {
         if (iInteger == 0) {
-            graphics.drawImage(i.aClassfArr[0].aClassImageArrArr[0][0], n, n2, 24);
+            graphics.drawImage(i.aClassfArr[0].images[0][0], n, n2, 24);
             return;
         }
         while (iInteger > 0) {
@@ -9012,18 +9124,19 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private boolean cBoolean() {
-        return this.hInt > 0 && this.hInt < this.eInt - 1 && this.iInt > 0 && this.iInt < this.fInt - 1;
+    private boolean isPlayerWithinStageBounds() {
+        return this.crtPlayerX > 0 && this.crtPlayerX < this.crtStageWidth - 1 &&
+                this.crtPlayerY > 0 && this.crtPlayerY < this.crtStageHeight - 1;
     }
 
     private void gVoid(int n) {
         final int dInt;
-        if ((dInt = i.aClassbArr[0].dInt) != 19 && (this.kInt & 0x4000) == 0x0 && (this.kInt & 0x800) == 0x0) {
+        if ((dInt = i.aClassbArr[0].crtAnimationI) != 19 && (this.kInt & 0x4000) == 0x0 && (this.kInt & 0x800) == 0x0) {
             Label_0516:
             {
-                if (this.cBoolean()) {
+                if (this.isPlayerWithinStageBounds()) {
                     final int n2;
-                    if ((n2 = ((i.eIntArrArr == null) ? 0 : aInt(i.eIntArrArr[this.hInt][this.iInt], (byte) 0, (byte) 3, (byte) 4))) == 8 || n2 == 7) {
+                    if ((n2 = ((i.eIntArrArr == null) ? 0 : aInt(i.eIntArrArr[this.crtPlayerX][this.crtPlayerY], (byte) 0, (byte) 3, (byte) 4))) == 8 || n2 == 7) {
                         switch (n) {
                             case 0:
                             case 1:
@@ -9044,7 +9157,7 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                         }
-                    } else if (i.aByteArrArr[this.hInt][this.iInt + 1] < 0 || i.aByteArrArr[this.hInt][this.iInt + 1] == 14) {
+                    } else if (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY + 1] < 0 || i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY + 1] == 14) {
                         int n3 = 0;
                         switch (n) {
                             case 14: {
@@ -9104,10 +9217,10 @@ public final class i extends Canvas implements Runnable {
                 }
             }
             if (n == 1000) {
-                i.aClassbArr[3].aVoid(0);
+                i.aClassbArr[3].setAnimation(0);
                 this.kInt |= 0x4000;
             } else {
-                i.aClassbArr[0].aVoid(n);
+                i.aClassbArr[0].setAnimation(n);
             }
             if (dInt != n) {
                 this.axInt = 70;
@@ -9116,42 +9229,42 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void PVoid() {
-        if (aBoolean(32944)) {
-            i.ahInt = 0;
+        if (isKeyPressed(KEY_ANY_OK)) { // 32944
+            i.keysPressed = 0;
             this.avBoolean = true;
             final int nInt = this.nInt;
             this.enInt = -1;
             switch (fInt(nInt)) {
                 case -1: {
-                    this.aClassString = i.aClassStringArr[41];
+                    this.aClassString = i.texts[41];
                 }
                 case 0: {
-                    this.aClassString = i.aClassStringArr[0];
+                    this.aClassString = i.texts[0];
                 }
                 case 1: {
-                    this.aZInt = aInt(i.iByteArr, 4) - a.aIntArr[this.nInt];
+                    this.aZInt = unpackUint16(i.iByteArr, 4) - a_Config.itemPrices[this.nInt];
                     this.gClassString = null;
                     System.gc();
-                    this.gClassString = i.aClassStringArr[125] + " " + this.aZInt + " " + i.aClassStringArr[19];
+                    this.gClassString = i.texts[125] + " " + this.aZInt + " " + i.texts[19];
                     i.iByteArr[4] = (byte) this.aZInt;
                     i.iByteArr[5] = (byte) (this.aZInt >> 8);
                     i.iByteArr[8] = (byte) (nInt + 4 + 1);
                     this.uVoid();
                     this.oInt = -1;
-                    this.aClassString = i.aClassStringArr[0];
+                    this.aClassString = i.texts[0];
                     this.aaBoolean = true;
-                    this.aVoid(i.aClassStringArr[32], -1, -1, 5000, 4273165, 0);
+                    this.aVoid(i.texts[32], -1, -1, 5000, 4273165, 0);
                     break;
                 }
             }
             return;
         }
-        if (aBoolean(64)) {
-            i.ahInt = 0;
+        if (isKeyPressed(KEY_CANCEL)) { // 64
+            i.keysPressed = 0;
             i.bByte = 27;
             this.avBoolean = true;
             this.gBoolean = true;
-            i.ahInt = 0;
+            i.keysPressed = 0;
             return;
         }
         Label_0325:
@@ -9160,13 +9273,13 @@ public final class i extends Canvas implements Runnable {
             i j;
             i k;
             int n;
-            if (aBoolean(4097)) {
+            if (isKeyPressed(KEY_UP)) { // 4097
                 i = this;
                 j = this;
                 k = this;
                 n = -1;
             } else {
-                if (!aBoolean(262146)) {
+                if (!isKeyPressed(KEY_DOWN)) { // 262146
                     break Label_0325;
                 }
                 i = this;
@@ -9184,21 +9297,21 @@ public final class i extends Canvas implements Runnable {
                 l.nInt = 0;
             }
         }
-        i.ahInt = 0;
+        i.keysPressed = 0;
         i m;
         String[] array;
         int n3;
         if (fInt(this.nInt) == 0) {
             this.oInt = -1;
             m = this;
-            array = i.aClassStringArr;
+            array = i.texts;
             n3 = 0;
         } else {
-            this.oInt = a.aIntArr[this.nInt];
+            this.oInt = a_Config.itemPrices[this.nInt];
             this.dClassStringBuffer.delete(0, this.dClassStringBuffer.length());
             this.dClassStringBuffer.append(this.oInt);
             m = this;
-            array = i.aClassStringArr;
+            array = i.texts;
             n3 = 6;
         }
         m.aClassString = array[n3];
@@ -9209,7 +9322,7 @@ public final class i extends Canvas implements Runnable {
         if (i.iByteArr[8] >= n + 4 + 1) {
             return 0;
         }
-        if (aInt(i.iByteArr, 4) < a.aIntArr[n]) {
+        if (unpackUint16(i.iByteArr, 4) < a_Config.itemPrices[n]) {
             return -1;
         }
         return 1;
@@ -9228,11 +9341,11 @@ public final class i extends Canvas implements Runnable {
         i.dZInt = 0;
     }
 
-    private void RVoid() {
-        if (i.sByte < i.bIntArr.length && aBoolean(i.bIntArr[i.sByte])) {
-            i.ahInt = 0;
-            if (++i.sByte == i.bIntArr.length) {
-                i.ahInt = 0;
+    private void checkCheatKeyCodeIsPressed() {
+        if (i.crtCheatPageKeyCodeIndex < i.cheatPageKeyCode.length && isKeyPressed(i.cheatPageKeyCode[i.crtCheatPageKeyCodeIndex])) {
+            i.keysPressed = 0;
+            if (++i.crtCheatPageKeyCodeIndex == i.cheatPageKeyCode.length) {
+                i.keysPressed = 0;
                 i.bByte = 24;
                 this.czInt = i.iByteArr[8];
                 this.cAInt = i.iByteArr[9];
@@ -9241,13 +9354,13 @@ public final class i extends Canvas implements Runnable {
             }
         } else {
             byte sByte;
-            if (aBoolean(i.bIntArr[0])) {
-                i.ahInt = 0;
+            if (isKeyPressed(i.cheatPageKeyCode[0])) {
+                i.keysPressed = 0;
                 sByte = 1;
             } else {
                 sByte = 0;
             }
-            i.sByte = sByte;
+            i.crtCheatPageKeyCodeIndex = sByte;
         }
     }
 
@@ -9262,15 +9375,15 @@ public final class i extends Canvas implements Runnable {
         } else if (i.mByte == 1) {
             this.oBoolean = true;
         }
-        i.ahInt = 0;
+        i.keysPressed = 0;
     }
 
     private void TVoid() {
         if (this.dbInt >= 0 && this.dbInt <= 2) {
-            i.ahInt = 0;
+            i.keysPressed = 0;
             return;
         }
-        if (aBoolean(4097)) {
+        if (isKeyPressed(KEY_UP)) { // 4097
             if (System.currentTimeMillis() < 300L) {
                 return;
             }
@@ -9278,7 +9391,7 @@ public final class i extends Canvas implements Runnable {
             if (this.boInt == 0 && this.bqInt == 0 && !this.XBoolean) {
                 this.mVoid();
             }
-        } else if (aBoolean(262146)) {
+        } else if (isKeyPressed(KEY_DOWN)) { // 262146
             if (System.currentTimeMillis() < 300L) {
                 return;
             }
@@ -9286,12 +9399,12 @@ public final class i extends Canvas implements Runnable {
             if (this.boInt == 0 && this.bqInt == 0 && !this.XBoolean) {
                 this.nVoid();
             }
-        } else if (aBoolean(32944)) {
+        } else if (isKeyPressed(KEY_ANY_OK)) { // 32944
             if (this.dbInt < 0 || this.dbInt > 2) {
                 this.dbInt = 0;
                 this.gLong = System.currentTimeMillis();
             }
-        } else if (aBoolean(64)) {
+        } else if (isKeyPressed(KEY_CANCEL)) { // 64
             switch (this.boInt) {
                 case 5: {
                     i.VBoolean = true;
@@ -9303,7 +9416,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     if (i.bByte == 4) {
                         this.aVoid(0);
-                        this.pVoid(19);
+                        this.playSound(j_SoundManager.SOUND_M_TITLE);
                         break;
                     }
                     break;
@@ -9321,14 +9434,14 @@ public final class i extends Canvas implements Runnable {
                 }
             }
         }
-        i.ahInt = 0;
+        i.keysPressed = 0;
     }
 
     private boolean dBoolean() {
         if (this.xByte == 3) {
-            final int n = i.aIntArrArr[this.hInt][this.iInt] & 0xFF;
+            final int n = i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF;
             if (this.cfInt == 0 && n != 15 && n != 16) {
-                this.pVoid(0);
+                this.playSound(0);
                 i i;
                 int cfInt;
                 if (this.ceInt <= 0) {
@@ -9349,7 +9462,7 @@ public final class i extends Canvas implements Runnable {
         int n4 = i.bIntArrArr[n2][n3];
         if (n == 43 && (n4 & 0xF8) == 0x0) {
             if ((n4 & 0x18000) == 0x0) {
-                i.aByteArrArr[n2][n3] = -1;
+                i.crtStagePlayerLayer[n2][n3] = -1;
                 this.jVoid(n2, n3);
                 return;
             }
@@ -9360,30 +9473,30 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void dVoid(final int n, final int n2) {
-        switch (i.aByteArrArr[n][n2]) {
+        switch (i.crtStagePlayerLayer[n][n2]) {
             case 0: {
-                this.pVoid(11);
+                this.playSound(11);
             }
             case 19:
             case 43:
             case 45:
             case 46: {
-                i.aIntArrArr[n][n2] = -1;
+                i.crtStageForegrondLayer[n][n2] = -1;
                 this.jVoid(n, n2);
             }
             case 48: {
-                i.aIntArrArr[n][n2] = -1;
+                i.crtStageForegrondLayer[n][n2] = -1;
                 this.jVoid(n, n2);
                 int n3 = n2 + 1;
-                if (i.aByteArrArr[n][n3] != 48) {
+                if (i.crtStagePlayerLayer[n][n3] != 48) {
                     n3 = -1;
                 }
-                i.aByteArrArr[n][n3] = -1;
+                i.crtStagePlayerLayer[n][n3] = -1;
                 this.jVoid(n, n3);
                 i.eByteArr[(i.bIntArrArr[n][n2] >> 24) * 3 + 2] = -1;
             }
             default: {
-                i.aIntArrArr[n][n2] = -1;
+                i.crtStageForegrondLayer[n][n2] = -1;
             }
         }
     }
@@ -9404,7 +9517,7 @@ public final class i extends Canvas implements Runnable {
             this.IBoolean = true;
             i.bByte = 28;
         }
-        boolean b = this.cBoolean();
+        boolean b = this.isPlayerWithinStageBounds();
         if (this.alBoolean) {
             this.alBoolean = false;
             if (this.dtInt < this.duInt) {
@@ -9416,7 +9529,7 @@ public final class i extends Canvas implements Runnable {
             }
         }
         if (i.aClassbArr[4] != null) {
-            i.aClassbArr[4].bVoid();
+            i.aClassbArr[4].tick();
         }
         if (this.bjInt > 0) {
             --this.bjInt;
@@ -9438,7 +9551,7 @@ public final class i extends Canvas implements Runnable {
                 final byte[] bByteArr = i.bByteArr;
                 final int n3 = n2;
                 ++bByteArr[n3];
-                if (i.bByteArr[n2] >= ((i.cByteArr[n2] < 0) ? aInt(i.aClassfArr[2], 0) : i.aClassfArr[9].aInt((int) i.cByteArr[n2]))) {
+                if (i.bByteArr[n2] >= ((i.cByteArr[n2] < 0) ? aInt(i.aClassfArr[2], 0) : i.aClassfArr[9].getAnimationFrameCount((int) i.cByteArr[n2]))) {
                     ++this.adInt;
                     this.adInt &= 0x7;
                 }
@@ -9450,102 +9563,102 @@ public final class i extends Canvas implements Runnable {
             {
                 switch (this.kByte) {
                     case 2: {
-                        if (i.aIntArrArr != null && this.cBoolean() && (i.aIntArrArr[this.hInt][this.iInt] & 0xFF) == 0x0) {
+                        if (i.crtStageForegrondLayer != null && this.isPlayerWithinStageBounds() && (i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) == 0x0) {
                             final int n4;
-                            if ((n4 = i.aIntArrArr[this.hInt][this.iInt] >> 8) == 13) {
+                            if ((n4 = i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] >> 8) == 13) {
                                 this.qBoolean = true;
                             } else if (n4 == 16) {
                                 this.rBoolean = true;
                             }
                         }
-                        if (!this.sBoolean && this.jInt <= 0 && this.cBoolean(46, 7)) {
+                        if (!this.sBoolean && this.jInt <= 0 && this.isPlayerAtPosition(46, 7)) {
                             this.tBoolean = true;
                             this.sBoolean = true;
                         }
-                        if (this.cBoolean(61, 3) && this.jInt == 6) {
-                            this.cVoid(this.hInt, this.iInt, 5);
+                        if (this.isPlayerAtPosition(61, 3) && this.jInt == 6) {
+                            this.cVoid(this.crtPlayerX, this.crtPlayerY, 5);
                             this.eBoolean = false;
                         }
-                        if (this.aClassc == null && (this.cBoolean(60, 3) || this.cBoolean(61, 3))) {
+                        if (this.aClassc == null && (this.isPlayerAtPosition(60, 3) || this.isPlayerAtPosition(61, 3))) {
                             this.bVoid(true);
                             this.NBoolean = true;
                             this.auVoid();
                             this.pVoid();
-                            this.aAInt = 0;
-                            this.aBInt = 0;
+                            this.crtWorldIndex = 0;
+                            this.crtStageI = 0;
                             this.lVoid();
                         }
                         if (this.aIInt == 2) {
-                            i.aIntArrArr[11][50] = -1;
+                            i.crtStageForegrondLayer[11][50] = -1;
                         }
                         break;
                     }
                     case 1: {
-                        if (i.aByteArrArr[18][63] == 0 && i.bByteArrArr[18][63] <= 0 && this.amInt == 0) {
+                        if (i.crtStagePlayerLayer[18][63] == 0 && i.bByteArrArr[18][63] <= 0 && this.amInt == 0) {
                             this.bjInt = 120;
                             ++this.amInt;
                         }
                         Label_0773:
                         {
-                            b b2;
+                            b_SpriteAnimator b2;
                             int n5;
                             if (this.amInt == 3) {
-                                if (i.aClassbArr[2].dInt == 0) {
+                                if (i.aClassbArr[2].crtAnimationI == 0) {
                                     b2 = i.aClassbArr[2];
                                     n5 = 1;
                                 } else {
-                                    if (i.aClassbArr[2].dInt != 1 || !i.aClassbArr[2].aBoolean()) {
+                                    if (i.aClassbArr[2].crtAnimationI != 1 || !i.aClassbArr[2].animationEnded()) {
                                         break Label_0773;
                                     }
-                                    i.aClassbArr[2].aVoid(2);
-                                    if (this.iInt == this.fInt - 4) {
+                                    i.aClassbArr[2].setAnimation(2);
+                                    if (this.crtPlayerY == this.crtStageHeight - 4) {
                                         this.alInt = 817;
                                     }
                                     break Label_0773;
                                 }
                             } else {
-                                if (i.aClassbArr[2].dInt == 0) {
+                                if (i.aClassbArr[2].crtAnimationI == 0) {
                                     break Label_0773;
                                 }
                                 b2 = i.aClassbArr[2];
                                 n5 = 0;
                             }
-                            b2.aVoid(n5);
+                            b2.setAnimation(n5);
                         }
-                        i.aClassbArr[2].bVoid();
-                        if (i.aClassbArr[2].dInt == 2) {
-                            i.aClassbArr[1].bVoid();
+                        i.aClassbArr[2].tick();
+                        if (i.aClassbArr[2].crtAnimationI == 2) {
+                            i.aClassbArr[1].tick();
                             if (this.bjInt == 10) {
                                 this.bjInt = 60;
                             }
-                            if (i.aClassbArr[1].dInt == 0) {
+                            if (i.aClassbArr[1].crtAnimationI == 0) {
                                 if ((this.aClassc == null || this.alInt < 46) && this.alInt < 1704) {
                                     ++this.alInt;
-                                    final int alInt = this.fInt * 24 - (this.bInt + 320 - 80);
+                                    final int alInt = this.crtStageHeight * 24 - (this.bInt + 320 - 80);
                                     if (this.alInt < alInt) {
                                         this.alInt = alInt;
                                     }
                                 }
-                                if (this.fInt * 24 - this.alInt <= this.iInt * 24 + 18 && this.hInt < 17) {
-                                    this.aVoid(i.iByteArr[8], 64, 1);
+                                if (this.crtStageHeight * 24 - this.alInt <= this.crtPlayerY * 24 + 18 && this.crtPlayerX < 17) {
+                                    this.hurtHero(i.iByteArr[8], 64, 1);
                                 }
-                            } else if (i.aClassbArr[1].aBoolean()) {
-                                i.aClassbArr[1].aVoid(0);
+                            } else if (i.aClassbArr[1].animationEnded()) {
+                                i.aClassbArr[1].setAnimation(0);
                             }
                         }
                         break;
                     }
                     case 3: {
-                        final b b3 = i.aClassbArr[5];
+                        final b_SpriteAnimator b3 = i.aClassbArr[5];
                         final int beInt = this.bEInt;
                         final int bfInt = this.bFInt;
-                        final int n6 = this.hInt - 8;
-                        final int n7 = this.hInt + 8;
-                        final int n8 = this.iInt + 8;
-                        final int n9 = this.iInt - 8;
+                        final int n6 = this.crtPlayerX - 8;
+                        final int n7 = this.crtPlayerX + 8;
+                        final int n8 = this.crtPlayerY + 8;
+                        final int n9 = this.crtPlayerY - 8;
                         for (int iInteger = 15; iInteger <= 22; ++iInteger) {
                             for (int j = 14; j <= 21; ++j) {
-                                if ((j <= n6 || j >= n7 || iInteger <= n8 || iInteger >= n9) && i.aByteArrArr[j][iInteger] == 44) {
+                                if ((j <= n6 || j >= n7 || iInteger <= n8 || iInteger >= n9) && i.crtStagePlayerLayer[j][iInteger] == 44) {
                                     this.bEInt = j;
                                     this.bFInt = iInteger;
                                     this.akVoid();
@@ -9557,18 +9670,18 @@ public final class i extends Canvas implements Runnable {
                         if (this.nByte == 0) {
                             this.adVoid();
                         }
-                        b b4;
+                        b_SpriteAnimator b4;
                         if (this.aoInt == 12) {
                             if (this.apInt++ > 100) {
                                 this.aoInt = 15;
                                 this.jVoid(11, 11);
                             } else {
-                                this.aClassj.bVoid(7);
+                                this.aClassj.playSound(j_SoundManager.SOUND_SFX_MINE);
                             }
                             b4 = b3;
                         } else if (this.aoInt == -1) {
-                            if (this.hInt * 24 >= 336) {
-                                b3.aVoid(this.aoInt = 0);
+                            if (this.crtPlayerX * 24 >= 336) {
+                                b3.setAnimation(this.aoInt = 0);
                                 break;
                             }
                             break;
@@ -9577,11 +9690,11 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             int n10 = -1;
-                            final int n11 = this.hInt * 24 + 12;
-                            final int n12 = this.iInt * 24;
+                            final int n11 = this.crtPlayerX * 24 + 12;
+                            final int n12 = this.crtPlayerY * 24;
                             int n13 = this.asInt + 24;
                             if (this.jLong == 0L && this.nByte != 0) {
-                                this.jLong = i.aSInt + e.aInt(340, 441);
+                                this.jLong = i.aSInt + e_Utils.getRandomInt(340, 441);
                             }
                             int n14 = (this.aqInt > 0 && i.aSInt % this.aqInt == 0) ? 2 : 1;
                             if (this.aoInt == 10 || this.aoInt == 11) {
@@ -9592,7 +9705,7 @@ public final class i extends Canvas implements Runnable {
                                 {
                                     switch (this.aoInt) {
                                         case 2: {
-                                            if (!b3.aBoolean()) {
+                                            if (!b3.animationEnded()) {
                                                 break;
                                             }
                                             if (i.aSInt > this.jLong) {
@@ -9603,7 +9716,7 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 3: {
-                                            if (!b3.aBoolean()) {
+                                            if (!b3.animationEnded()) {
                                                 break;
                                             }
                                             if (i.aSInt > this.jLong) {
@@ -9630,7 +9743,7 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 10: {
-                                            if (!b3.aBoolean()) {
+                                            if (!b3.animationEnded()) {
                                                 this.asInt -= 2;
                                                 break;
                                             }
@@ -9651,7 +9764,7 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                         case 11: {
-                                            if (!b3.aBoolean()) {
+                                            if (!b3.animationEnded()) {
                                                 this.asInt += 2;
                                                 break;
                                             }
@@ -9730,7 +9843,7 @@ public final class i extends Canvas implements Runnable {
                                                         break;
                                                     }
                                                     default: {
-                                                        if (b3.eInt == 5 && b3.fInt == 0) {
+                                                        if (b3.crtAnimationFrame == 5 && b3.crtTime == 0) {
                                                             i k;
                                                             int bjInt;
                                                             if (this.aoInt == 13 || this.aoInt == 14) {
@@ -9742,15 +9855,15 @@ public final class i extends Canvas implements Runnable {
                                                             }
                                                             k.bjInt = bjInt;
                                                         }
-                                                        if (b3.aBoolean()) {
+                                                        if (b3.animationEnded()) {
                                                             if (this.aoInt == 13 || this.aoInt == 14) {
                                                                 this.kLong = i.aSInt + 40;
-                                                                this.jLong = i.aSInt + e.aInt(340, 441);
+                                                                this.jLong = i.aSInt + e_Utils.getRandomInt(340, 441);
                                                             }
                                                             n10 = (this.aoInt = aoInt);
                                                         }
-                                                        if (b3.eInt >= 5 && n12 >= 504 && n11 >= n13 - n15 * 24 && n11 <= n13 + n16 * 24) {
-                                                            this.aVoid(1, 48, 4);
+                                                        if (b3.crtAnimationFrame >= 5 && n12 >= 504 && n11 >= n13 - n15 * 24 && n11 <= n13 + n16 * 24) {
+                                                            this.hurtHero(1, 48, 4);
                                                             break Label_2250;
                                                         }
                                                         break Label_2250;
@@ -9763,7 +9876,7 @@ public final class i extends Canvas implements Runnable {
                                     }
                                 }
                                 if (n12 >= 504 && n11 >= n13 - 24 && n11 <= n13 + 24) {
-                                    this.aVoid(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
+                                    this.hurtHero(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
                                 }
                                 if (this.aqInt <= 0) {
                                     this.aoInt = 12;
@@ -9778,25 +9891,25 @@ public final class i extends Canvas implements Runnable {
                                     int n18;
                                     if (this.cfInt <= 0) {
                                         if (this.aqInt <= 2) {
-                                            i.aByteArrArr[10][16] = 45;
+                                            i.crtStagePlayerLayer[10][16] = 45;
                                             i.cByteArrArr[10][16] = 24;
                                             i.bByteArrArr[10][16] = 0;
                                             i.bIntArrArr[10][16] = 0;
                                         }
-                                        i.aByteArrArr[26][19] = 45;
+                                        i.crtStagePlayerLayer[26][19] = 45;
                                         i.cByteArrArr[26][19] = 24;
                                         i.bByteArrArr[26][19] = 0;
                                         array = i.bIntArrArr[26];
                                         n18 = 19;
                                     } else {
-                                        i.aByteArrArr[10][19] = 45;
+                                        i.crtStagePlayerLayer[10][19] = 45;
                                         i.cByteArrArr[10][19] = 24;
                                         i.bByteArrArr[10][19] = 0;
                                         i.bIntArrArr[10][19] = 0;
                                         if (this.aqInt > 2) {
                                             break Label_2517;
                                         }
-                                        i.aByteArrArr[26][16] = 45;
+                                        i.crtStagePlayerLayer[26][16] = 45;
                                         i.cByteArrArr[26][16] = 24;
                                         i.bByteArrArr[26][16] = 0;
                                         array = i.bIntArrArr[26];
@@ -9808,7 +9921,7 @@ public final class i extends Canvas implements Runnable {
                             if (this.aoInt != 10 && this.aoInt != 11) {
                                 for (int l = 21; l < 23; ++l) {
                                     for (int n19 = n13 / 24 - 1; n19 < n13 / 24 - 2 + 4; ++n19) {
-                                        if (i.aByteArrArr[n19][l] == 9) {
+                                        if (i.crtStagePlayerLayer[n19][l] == 9) {
                                             Label_2673:
                                             {
                                                 if ((i.bIntArrArr[n19][l] & 0x7) == 0x3) {
@@ -9841,23 +9954,23 @@ public final class i extends Canvas implements Runnable {
                                                     m.aoInt = aoInt2;
                                                 }
                                             }
-                                            i.aByteArrArr[n19][l] = -1;
+                                            i.crtStagePlayerLayer[n19][l] = -1;
                                             this.bVoid(n19, l);
-                                            i.aByteArrArr[n19][l] = 30;
+                                            i.crtStagePlayerLayer[n19][l] = 30;
                                             i.cByteArrArr[n19][l] = 24;
                                             i.bIntArrArr[n19][l] = 4;
-                                            this.pVoid(14);
+                                            this.playSound(14);
                                         }
                                     }
                                 }
                             }
                             if (n10 != -1) {
-                                b3.aVoid(n10);
+                                b3.setAnimation(n10);
                                 break;
                             }
                             b4 = b3;
                         }
-                        b4.bVoid();
+                        b4.tick();
                         break;
                     }
                     case 4: {
@@ -9867,21 +9980,21 @@ public final class i extends Canvas implements Runnable {
                             }
                             this.ZBoolean = true;
                         }
-                        final b b5 = i.aClassbArr[5];
+                        final b_SpriteAnimator b5 = i.aClassbArr[5];
                         ++this.apInt;
                         int n21 = -1;
-                        final b b6 = i.aClassbArr[4];
+                        final b_SpriteAnimator b6 = i.aClassbArr[4];
                         int n22 = -1;
                         final int dInt = this.dInt();
-                        if (i.aByteArrArr[this.PInt][2] == -1) {
-                            i.aByteArrArr[this.PInt][2] = 31;
+                        if (i.crtStagePlayerLayer[this.PInt][2] == -1) {
+                            i.crtStagePlayerLayer[this.PInt][2] = 31;
                         }
-                        if (i.aByteArrArr[this.QInt][2] == -1) {
-                            i.aByteArrArr[this.QInt][2] = 31;
+                        if (i.crtStagePlayerLayer[this.QInt][2] == -1) {
+                            i.crtStagePlayerLayer[this.QInt][2] = 31;
                         }
                         switch (this.aoInt) {
                             case 0: {
-                                if (this.hInt >= 10) {
+                                if (this.crtPlayerX >= 10) {
                                     this.aoInt = 6;
                                     this.apInt = 0;
                                     break;
@@ -9921,7 +10034,7 @@ public final class i extends Canvas implements Runnable {
                                     this.alVoid();
                                 }
                                 if ((this.apInt & 0x6F) == 0x1) {
-                                    this.pVoid(7);
+                                    this.playSound(7);
                                     break;
                                 }
                                 break;
@@ -9958,9 +10071,9 @@ public final class i extends Canvas implements Runnable {
                                     this.SInt = this.aoInt;
                                     this.aoInt = 3;
                                     n21 = 3;
-                                    this.pVoid(10);
+                                    this.playSound(10);
                                 }
-                                if (this.apInt > 15 && b5.dInt != 6) {
+                                if (this.apInt > 15 && b5.crtAnimationI != 6) {
                                     n21 = 6;
                                 }
                                 if (this.apInt > 30) {
@@ -9984,7 +10097,7 @@ public final class i extends Canvas implements Runnable {
                                         this.apInt = 0;
                                         n24 = 4;
                                     } else {
-                                        if (this.apInt <= n23 >> 1 || b5.dInt == 1) {
+                                        if (this.apInt <= n23 >> 1 || b5.crtAnimationI == 1) {
                                             break Label_3392;
                                         }
                                         n24 = 1;
@@ -9996,7 +10109,7 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             case 5: {
-                                if (b5.bInt - 40 - b5.aClassf.cByteArr[(b5.aClassf.aShortArr[b5.dInt] + b5.eInt) * 5 + 3] <= 72 - this.bInt + 40) {
+                                if (b5.y - 40 - b5.sprite.animationFrames[(b5.sprite.animationFirstAnimationFrameIndices[b5.crtAnimationI] + b5.crtAnimationFrame) * 5 + 3] <= 72 - this.bInt + 40) {
                                     this.TInt = 0;
                                     this.acVoid();
                                     this.aoInt = 10;
@@ -10011,11 +10124,11 @@ public final class i extends Canvas implements Runnable {
                             case 9: {
                                 this.apInt -= 2;
                                 this.abVoid();
-                                if (b5.bInt - 40 - b5.aClassf.cByteArr[(b5.aClassf.aShortArr[b5.dInt] + b5.eInt) * 5 + 3] >= 240 - this.bInt + 40) {
+                                if (b5.y - 40 - b5.sprite.animationFrames[(b5.sprite.animationFirstAnimationFrameIndices[b5.crtAnimationI] + b5.crtAnimationFrame) * 5 + 3] >= 240 - this.bInt + 40) {
                                     this.aoInt = 6;
                                     this.apInt = 0;
                                     final int n25;
-                                    int arInt = (n25 = this.hInt - 10) / 3;
+                                    int arInt = (n25 = this.crtPlayerX - 10) / 3;
                                     if (n25 == arInt * 3 + 2) {
                                         arInt += i.aSInt % 50 / 25;
                                     }
@@ -10059,8 +10172,8 @@ public final class i extends Canvas implements Runnable {
                                     break;
                                 }
                                 final int dInt2 = this.dInt();
-                                if (this.iInt == 4 && this.hInt >= dInt2 - 3 && this.hInt <= dInt2 + 4) {
-                                    this.aVoid(1, 64, (this.hInt == dInt2) ? 4 : 2);
+                                if (this.crtPlayerY == 4 && this.crtPlayerX >= dInt2 - 3 && this.crtPlayerX <= dInt2 + 4) {
+                                    this.hurtHero(1, 64, (this.crtPlayerX == dInt2) ? 4 : 2);
                                     this.jBoolean = true;
                                     break;
                                 }
@@ -10068,33 +10181,33 @@ public final class i extends Canvas implements Runnable {
                             }
                         }
                         if (n21 == -1) {
-                            b5.bVoid();
+                            b5.tick();
                         } else {
-                            b5.aVoid(n21);
+                            b5.setAnimation(n21);
                         }
                         if (this.kBoolean) {
                             if (n22 == -1) {
-                                b6.bVoid();
+                                b6.tick();
                             } else {
-                                b6.aVoid(n22);
+                                b6.setAnimation(n22);
                             }
                         }
                         break;
                     }
                     case 5: {
-                        final b b7 = i.aClassbArr[5];
-                        b b8;
+                        final b_SpriteAnimator b7 = i.aClassbArr[5];
+                        b_SpriteAnimator b8;
                         if (this.aoInt == 12) {
                             if (this.apInt++ > 100) {
                                 this.aoInt = 15;
                                 this.jVoid(11, 11);
                             } else {
-                                this.aClassj.bVoid(7);
+                                this.aClassj.playSound(j_SoundManager.SOUND_SFX_MINE);
                             }
                             b8 = b7;
                         } else if (this.aoInt == -1) {
-                            if (this.hInt * 24 >= 360) {
-                                b7.aVoid(this.aoInt = 10);
+                            if (this.crtPlayerX * 24 >= 360) {
+                                b7.setAnimation(this.aoInt = 10);
                                 break;
                             }
                             break;
@@ -10103,8 +10216,8 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             int n26 = -1;
-                            final int n27 = this.hInt * 24 + 12;
-                            final int n28 = this.iInt * 24;
+                            final int n27 = this.crtPlayerX * 24 + 12;
+                            final int n28 = this.crtPlayerY * 24;
                             final int n29 = this.atInt + 24;
                             if (this.aoInt == 13) {
                                 n26 = 13;
@@ -10138,19 +10251,19 @@ public final class i extends Canvas implements Runnable {
                                 {
                                     switch (this.aoInt) {
                                         case 13: {
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = 0);
                                                 this.aeBoolean = false;
                                                 break Label_5070;
                                             }
                                             if (this.aeBoolean) {
-                                                b7.bVoid();
+                                                b7.tick();
                                             }
                                             break Label_5070;
                                         }
                                         case 4:
                                         case 5: {
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = ((this.aoInt != 4) ? 1 : 0));
                                             }
                                             this.adBoolean = false;
@@ -10258,65 +10371,65 @@ public final class i extends Canvas implements Runnable {
 //                                            break;
                                         }
                                         case 8: {
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = 10);
                                             }
-                                            if (b7.eInt >= 4 && n28 >= 504 && n27 >= n29 - 48 && n27 <= n29) {
+                                            if (b7.crtAnimationFrame >= 4 && n28 >= 504 && n27 >= n29 - 48 && n27 <= n29) {
                                                 break;
                                             }
                                             break Label_5070;
                                         }
                                         case 9: {
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = 11);
                                             }
-                                            if (b7.eInt >= 4 && n28 >= 504 && n27 >= n29 && n27 <= n29 + 48) {
+                                            if (b7.crtAnimationFrame >= 4 && n28 >= 504 && n27 >= n29 && n27 <= n29 + 48) {
                                                 break;
                                             }
                                             break Label_5070;
                                         }
                                         case 3: {
-                                            if (b7.eInt == 5 && b7.fInt == 0) {
+                                            if (b7.crtAnimationFrame == 5 && b7.crtTime == 0) {
                                                 this.bjInt = 30;
                                             }
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = 11);
                                                 this.adBoolean = false;
                                                 this.dhInt = 0;
                                             }
-                                            if (b7.eInt >= 7 && n28 < 504 && n27 == n29 + this.dhInt) {
+                                            if (b7.crtAnimationFrame >= 7 && n28 < 504 && n27 == n29 + this.dhInt) {
                                                 break;
                                             }
                                             break Label_5070;
                                         }
                                         case 2: {
-                                            if (b7.eInt == 5 && b7.fInt == 0) {
+                                            if (b7.crtAnimationFrame == 5 && b7.crtTime == 0) {
                                                 this.bjInt = 30;
                                             }
-                                            if (b7.aBoolean()) {
+                                            if (b7.animationEnded()) {
                                                 n26 = (this.aoInt = 10);
                                                 this.adBoolean = false;
                                                 this.dhInt = 0;
                                             }
-                                            if (b7.eInt >= 7 && n28 < 504 && n27 == n29 + this.dhInt) {
+                                            if (b7.crtAnimationFrame >= 7 && n28 < 504 && n27 == n29 + this.dhInt) {
                                                 break;
                                             }
                                             break Label_5070;
                                         }
                                     }
-                                    this.aVoid(1, 48, 0);
+                                    this.hurtHero(1, 48, 0);
                                 }
                                 if (n28 >= 504 && n27 >= n29 - 24 && n27 <= n29 - 24) {
-                                    this.aVoid(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
+                                    this.hurtHero(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
                                 }
                             }
-                            if ((this.aoInt == 8 || this.aoInt == 9) && b7.eInt == 5) {
+                            if ((this.aoInt == 8 || this.aoInt == 9) && b7.crtAnimationFrame == 5) {
                                 this.acVoid();
                             }
                             if (this.aoInt != 6 && this.aoInt != 7) {
                                 for (int n32 = 21; n32 < 23; ++n32) {
                                     for (int n33 = n29 / 24 - 1; n33 < n29 / 24 - 2 + 4; ++n33) {
-                                        if (i.aByteArrArr[n33][n32] == 0) {
+                                        if (i.crtStagePlayerLayer[n33][n32] == 0) {
                                             Label_5328:
                                             {
                                                 if ((i.bIntArrArr[n33][n32] & 0x7) == 0x3 && this.aoInt != 13) {
@@ -10351,12 +10464,12 @@ public final class i extends Canvas implements Runnable {
                                                     i4.aoInt = aoInt4;
                                                 }
                                             }
-                                            i.aByteArrArr[n33][n32] = -1;
+                                            i.crtStagePlayerLayer[n33][n32] = -1;
                                             this.bVoid(n33, n32);
-                                            i.aByteArrArr[n33][n32] = 30;
+                                            i.crtStagePlayerLayer[n33][n32] = 30;
                                             i.cByteArrArr[n33][n32] = 24;
                                             i.bIntArrArr[n33][n32] = 4;
-                                            this.pVoid(14);
+                                            this.playSound(14);
                                         }
                                     }
                                 }
@@ -10367,12 +10480,12 @@ public final class i extends Canvas implements Runnable {
                                 n26 = 12;
                             }
                             if (n26 != -1) {
-                                b7.aVoid(n26);
+                                b7.setAnimation(n26);
                                 break;
                             }
                             b8 = b7;
                         }
-                        b8.bVoid();
+                        b8.tick();
                         break;
                     }
                 }
@@ -10388,49 +10501,49 @@ public final class i extends Canvas implements Runnable {
             this.ceInt += this.cfInt;
             if (this.ceInt == 0 || this.ceInt == 9) {
                 this.cfInt = 0;
-                for (int n35 = 1; n35 < this.fInt - 1; ++n35) {
-                    for (int n36 = 1; n36 < this.eInt - 1; ++n36) {
-                        final int n37 = i.aIntArrArr[n36][n35] & 0xFF;
-                        final byte b9 = i.aByteArrArr[n36][n35];
+                for (int n35 = 1; n35 < this.crtStageHeight - 1; ++n35) {
+                    for (int n36 = 1; n36 < this.crtStageWidth - 1; ++n36) {
+                        final int n37 = i.crtStageForegrondLayer[n36][n35] & 0xFF;
+                        final byte b9 = i.crtStagePlayerLayer[n36][n35];
                         if (n37 == 15 || n37 == 16 || b9 == 34 || b9 == 35) {
                             this.cVoid(n36, n35);
                         }
                     }
                 }
             } else if (this.ceInt == 5) {
-                final int n38 = this.fInt - 1;
-                final int n39 = this.eInt - 1;
+                final int n38 = this.crtStageHeight - 1;
+                final int n39 = this.crtStageWidth - 1;
                 for (int n40 = 1; n40 < n38; ++n40) {
                     for (int n41 = 1; n41 < n39; ++n41) {
-                        final int n42 = i.aIntArrArr[n41][n40] & 0xFF;
-                        final byte b10 = i.aByteArrArr[n41][n40];
+                        final int n42 = i.crtStageForegrondLayer[n41][n40] & 0xFF;
+                        final byte b10 = i.crtStagePlayerLayer[n41][n40];
                         boolean b11 = false;
                         Label_5786:
                         {
                             if (n42 == 15) {
                                 this.dVoid(n41, n40);
-                                i.aByteArrArr[n41][n40] = 34;
+                                i.crtStagePlayerLayer[n41][n40] = 34;
                             } else if (n42 == 16) {
                                 this.dVoid(n41, n40);
-                                i.aByteArrArr[n41][n40] = 35;
+                                i.crtStagePlayerLayer[n41][n40] = 35;
                             } else {
                                 int[] array2;
                                 int n43;
                                 int n44;
                                 if (b10 == 34) {
-                                    array2 = i.aIntArrArr[n41];
+                                    array2 = i.crtStageForegrondLayer[n41];
                                     n43 = n40;
                                     n44 = 15;
                                 } else {
                                     if (b10 != 35) {
                                         break Label_5786;
                                     }
-                                    array2 = i.aIntArrArr[n41];
+                                    array2 = i.crtStageForegrondLayer[n41];
                                     n43 = n40;
                                     n44 = 16;
                                 }
                                 array2[n43] = n44;
-                                i.aByteArrArr[n41][n40] = -1;
+                                i.crtStagePlayerLayer[n41][n40] = -1;
                                 this.lVoid(n41, n40);
                             }
                             b11 = true;
@@ -10446,14 +10559,14 @@ public final class i extends Canvas implements Runnable {
         if (this.aWInt > 0 && --this.aWInt == 0) {
             this.XVoid();
         }
-        if (this.jInt <= 0 && this.wBoolean) {
-            this.wBoolean = false;
-            this.pVoid(9);
+        if (this.jInt <= 0 && this.shouldSaveCheckpoint) {
+            this.shouldSaveCheckpoint = false;
+            this.playSound(9);
             try {
                 Thread.sleep(100L);
             } catch (InterruptedException ex) {
             }
-            this.aoVoid();
+            this.saveCheckpoint();
         }
         if (i.aClassfArr[11] != null) {
             final int n45;
@@ -10522,24 +10635,24 @@ public final class i extends Canvas implements Runnable {
             i i8;
             int jInt;
             if (this.aTInt > 0) {
-                if (i.aByteArrArr[this.hInt][this.iInt] < 0) {
+                if (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY] < 0) {
                     i i7;
                     int n47;
                     int n48;
-                    if (i.aByteArrArr[this.hInt][this.iInt + 1] == 9 && (i.bIntArrArr[this.hInt][this.iInt + 1] & 0x7) == 0x3) {
-                        ++this.iInt;
+                    if (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY + 1] == 9 && (i.bIntArrArr[this.crtPlayerX][this.crtPlayerY + 1] & 0x7) == 0x3) {
+                        ++this.crtPlayerY;
                         i7 = this;
                         n47 = (this.kInt & 0xFFFFFFF8);
                         n48 = 3;
-                    } else if (i.aByteArrArr[this.hInt - 1][this.iInt + 1] == 9 && (i.bIntArrArr[this.hInt - 1][this.iInt + 1] & 0x7) == 0x3) {
-                        ++this.iInt;
-                        --this.hInt;
+                    } else if (i.crtStagePlayerLayer[this.crtPlayerX - 1][this.crtPlayerY + 1] == 9 && (i.bIntArrArr[this.crtPlayerX - 1][this.crtPlayerY + 1] & 0x7) == 0x3) {
+                        ++this.crtPlayerY;
+                        --this.crtPlayerX;
                         i7 = this;
                         n47 = (this.kInt & 0xFFFFFFF8);
                         n48 = 3;
-                    } else if (i.aByteArrArr[this.hInt + 1][this.iInt + 1] == 9 && (i.bIntArrArr[this.hInt + 1][this.iInt + 1] & 0x7) == 0x3) {
-                        ++this.iInt;
-                        ++this.hInt;
+                    } else if (i.crtStagePlayerLayer[this.crtPlayerX + 1][this.crtPlayerY + 1] == 9 && (i.bIntArrArr[this.crtPlayerX + 1][this.crtPlayerY + 1] & 0x7) == 0x3) {
+                        ++this.crtPlayerY;
+                        ++this.crtPlayerX;
                         i7 = this;
                         n47 = (this.kInt & 0xFFFFFFF8);
                         n48 = 3;
@@ -10551,7 +10664,7 @@ public final class i extends Canvas implements Runnable {
                     i7.kInt = (n47 | n48);
                 }
                 i8 = this;
-                jInt = i.bByteArrArr[this.hInt][this.iInt];
+                jInt = i.bByteArrArr[this.crtPlayerX][this.crtPlayerY];
             } else if ((this.lByte == 0 || (this.jInt <= 0 && this.lByte != 5)) && !this.xBoolean && (this.kInt & 0x70) == 0x0 && this.aFInt == -1) {
                 this.lByte = this.aByte;
                 boolean aBoolean = false;
@@ -10559,12 +10672,12 @@ public final class i extends Canvas implements Runnable {
                     this.lByte = 2;
                     --this.ayInt;
                     if (this.ayInt == 0) {
-                        this.eVoid(this.hInt - 1, this.iInt);
+                        this.doorHeadClose(this.crtPlayerX - 1, this.crtPlayerY);
                         this.aByte = 0;
-                        i.ahInt = 0;
+                        i.keysPressed = 0;
                     }
                 } else if (b) {
-                    kVoid(this.hInt, this.iInt);
+                    kVoid(this.crtPlayerX, this.crtPlayerY);
                 }
                 switch (this.lByte) {
                     case 3: {
@@ -10573,7 +10686,7 @@ public final class i extends Canvas implements Runnable {
                     case 1:
                     case 2:
                     case 4: {
-                        if (i.aClassbArr[0].dInt == 40 || i.aClassbArr[0].dInt == 48) {
+                        if (i.aClassbArr[0].crtAnimationI == 40 || i.aClassbArr[0].crtAnimationI == 48) {
                             break;
                         }
                         if ((this.kInt & 0x1000) != 0x0) {
@@ -10587,7 +10700,7 @@ public final class i extends Canvas implements Runnable {
                             break;
                         }
                         aBoolean = this.aBoolean(-i.gByteArr[this.lByte], -i.gByteArr[this.lByte + 8], false);
-                        b = this.cBoolean();
+                        b = this.isPlayerWithinStageBounds();
                         if (!aBoolean) {
                             break;
                         }
@@ -10610,12 +10723,12 @@ public final class i extends Canvas implements Runnable {
                     }
                     case 6: {
                         final int n51 = ((this.kInt & 0x7) == 0x2) ? 1 : -1;
-                        if (b && i.aByteArrArr[this.hInt + n51][this.iInt] < 0) {
+                        if (b && i.crtStagePlayerLayer[this.crtPlayerX + n51][this.crtPlayerY] < 0) {
                             this.gVoid((n51 == -1) ? 22 : 20);
-                            i.aByteArrArr[this.hInt + n51][this.iInt] = 32;
-                            i.bByteArrArr[this.hInt + n51][this.iInt] = 18;
-                            i.bIntArrArr[this.hInt + n51][this.iInt] = (0x4 | ((n51 > 0) ? 1 : 0));
-                            i.cByteArrArr[this.hInt + n51][this.iInt] = 30;
+                            i.crtStagePlayerLayer[this.crtPlayerX + n51][this.crtPlayerY] = 32;
+                            i.bByteArrArr[this.crtPlayerX + n51][this.crtPlayerY] = 18;
+                            i.bIntArrArr[this.crtPlayerX + n51][this.crtPlayerY] = (0x4 | ((n51 > 0) ? 1 : 0));
+                            i.cByteArrArr[this.crtPlayerX + n51][this.crtPlayerY] = 30;
                             this.jInt = 72;
                             this.aByte = 0;
                             break;
@@ -10625,7 +10738,7 @@ public final class i extends Canvas implements Runnable {
                     case 5: {
                         this.jInt = 0;
                         final int n52 = this.kInt & 0x7;
-                        if (this.cBoolean()) {
+                        if (this.isPlayerWithinStageBounds()) {
                             this.gVoid(n52 + 13 - 1);
                             break;
                         }
@@ -10635,7 +10748,7 @@ public final class i extends Canvas implements Runnable {
                         this.kInt &= 0xFFFFFFF7;
                         boolean b12 = false;
                         System.out.println(i.aClassbArr[0]);
-                        switch (i.aClassbArr[0].dInt) {
+                        switch (i.aClassbArr[0].crtAnimationI) {
                             case 0:
                             case 2:
                             case 10:
@@ -10680,21 +10793,21 @@ public final class i extends Canvas implements Runnable {
                     }
                 }
                 if (b) {
-                    final byte b13 = i.aByteArrArr[this.hInt][this.iInt - 1];
-                    if (!aBoolean && this.lByte != 5 && this.jInt <= 0 && (b13 == 0 || b13 == 9 || b13 == 8 || b13 == 48) && (i.aIntArrArr[this.hInt][this.iInt] & 0xFF) != 0x23) {
+                    final byte b13 = i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY - 1];
+                    if (!aBoolean && this.lByte != 5 && this.jInt <= 0 && (b13 == 0 || b13 == 9 || b13 == 8 || b13 == 48) && (i.crtStageForegrondLayer[this.crtPlayerX][this.crtPlayerY] & 0xFF) != 0x23) {
                         int aInt = 0;
                         if (i.eIntArrArr != null) {
-                            aInt = aInt(i.eIntArrArr[this.hInt][this.iInt], (byte) 0, (byte) 3, (byte) 4);
+                            aInt = aInt(i.eIntArrArr[this.crtPlayerX][this.crtPlayerY], (byte) 0, (byte) 3, (byte) 4);
                         }
                         if (!this.lBoolean || (aInt == 0 && aInt != 3)) {
-                            if ((this.kInt & 0x8) == 0x0 && i.aClassbArr[0].dInt != 11 && i.aClassbArr[0].dInt != 10 && i.aClassbArr[0].dInt != 12) {
+                            if ((this.kInt & 0x8) == 0x0 && i.aClassbArr[0].crtAnimationI != 11 && i.aClassbArr[0].crtAnimationI != 10 && i.aClassbArr[0].crtAnimationI != 12) {
                                 this.gVoid(11);
                             }
                             this.cBoolean = true;
                             if (this.lInt <= 0) {
                                 this.lInt = 40;
                                 this.bLong = 0L;
-                                this.aVoid(i.iByteArr[8], 32, 0);
+                                this.hurtHero(i.iByteArr[8], 32, 0);
                                 return;
                             }
                         }
@@ -10707,7 +10820,7 @@ public final class i extends Canvas implements Runnable {
                 if (!b || (i.aSInt & 0x1F) != 0x0) {
                     break Label_7749;
                 }
-                boolean b14 = i.aByteArrArr[this.hInt][this.iInt - 1] == 0;
+                boolean b14 = i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY - 1] == 0;
                 for (int n54 = 1; !b14 && n54 <= 4; b14 |= this.aBoolean(i.gByteArr[n54], i.gByteArr[n54 + 8], true), ++n54) {
                 }
                 if (b14) {
@@ -10732,11 +10845,11 @@ public final class i extends Canvas implements Runnable {
                     }
                     i10.lByte = lByte;
                     this.kInt = ((this.kInt & 0xFFFFFFF8) | this.lByte);
-                    this.hInt -= i.gByteArr[this.lByte];
-                    this.iInt -= i.gByteArr[this.lByte + 8];
-                    b = this.cBoolean();
+                    this.crtPlayerX -= i.gByteArr[this.lByte];
+                    this.crtPlayerY -= i.gByteArr[this.lByte + 8];
+                    b = this.isPlayerWithinStageBounds();
                     this.jInt = 18;
-                    if (i.aClassbArr[0].dInt != 4) {
+                    if (i.aClassbArr[0].crtAnimationI != 4) {
                         this.gVoid(4 + this.lByte - 1);
                     }
                 }
@@ -10774,14 +10887,14 @@ public final class i extends Canvas implements Runnable {
             }
         }
         if (this.lByte != 0 && b) {
-            this.nBoolean = (i.aByteArrArr[this.hInt][this.iInt + 1] >= 0);
+            this.nBoolean = (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY + 1] >= 0);
         }
         this.YVoid();
-        if (this.xBoolean && (this.hInt < -5 || this.hInt > this.eInt + 5 || this.iInt < -5 || this.iInt > this.fInt + 5)) {
+        if (this.xBoolean && (this.crtPlayerX < -5 || this.crtPlayerX > this.crtStageWidth + 5 || this.crtPlayerY < -5 || this.crtPlayerY > this.crtStageHeight + 5)) {
             this.oVoid();
             i i11;
             boolean b15;
-            if (this.atBoolean || this.aBInt >= this.dKInt) {
+            if (this.atBoolean || this.crtStageI >= this.dKInt) {
                 this.bsInt = 0;
                 this.brInt = 12;
                 i.bByte = 35;
@@ -10805,17 +10918,17 @@ public final class i extends Canvas implements Runnable {
 
     private static byte aByte(int n, final int n2, final int n3, final int n4) {
         int n5 = n + n2;
-        if (((n > 0 && n3 == 0) || (n < n3 && n3 > 0)) && (i.aByteArrArr[n5][n4] < 0 || i.aByteArrArr[n5][n4] == 31 || dInt(n5, n4) >= 0)) {
+        if (((n > 0 && n3 == 0) || (n < n3 && n3 > 0)) && (i.crtStagePlayerLayer[n5][n4] < 0 || i.crtStagePlayerLayer[n5][n4] == 31 || dInt(n5, n4) >= 0)) {
             do {
                 n = n5;
                 n5 += n2;
-            } while (((n > 0 && n3 == 0) || (n < n3 && n3 > 0)) && (i.aByteArrArr[n5][n4] < 0 || dInt(n5, n4) >= 0 || i.aByteArrArr[n5][n4] == 31));
+            } while (((n > 0 && n3 == 0) || (n < n3 && n3 > 0)) && (i.crtStagePlayerLayer[n5][n4] < 0 || dInt(n5, n4) >= 0 || i.crtStagePlayerLayer[n5][n4] == 31));
         }
         return (byte) n;
     }
 
     private void VVoid() {
-        final int n = this.eInt - 1;
+        final int n = this.crtStageWidth - 1;
         for (int iInteger = 0; iInteger < i.eByteArr.length; iInteger += 3) {
             final byte b;
             if ((b = i.eByteArr[iInteger + 2]) > 0) {
@@ -10837,72 +10950,55 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private boolean aBoolean(final int n, final int n2) {
-        final int dInt = dInt(n, n2);
+    private boolean aBoolean(final int x, final int y) {
+        final int dInt = dInt(x, y);
         int n3 = 0;
         if (dInt >= 0) {
-            if (dInt == 37 && i.aByteArrArr[n][n2] == 43) {
-                n3 = 268435456;
-            }
-            kVoid(n, n2);
-            i.aByteArrArr[n][n2] = 9;
-            i.bIntArrArr[n][n2] = ((i.bIntArrArr[n][n2] & 0xF03FFFFF) | dInt << 22 | n3);
-            this.cVoid(n, n2, 1);
+            if (dInt == 37 && i.crtStagePlayerLayer[x][y] == 43) n3 = 268435456;
+            kVoid(x, y);
+            i.crtStagePlayerLayer[x][y] = 9;
+            i.bIntArrArr[x][y] = ((i.bIntArrArr[x][y] & 0xF03FFFFF) | dInt << 22 | n3);
+            this.cVoid(x, y, 1);
         }
-        final b b = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3];
-        if (this.cBoolean(n, n2) && this.aTInt <= 0 && b.dInt != 40 && b.dInt != 48 && b.dInt != 47) {
-            this.aVoid(0, 16, 0);
+        final b_SpriteAnimator b = i.aClassbArr[((this.kInt & 0x4000) == 0x0) ? 0 : 3];
+        if (this.isPlayerAtPosition(x, y) && this.aTInt <= 0 && b.crtAnimationI != 40 && b.crtAnimationI != 48 && b.crtAnimationI != 47) {
+            this.hurtHero(0, 16, 0);
         }
         return dInt >= 0;
     }
 
-    private static int dInt(final int n, final int n2) {
-        if (i.aByteArrArr[n][n2] < 0) {
-            return -1;
-        }
-        switch (i.aByteArrArr[n][n2]) {
-            case 1: {
-                return 34;
-            }
-            case 45: {
-                return 35;
-            }
+    private static int dInt(final int x, final int y) {
+        if (i.crtStagePlayerLayer[x][y] < 0) return -1;
+        switch (i.crtStagePlayerLayer[x][y]) {
+            case 1: return 34; // Violet gem
+            case 45: return 35; // Monkey
             case 19:
-            case 43: {
-                return 37;
-            }
-            case 46: {
-                return 36;
-            }
-            case 49: {
-                return 39;
-            }
-            default: {
-                return -1;
-            }
+            case 43: return 37; // Any snake
+            case 46: return 36; // Wasp
+            case 49: return 39; // Turtle
+            default: return -1;
         }
     }
 
-    public static int aInt(final byte[] array, final int n) {
-        return (array[n] & 0xFF) | (array[n + 1] & 0xFF) << 8;
+    public static int unpackUint16(final byte[] array, final int ptr) {
+        return (array[ptr] & 0xFF) | (array[ptr + 1] & 0xFF) << 8;
     }
 
-    public static int bInt(final byte[] array, final int n) {
-        return (array[n] & 0xFF) | (array[n + 1] & 0xFF) << 8 | (array[n + 2] & 0xFF) << 16 | (array[n + 3] & 0xFF) << 24;
+    public static int unpackUint32(final byte[] array, final int ptr) {
+        return (array[ptr] & 0xFF) | (array[ptr + 1] & 0xFF) << 8 | (array[ptr + 2] & 0xFF) << 16 | (array[ptr + 3] & 0xFF) << 24;
     }
 
-    private static int eInt(final int n, int n2) {
-        if ((n2 += aInt(i.iByteArr, n)) < 0) {
-            n2 = 0;
-        }
-        i.iByteArr[n] = (byte) n2;
-        i.iByteArr[n + 1] = (byte) (n2 >> 8);
-        return n2;
+    private static int eInt(final int ptr, int uint16) {
+        uint16 += unpackUint16(i.iByteArr, ptr);
+        if (uint16 < 0) uint16 = 0;
+        i.iByteArr[ptr] = (byte) uint16;
+        i.iByteArr[ptr + 1] = (byte) (uint16 >> 8);
+        return uint16;
     }
 
     private void WVoid() {
         for (int iInteger = 0; iInteger < this.aiInt; ++iInteger) {
-            this.aVoid(this.aAInt, this.aBInt, i.dByteArr[iInteger << 1] & 0xFF, i.dByteArr[(iInteger << 1) + 1] & 0xFF);
+            this.aVoid(this.crtWorldIndex, this.crtStageI, i.dByteArr[iInteger << 1] & 0xFF, i.dByteArr[(iInteger << 1) + 1] & 0xFF);
         }
     }
 
@@ -10923,7 +11019,7 @@ public final class i extends Canvas implements Runnable {
         --this.azInt;
         ++this.bdInt;
         if (this.azInt >= 0) {
-            this.apVoid();
+            this.restoreCheckpoint();
             this.nByte = i.iByteArr[8];
             this.oBoolean = true;
             this.kInt = 0;
@@ -10936,94 +11032,86 @@ public final class i extends Canvas implements Runnable {
         i.bByte = 12;
     }
 
-    private void hVoid(int n) {
-        if (n < 0) {
-            return;
-        }
-        final byte b = i.qByteArr[n];
-        final byte b2 = i.rByteArr[n];
-        final int n2 = i.aIntArrArr[b][b2] & 0xFF;
-        final int n3;
-        if (((n3 = i.aIntArrArr[b][b2] >> 8) & 0xF0) != 0x0) {
-            return;
-        }
-        if (n2 != 7 || (n3 >> 8 & 0xFF) != n) {
-            System.out.println("!!!!!!!!!!!!!! door missing");
-        }
-        n = (n3 & 0xF);
+    private void hVoid(int doorI) {
+        if (doorI < 0) return;
+        final byte x = i.crtStageDoorXs[doorI];
+        final byte y = i.crtStageDoorYs[doorI];
+        final int n2 = i.crtStageForegrondLayer[x][y] & 0xFF;
+        final int n3 = i.crtStageForegrondLayer[x][y] >> 8;
+        if ((n3 & 0xF0) != 0x0) return;
+        if (n2 != 7 || (n3 >> 8 & 0xFF) != doorI) System.out.println("!!!!!!!!!!!!!! door missing");
+        doorI = (n3 & 0xF);
         int n4;
-        if (--n == 0) {
+        if (--doorI == 0) {
             n4 = ((n3 & 0xFFFFFF0F) | 0x10);
-            this.aVoid(b, b2 - 1, 1, 0, 1);
-            this.aVoid(b, b2 - 1, -1, 0, 1);
-            n = (i.aIntArrArr[b][b2 - 1] >> 8 | 0x200);
-            i.aIntArrArr[b][b2 - 1] = (n << 8 | (i.aIntArrArr[b][b2 - 1] & 0xFF));
-            i.cByteArrArr[b][b2] = 24;
+            this.aVoid(x, y - 1, 1, 0, 1);
+            this.aVoid(x, y - 1, -1, 0, 1);
+            doorI = (i.crtStageForegrondLayer[x][y - 1] >> 8 | 0x200);
+            i.crtStageForegrondLayer[x][y - 1] = (doorI << 8 | (i.crtStageForegrondLayer[x][y - 1] & 0xFF));
+            i.cByteArrArr[x][y] = 24;
         } else {
-            n4 = ((n3 & 0xFFFFFFF0) | n);
+            n4 = ((n3 & 0xFFFFFFF0) | doorI);
         }
-        i.aIntArrArr[b][b2] = (n4 << 8 | n2);
-        this.pVoid(8);
+        i.crtStageForegrondLayer[x][y] = (n4 << 8 | n2);
+        this.playSound(8);
     }
 
-    private void eVoid(final int n, final int n2) {
+    private void doorHeadClose(final int x, final int y) {
         try {
-            final int n3 = i.aIntArrArr[n][n2] >> 8;
-            if ((i.aIntArrArr[n][n2] & 0xFF) != 0x7) {
-                return;
-            }
-            if ((n3 & 0xF0) == 0x0) {
-                return;
-            }
-            if (i.aByteArrArr[n][n2] == 32) {
-                return;
-            }
-            this.pVoid(14);
-            i.aIntArrArr[n][n2] = ((n3 & 0xFFFFFF0F) << 8 | 0x7);
-            this.aVoid(n, n2 - 1, 1, 0, 0);
-            this.aVoid(n, n2 - 1, -1, 0, 0);
-            if (this.cBoolean(n, n2)) {
+            final int n3 = i.crtStageForegrondLayer[x][y] >> 8;
+            if ((i.crtStageForegrondLayer[x][y] & 0xFF) != 0x7) return; // Not door bottom
+            if ((n3 & 0xF0) == 0x0) return;
+            if (i.crtStagePlayerLayer[x][y] == 32) return;
+
+            this.playSound(14);
+            i.crtStageForegrondLayer[x][y] = ((n3 & 0xFFFFFF0F) << 8 | 0x7);
+            this.aVoid(x, y - 1, 1, 0, 0);
+            this.aVoid(x, y - 1, -1, 0, 0);
+
+            if (this.isPlayerAtPosition(x, y)) {
                 this.bLong = 0L;
                 this.biInt = 0;
-                this.aVoid(i.iByteArr[8], 48, 0);
-                this.pVoid(2);
+                this.hurtHero(i.iByteArr[8], 48, 0);
+                this.playSound(2);
             } else {
-                switch (i.aByteArrArr[n][n2]) {
-                    case 0:
-                    case 1:
-                    case 19:
-                    case 43:
-                    case 45: {
-                        i.aByteArrArr[n][n2] = -1;
-                        this.bVoid(n, n2);
-                        this.jVoid(n, n2);
+                switch (i.crtStagePlayerLayer[x][y]) {
+                    case 0: // Boulder
+                    case 1: // Violet gem
+                    case 19: // Green snake
+                    case 43: // Red snake
+                    case 45: // Monkey
+                    {
+                        i.crtStagePlayerLayer[x][y] = -1;
+                        this.bVoid(x, y);
+                        this.jVoid(x, y);
                         break;
                     }
                 }
             }
-            i.cByteArrArr[n][n2] = 24;
+            i.cByteArrArr[x][y] = 24;
         } catch (Exception ex) {
         }
     }
 
-    private void iVoid(final int n) {
-        if (n < 0) {
-            return;
-        }
+    private void doorHeadClose(final int doorI) {
+        if (doorI < 0) return;
         try {
-            this.eVoid(i.qByteArr[n], i.rByteArr[n]);
+            this.doorHeadClose(i.crtStageDoorXs[doorI], i.crtStageDoorYs[doorI]);
         } catch (Exception ex) {
         }
     }
 
+    /**
+     * Maybe does something with the hero on fire animation and the hero sprite?
+     */
     private void YVoid() {
         final int n = ((this.kInt & 0x4000) == 0x0) ? 0 : 3;
-        final b b = i.aClassbArr[n];
+        final b_SpriteAnimator b = i.aClassbArr[n];
         int n2 = -1;
         boolean b2 = true;
         boolean b3 = false;
         final boolean a;
-        if (a = b.aBoolean()) {
+        if (a = b.animationEnded()) {
             this.kInt &= 0xFFFFDFFF;
         }
         Label_3151:
@@ -11039,7 +11127,7 @@ public final class i extends Canvas implements Runnable {
                     n3 = this.cInt();
                 } else {
                     int n4 = 0;
-                    switch (b.dInt) {
+                    switch (b.crtAnimationI) {
                         case 41:
                         case 42:
                         case 43:
@@ -11052,7 +11140,7 @@ public final class i extends Canvas implements Runnable {
                                 this.aByte = b4;
                                 this.lByte = b4;
                                 this.jInt = 0;
-                                i.ahInt = 0;
+                                i.keysPressed = 0;
                             }
                             break Label_3151;
                         }
@@ -11077,9 +11165,9 @@ public final class i extends Canvas implements Runnable {
                             this.lByte = b5;
                             this.aByte = b5;
                             if ((i.aSInt & 0x1) == 0x0) {
-                                int n5 = this.hInt - 2 + i.aSInt % 5;
-                                final int n6 = this.iInt - 2 + i.aSInt % 3;
-                                if (n5 == this.hInt && (n6 == this.iInt || n6 == this.iInt - 1)) {
+                                int n5 = this.crtPlayerX - 2 + i.aSInt % 5;
+                                final int n6 = this.crtPlayerY - 2 + i.aSInt % 3;
+                                if (n5 == this.crtPlayerX && (n6 == this.crtPlayerY || n6 == this.crtPlayerY - 1)) {
                                     n5 += (((i.aSInt >> 1 & 0x1) == 0x0) ? 1 : -1);
                                 }
                                 this.cVoid(n5, n6, i.aSInt * 3 % 5);
@@ -11099,11 +11187,11 @@ public final class i extends Canvas implements Runnable {
                             final byte b6 = 0;
                             this.lByte = b6;
                             this.aByte = b6;
-                            if (b.fInt == 0) {
-                                if (b.eInt == ((b.dInt == 40) ? 12 : 6)) {
-                                    this.pVoid(4);
+                            if (b.crtTime == 0) {
+                                if (b.crtAnimationFrame == ((b.crtAnimationI == 40) ? 12 : 6)) {
+                                    this.playSound(4);
                                 }
-                                if (b.eInt == ((b.dInt == 40) ? 13 : 6)) {
+                                if (b.crtAnimationFrame == ((b.crtAnimationI == 40) ? 13 : 6)) {
                                     boolean b7 = false;
                                     int n7 = -1;
                                     boolean b8 = false;
@@ -11147,7 +11235,7 @@ public final class i extends Canvas implements Runnable {
                                             this.aZInt += this.aHInt;
                                             this.aaInt -= this.aHInt;
                                             if (this.aaInt <= 0 && !this.fBoolean()) {
-                                                i.aByteArrArr[this.abInt][this.acInt] = -1;
+                                                i.crtStagePlayerLayer[this.abInt][this.acInt] = -1;
                                                 this.aaInt = 0;
                                             }
                                             n7 = 3;
@@ -11171,12 +11259,12 @@ public final class i extends Canvas implements Runnable {
                                         }
                                         case 6: {
                                             ++this.azInt;
-                                            i.eByteArrArr[this.hInt][this.iInt] = -1;
-                                            final int[] array = i.dIntArrArr[this.hInt];
-                                            final int iInt = this.iInt;
+                                            i.eByteArrArr[this.crtPlayerX][this.crtPlayerY] = -1;
+                                            final int[] array = i.dIntArrArr[this.crtPlayerX];
+                                            final int iInt = this.crtPlayerY;
                                             array[iInt] |= 0x100;
                                             n7 = 0;
-                                            this.aVoid(this.aAInt, this.aBInt, this.hInt, this.iInt);
+                                            this.aVoid(this.crtWorldIndex, this.crtStageI, this.crtPlayerX, this.crtPlayerY);
                                             break;
                                         }
                                         case 7: {
@@ -11187,7 +11275,7 @@ public final class i extends Canvas implements Runnable {
                                         case 51:
                                         case 52:
                                         case 53: {
-                                            this.aVoid(this.aAInt, this.aBInt, this.hInt, this.iInt);
+                                            this.aVoid(this.crtWorldIndex, this.crtStageI, this.crtPlayerX, this.crtPlayerY);
                                             n7 = 0;
                                             b7 = true;
                                             this.eVoid();
@@ -11216,18 +11304,18 @@ public final class i extends Canvas implements Runnable {
                                         this.gVoid(47);
                                     }
                                     if (n7 != -1) {
-                                        this.cVoid(this.hInt, this.iInt - 1, n7);
+                                        this.cVoid(this.crtPlayerX, this.crtPlayerY - 1, n7);
                                     }
                                     if (b8) {
-                                        i.dByteArr[this.aiInt << 1] = (byte) this.hInt;
-                                        i.dByteArr[(this.aiInt << 1) + 1] = (byte) this.iInt;
+                                        i.dByteArr[this.aiInt << 1] = (byte) this.crtPlayerX;
+                                        i.dByteArr[(this.aiInt << 1) + 1] = (byte) this.crtPlayerY;
                                         ++this.aiInt;
                                     }
                                     this.oBoolean = true;
                                     this.aIInt = -1;
                                 }
                             }
-                            if (b.aBoolean()) {
+                            if (b.animationEnded()) {
                                 this.iLong = System.currentTimeMillis();
                                 n2 = 0 + (this.kInt & 0x7) - 1;
                                 final int afInt2 = -1;
@@ -11288,7 +11376,7 @@ public final class i extends Canvas implements Runnable {
                         case 4:
                         case 6: {
                             if (this.nBoolean) {
-                                n3 = b.dInt;
+                                n3 = b.crtAnimationI;
                                 break Label_3150;
                             }
                             break Label_3151;
@@ -11331,7 +11419,7 @@ public final class i extends Canvas implements Runnable {
                         case 33: {
                             if (a) {
                                 b2 = false;
-                                i.ahInt = 0;
+                                i.keysPressed = 0;
                             }
                             break Label_3151;
                         }
@@ -11349,16 +11437,16 @@ public final class i extends Canvas implements Runnable {
                         case 28:
                         case 29: {
                             if (a) {
-                                i.ahInt = 0;
+                                i.keysPressed = 0;
                                 this.lByte = 0;
                                 this.jInt = 0;
                                 n4 = 0;
                                 break;
                             }
-                            if ((this.kInt & 0x2000) == 0x0 && b.eInt == 2 && b.fInt == 0) {
-                                final int n9 = this.hInt - i.gByteArr[this.kInt & 0x7];
-                                final int n10 = this.iInt - i.gByteArr[(this.kInt & 0x7) + 8];
-                                if (i.iByteArr[9] >= 8 && b.eInt == 2 && b.fInt == 0) {
+                            if ((this.kInt & 0x2000) == 0x0 && b.crtAnimationFrame == 2 && b.crtTime == 0) {
+                                final int n9 = this.crtPlayerX - i.gByteArr[this.kInt & 0x7];
+                                final int n10 = this.crtPlayerY - i.gByteArr[(this.kInt & 0x7) + 8];
+                                if (i.iByteArr[9] >= 8 && b.crtAnimationFrame == 2 && b.crtTime == 0) {
                                     this.cVoid(n9, n10, -1);
                                 }
                                 final int n11 = n9;
@@ -11372,7 +11460,7 @@ public final class i extends Canvas implements Runnable {
                                 Label_2313:
                                 {
                                     int dBoolean = 0;
-                                    switch (i.aByteArrArr[n12][b9]) {
+                                    switch (i.crtStagePlayerLayer[n12][b9]) {
                                         case 9: {
                                             if ((this.kInt & 0x2000) == 0x0) {
                                                 this.kInt |= 0x2000;
@@ -11398,10 +11486,10 @@ public final class i extends Canvas implements Runnable {
                                                 }
                                                 if (!b14) {
                                                     kVoid(n15, b12);
-                                                    final int n18 = this.cBoolean(n15, b12 - 1) ? 2 : 1;
+                                                    final int n18 = this.isPlayerAtPosition(n15, b12 - 1) ? 2 : 1;
                                                     switch ((i.bIntArrArr[n15][b12] & 0xFC00000) >> 22) {
                                                         case 39: {
-                                                            i.aByteArrArr[n15][b12] = 49;
+                                                            i.crtStagePlayerLayer[n15][b12] = 49;
                                                             i.bIntArrArr[n15][b12] = n18;
                                                             break;
                                                         }
@@ -11410,11 +11498,11 @@ public final class i extends Canvas implements Runnable {
                                                             byte b15;
                                                             int n19;
                                                             if ((i.bIntArrArr[n15][b12] & 0x10000000) != 0x0) {
-                                                                array4 = i.aByteArrArr[n15];
+                                                                array4 = i.crtStagePlayerLayer[n15];
                                                                 b15 = b12;
                                                                 n19 = 43;
                                                             } else {
-                                                                array4 = i.aByteArrArr[n15];
+                                                                array4 = i.crtStagePlayerLayer[n15];
                                                                 b15 = b12;
                                                                 n19 = 19;
                                                             }
@@ -11424,17 +11512,17 @@ public final class i extends Canvas implements Runnable {
                                                             break;
                                                         }
                                                         case 35: {
-                                                            i.aByteArrArr[n15][b12] = 45;
+                                                            i.crtStagePlayerLayer[n15][b12] = 45;
                                                             i.bIntArrArr[n15][b12] = ((i.bIntArrArr[n15][b12] & 0xFFFFFFF0) | 0xA);
                                                             break;
                                                         }
                                                         case 34: {
-                                                            i.aByteArrArr[n15][b12] = 1;
+                                                            i.crtStagePlayerLayer[n15][b12] = 1;
                                                             this.cVoid(n15, b12);
                                                             break;
                                                         }
                                                         case 36: {
-                                                            i.aByteArrArr[n15][b12] = 46;
+                                                            i.crtStagePlayerLayer[n15][b12] = 46;
                                                             i.bIntArrArr[n15][b12] = 0;
                                                             i.bByteArrArr[n15][b12] = 0;
                                                             break;
@@ -11455,7 +11543,7 @@ public final class i extends Canvas implements Runnable {
                                         case 30: {
                                             n13 = 1;
                                             if (i.bIntArrArr[n12][b9] == 0) {
-                                                this.pVoid(11);
+                                                this.playSound(11);
                                                 i.bIntArrArr[n12][b9] = 1;
                                             }
                                             break Label_2313;
@@ -11474,7 +11562,7 @@ public final class i extends Canvas implements Runnable {
                                             break Label_2313;
                                         }
                                         default: {
-                                            if (i.aByteArrArr[n12][b9] - 80 >= 0 || ((i.aIntArrArr[n12][b9] & 0xFF) == 0x7 && (i.aIntArrArr[n12][b9] >> 8 & 0xF0) == 0x0)) {
+                                            if (i.crtStagePlayerLayer[n12][b9] - 80 >= 0 || ((i.crtStageForegrondLayer[n12][b9] & 0xFF) == 0x7 && (i.crtStageForegrondLayer[n12][b9] >> 8 & 0xF0) == 0x0)) {
                                                 b11 = true;
                                                 dBoolean = 1;
                                                 break;
@@ -11485,21 +11573,21 @@ public final class i extends Canvas implements Runnable {
                                     n13 = dBoolean;
                                 }
                                 if (b11) {
-                                    jVoid(200);
-                                    this.pVoid(6);
+                                    vibrate(200);
+                                    this.playSound(6);
                                     this.gVoid(41 + (this.kInt & 0x7) - 1);
                                 }
                                 if (n13 == 0) {
                                     for (int k = 0; k < 5; ++k) {
                                         final int n20 = n12 + array2[k];
                                         final int n21 = b9 + array3[k];
-                                        if (n20 >= 0 && n20 < this.eInt && n21 >= 0 && n21 < this.fInt) {
-                                            final byte b16 = i.aByteArrArr[n20][n21];
+                                        if (n20 >= 0 && n20 < this.crtStageWidth && n21 >= 0 && n21 < this.crtStageHeight) {
+                                            final byte b16 = i.crtStagePlayerLayer[n20][n21];
                                             int n22 = 0;
                                             boolean b17 = false;
                                             switch (b16) {
                                                 case 1: {
-                                                    if (n20 == this.hInt - i.gByteArr[this.kInt & 0x7] && n21 == this.iInt - i.gByteArr[(this.kInt & 0x7) + 8]) {
+                                                    if (n20 == this.crtPlayerX - i.gByteArr[this.kInt & 0x7] && n21 == this.crtPlayerY - i.gByteArr[(this.kInt & 0x7) + 8]) {
                                                         b17 = true;
                                                         break;
                                                     }
@@ -11518,13 +11606,13 @@ public final class i extends Canvas implements Runnable {
                                                         n22 = (b19 ? 1 : 0);
                                                     }
                                                     if (b17) {
-                                                        this.pVoid(10);
+                                                        this.playSound(10);
                                                         break;
                                                     }
                                                     break;
                                                 }
                                             }
-                                            if (b10 && b17 && (n20 != this.hInt || n21 != this.iInt)) {
+                                            if (b10 && b17 && (n20 != this.crtPlayerX || n21 != this.crtPlayerY)) {
                                                 if (this.aBoolean(n20, n21)) {
                                                     this.kInt |= 0x2000;
                                                 }
@@ -11533,7 +11621,7 @@ public final class i extends Canvas implements Runnable {
                                                 if (b16 == 45) {
                                                     int n24;
                                                     if ((n24 = (i.bIntArrArr[n20][n21] & 0x1C00) >> 10) == 3) {
-                                                        i.aByteArrArr[n20][n21] = -1;
+                                                        i.crtStagePlayerLayer[n20][n21] = -1;
                                                         this.jVoid(n20, n21);
                                                     } else {
                                                         ++n24;
@@ -11549,18 +11637,18 @@ public final class i extends Canvas implements Runnable {
                                     }
                                 }
                                 this.aByte = 0;
-                                i.ahInt = 0;
+                                i.keysPressed = 0;
                             }
                             break Label_3151;
                         }
                         case 11: {
-                            if (i.aByteArrArr[this.hInt][this.iInt - 1] == -1) {
+                            if (i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY - 1] == -1) {
                                 n4 = 0;
                                 break;
                             }
-                            if (a && i.aByteArrArr[this.hInt][this.iInt - 1] != -1) {
+                            if (a && i.crtStagePlayerLayer[this.crtPlayerX][this.crtPlayerY - 1] != -1) {
                                 this.bLong = 0L;
-                                this.aVoid(i.iByteArr[8], 32, 0);
+                                this.hurtHero(i.iByteArr[8], 32, 0);
                             }
                             break Label_3151;
                         }
@@ -11571,17 +11659,17 @@ public final class i extends Canvas implements Runnable {
                                 this.jInt = 0;
                                 break Label_3151;
                             }
-                            if (b.eInt > 0 && this.aFInt != -1) {
-                                final int n25 = ((this.kInt & 0x7) == 0x2) ? (this.hInt + 1) : (this.hInt - 1);
-                                final int n26 = i.aIntArrArr[n25][this.iInt] >> 8;
-                                final int n27 = i.aIntArrArr[n25][this.iInt] & 0xFF;
+                            if (b.crtAnimationFrame > 0 && this.aFInt != -1) {
+                                final int n25 = ((this.kInt & 0x7) == 0x2) ? (this.crtPlayerX + 1) : (this.crtPlayerX - 1);
+                                final int n26 = i.crtStageForegrondLayer[n25][this.crtPlayerY] >> 8;
+                                final int n27 = i.crtStageForegrondLayer[n25][this.crtPlayerY] & 0xFF;
                                 final int n28 = n26 | 0x100;
                                 if (n27 == 9) {
                                     --this.aUInt;
                                 } else {
                                     --this.aVInt;
                                 }
-                                i.aIntArrArr[n25][this.iInt] = (n28 << 8 | n27);
+                                i.crtStageForegrondLayer[n25][this.crtPlayerY] = (n28 << 8 | n27);
                                 this.hVoid(n28 & 0xFF);
                                 final int n29 = -1;
                                 this.aHInt = n29;
@@ -11628,7 +11716,7 @@ public final class i extends Canvas implements Runnable {
             this.gVoid(n2);
         }
         if (b2) {
-            b.bVoid();
+            b.tick();
         }
         this.mInt = ((this.mInt > 0) ? (--this.mInt) : 0);
     }
@@ -11636,7 +11724,7 @@ public final class i extends Canvas implements Runnable {
     private int cInt() {
         int n;
         if (this.nByte <= 0) {
-            this.pVoid(2);
+            this.playSound(2);
             n = 12;
             this.aWInt = 80;
         } else {
@@ -11648,9 +11736,13 @@ public final class i extends Canvas implements Runnable {
         return n;
     }
 
-    private static void jVoid(final int n) {
+    /**
+     * Vibrates the device, if enableed.
+     * @param _unused Probably was used to determine the vibration duration.
+     */
+    private static void vibrate(final int _unused) {
         if (i.mBoolean) {
-            i.aClassGloftDIRU.aClassDisplay.vibrate(200);
+            i.aClassGloftDIRU.display.vibrate(200);
         }
     }
 
@@ -11659,35 +11751,35 @@ public final class i extends Canvas implements Runnable {
             final int n = (this.biInt > 0) ? 1 : -1;
             this.biInt -= n;
             if (this.biInt != 0) {
-                if (i.aByteArrArr[this.bgInt][this.bhInt] == 48) {
+                if (i.crtStagePlayerLayer[this.bgInt][this.bhInt] == 48) {
                     final int n2 = this.bhInt + (((i.bIntArrArr[this.bgInt][this.bhInt] & 0x8) == 0x0) ? -1 : 1);
-                    if (i.aByteArrArr[this.bgInt + n][n2] >= 0) {
-                        int hInt = this.hInt;
+                    if (i.crtStagePlayerLayer[this.bgInt + n][n2] >= 0) {
+                        int hInt = this.crtPlayerX;
                         while (true) {
                             final int n3 = hInt - n;
-                            if (i.aByteArrArr[n3][this.iInt] != 32) {
+                            if (i.crtStagePlayerLayer[n3][this.crtPlayerY] != 32) {
                                 break;
                             }
-                            i.aByteArrArr[n3][this.iInt] = -1;
+                            i.crtStagePlayerLayer[n3][this.crtPlayerY] = -1;
                             hInt = n3;
                         }
                         this.biInt = 0;
                         return;
                     }
-                    i.aByteArrArr[this.bgInt + n][n2] = i.aByteArrArr[this.bgInt][n2];
-                    i.aByteArrArr[this.bgInt][n2] = -1;
+                    i.crtStagePlayerLayer[this.bgInt + n][n2] = i.crtStagePlayerLayer[this.bgInt][n2];
+                    i.crtStagePlayerLayer[this.bgInt][n2] = -1;
                     i.bIntArrArr[this.bgInt + n][n2] = i.bIntArrArr[this.bgInt][n2];
                     i.bByteArrArr[this.bgInt][n2] = this.oByte;
                 }
-                i.aByteArrArr[this.bgInt + n][this.bhInt] = i.aByteArrArr[this.bgInt][this.bhInt];
-                i.aByteArrArr[this.bgInt][this.bhInt] = -1;
+                i.crtStagePlayerLayer[this.bgInt + n][this.bhInt] = i.crtStagePlayerLayer[this.bgInt][this.bhInt];
+                i.crtStagePlayerLayer[this.bgInt][this.bhInt] = -1;
                 this.bVoid(this.bgInt, this.bhInt);
                 this.bgInt += n;
                 i.bIntArrArr[this.bgInt][this.bhInt] = (this.beInt | Integer.MIN_VALUE);
                 this.oByte = 18;
                 i.bByteArrArr[this.bgInt][this.bhInt] = this.oByte;
             } else {
-                if (i.aByteArrArr[this.bgInt][this.bhInt] == 48) {
+                if (i.crtStagePlayerLayer[this.bgInt][this.bhInt] == 48) {
                     i.bByteArrArr[this.bgInt][this.bhInt + (((i.bIntArrArr[this.bgInt][this.bhInt] & 0x8) == 0x0) ? -1 : 1)] = 0;
                 } else {
                     i.bIntArrArr[this.bgInt][this.bhInt] = this.bfInt;
@@ -11707,8 +11799,8 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void aaVoid() {
-        int n = i.kByteArr[this.aCInt << 1] - this.hInt;
-        int n2 = i.kByteArr[(this.aCInt << 1) + 1] - this.iInt;
+        int n = i.kByteArr[this.aCInt << 1] - this.crtPlayerX;
+        int n2 = i.kByteArr[(this.aCInt << 1) + 1] - this.crtPlayerY;
         if (this.kByte == 2 && this.aCInt == 2) {
             n = 10;
             n2 = -8;
@@ -11787,8 +11879,8 @@ public final class i extends Canvas implements Runnable {
     private void fVoid(final int n, final int n2) {
         for (int i = -1; i < 2; ++i) {
             for (int j = -1; j < 2; ++j) {
-                if (this.cBoolean((this.aInt + n) / 24 + j, (this.bInt + n2) / 24 + i)) {
-                    this.aVoid(1, 48, 0);
+                if (this.isPlayerAtPosition((this.aInt + n) / 24 + j, (this.bInt + n2) / 24 + i)) {
+                    this.hurtHero(1, 48, 0);
                 }
             }
         }
@@ -11796,16 +11888,16 @@ public final class i extends Canvas implements Runnable {
 
     private void abVoid() {
         final int dInt = this.dInt();
-        if (this.hInt == dInt || this.hInt == dInt + 1) {
-            final b b;
-            final int n = (b = i.aClassbArr[5]).bInt - 40;
-            final int n2 = b.bInt + 256;
-            final byte b2 = b.aClassf.cByteArr[(b.aClassf.aShortArr[b.dInt] + b.eInt) * 5 + 3];
+        if (this.crtPlayerX == dInt || this.crtPlayerX == dInt + 1) {
+            final b_SpriteAnimator b;
+            final int n = (b = i.aClassbArr[5]).y - 40;
+            final int n2 = b.y + 256;
+            final byte b2 = b.sprite.animationFrames[(b.sprite.animationFirstAnimationFrameIndices[b.crtAnimationI] + b.crtAnimationFrame) * 5 + 3];
             final int n3 = n - b2;
             final int n4 = n2 - b2;
             final int bInt;
-            if ((bInt = i.aClassbArr[0].bInt) > n3 && bInt < n4 && !this.jBoolean) {
-                this.aVoid(1, 48, (this.hInt == dInt) ? 4 : 2);
+            if ((bInt = i.aClassbArr[0].y) > n3 && bInt < n4 && !this.jBoolean) {
+                this.hurtHero(1, 48, (this.crtPlayerX == dInt) ? 4 : 2);
             }
         }
     }
@@ -11814,26 +11906,26 @@ public final class i extends Canvas implements Runnable {
         if (n < 0 || n2 < 0) {
             return;
         }
-        i.aByteArrArr[n][n2] = -1;
-        i.aByteArrArr[n + 1][n2] = -1;
+        i.crtStagePlayerLayer[n][n2] = -1;
+        i.crtStagePlayerLayer[n + 1][n2] = -1;
     }
 
     private static void hVoid(final int n, final int n2) {
         if (n < 0 || n2 < 0) {
             return;
         }
-        i.aByteArrArr[n][n2] = 50;
-        i.aByteArrArr[n + 1][n2] = 50;
+        i.crtStagePlayerLayer[n][n2] = 50;
+        i.crtStagePlayerLayer[n + 1][n2] = 50;
     }
 
     private boolean bBoolean(final int n, int n2) {
         n2 = 0;
         for (int iInteger = n; iInteger <= n + 1; ++iInteger) {
             for (int j = 8; j >= 7; --j) {
-                if (i.aByteArrArr[iInteger][j] == 0) {
+                if (i.crtStagePlayerLayer[iInteger][j] == 0) {
                     this.dVoid(iInteger, j);
                     kVoid(iInteger, j);
-                    i.aByteArrArr[iInteger][j] = -1;
+                    i.crtStagePlayerLayer[iInteger][j] = -1;
                     this.bVoid(iInteger, j);
                     n2 = 1;
                 }
@@ -11847,8 +11939,8 @@ public final class i extends Canvas implements Runnable {
     }
 
     private int eInt() {
-        final b b;
-        return this.fInt * ((b = i.aClassbArr[5]).bInt - 40 - b.aClassf.cByteArr[(b.aClassf.aShortArr[b.dInt] + b.eInt) * 5 + 3] + this.bInt) / (this.fInt * 24);
+        final b_SpriteAnimator b;
+        return this.crtStageHeight * ((b = i.aClassbArr[5]).y - 40 - b.sprite.animationFrames[(b.sprite.animationFirstAnimationFrameIndices[b.crtAnimationI] + b.crtAnimationFrame) * 5 + 3] + this.bInt) / (this.crtStageHeight * 24);
     }
 
     private boolean eBoolean() {
@@ -11857,10 +11949,10 @@ public final class i extends Canvas implements Runnable {
         boolean b = false;
         for (int iInteger = dInt; iInteger <= dInt + 1; ++iInteger) {
             for (int j = eInt; j <= 10; ++j) {
-                if (i.aByteArrArr[iInteger][j] == 0) {
+                if (i.crtStagePlayerLayer[iInteger][j] == 0) {
                     this.dVoid(iInteger, j);
                     kVoid(iInteger, j);
-                    i.aByteArrArr[iInteger][j] = -1;
+                    i.crtStagePlayerLayer[iInteger][j] = -1;
                     this.bVoid(iInteger, j);
                     b = true;
                 }
@@ -11871,12 +11963,12 @@ public final class i extends Canvas implements Runnable {
 
     private void acVoid() {
         this.bjInt = 30;
-        if (i.aByteArrArr[this.PInt][this.RInt] == -1) {
-            i.aByteArrArr[this.PInt][this.OInt] = 0;
+        if (i.crtStagePlayerLayer[this.PInt][this.RInt] == -1) {
+            i.crtStagePlayerLayer[this.PInt][this.OInt] = 0;
             kVoid(this.PInt, this.OInt);
         }
-        if (i.aByteArrArr[this.QInt][this.RInt] == -1) {
-            i.aByteArrArr[this.QInt][this.OInt] = 0;
+        if (i.crtStagePlayerLayer[this.QInt][this.RInt] == -1) {
+            i.crtStagePlayerLayer[this.QInt][this.OInt] = 0;
             kVoid(this.QInt, this.OInt);
         }
     }
@@ -11888,9 +11980,9 @@ public final class i extends Canvas implements Runnable {
 
     public final void aVoid() {
         final byte b = (byte) (((this.kInt & 0x1000) == 0x0) ? this.lByte : 0);
-        final int n = this.hInt * 24 + this.jInt * i.gByteArr[b];
-        final int n2 = 24 * this.eInt - 240;
-        final int dInt = 24 * this.fInt - 240;
+        final int n = this.crtPlayerX * 24 + this.jInt * i.gByteArr[b];
+        final int n2 = 24 * this.crtStageWidth - 240;
+        final int dInt = 24 * this.crtStageHeight - 240;
         Label_0141:
         {
             i i;
@@ -11916,7 +12008,7 @@ public final class i extends Canvas implements Runnable {
             i.cInt = cInt;
         }
         final int n3;
-        if ((n3 = this.iInt * 24 + this.jInt * i.gByteArr[b + 8] + 40) < this.dInt + 96) {
+        if ((n3 = this.crtPlayerY * 24 + this.jInt * i.gByteArr[b + 8] + 40) < this.dInt + 96) {
             this.dInt = this.dInt - 96 + n3 >> 1;
             if (this.dInt < 0) {
                 this.dInt = 0;
@@ -11967,8 +12059,8 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void bVoid(int n, int n2, final byte b) {
-        while ((i.aIntArrArr[n][n2] & 0xFF) == b) {
-            i.aIntArrArr[n][n2] = -1;
+        while ((i.crtStageForegrondLayer[n][n2] & 0xFF) == b) {
+            i.crtStageForegrondLayer[n][n2] = -1;
             this.bVoid(n - 1, n2, b);
             this.bVoid(n + 1, n2, b);
             this.bVoid(n, n2 - 1, b);
@@ -11981,8 +12073,8 @@ public final class i extends Canvas implements Runnable {
     private boolean aBoolean(int n, int n2, final boolean b) {
         int n3 = 0;
         final int kInt = this.kInt;
-        int hInt = this.hInt;
-        int iInt = this.iInt;
+        int hInt = this.crtPlayerX;
+        int iInt = this.crtPlayerY;
         byte lByte = this.lByte;
         boolean xBoolean = this.xBoolean;
         int axInt = this.aXInt;
@@ -12008,7 +12100,7 @@ public final class i extends Canvas implements Runnable {
         final int n7 = iInt + n2;
         boolean b2 = false;
         boolean b3 = false;
-        if (n6 < 0 || n6 >= this.eInt || n7 < 0 || n7 >= this.fInt) {
+        if (n6 < 0 || n6 >= this.crtStageWidth || n7 < 0 || n7 >= this.crtStageHeight) {
             b2 = true;
         } else {
             if (i.eIntArrArr != null && i.eIntArrArr[n6][n7] != 0 && i.iByteArr[10] == 0) {
@@ -12018,14 +12110,14 @@ public final class i extends Canvas implements Runnable {
             Label_0738:
             {
                 int n10 = 0;
-                switch ((byte) i.aIntArrArr[n6][n7]) {
+                switch ((byte) i.crtStageForegrondLayer[n6][n7]) {
                     case 19: {
                         if (b) {
                             break Label_0738;
                         }
                         int n8;
                         int n9;
-                        for (n8 = n6 + 3, n9 = n7; i.aByteArrArr[n8][n9] != 39; --n9) {
+                        for (n8 = n6 + 3, n9 = n7; i.crtStagePlayerLayer[n8][n9] != 39; --n9) {
                         }
                         if (!this.lBoolean) {
                             this.arVoid();
@@ -12033,16 +12125,16 @@ public final class i extends Canvas implements Runnable {
                         this.lBoolean = true;
                         this.alBoolean = false;
                         if (i.eIntArrArr == null) {
-                            i.eIntArrArr = new int[this.eInt][this.fInt];
+                            i.eIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
                         }
                         this.aByte((byte) i.bIntArrArr[n8][n9], (byte) n8, (byte) n9, (byte) 0);
                         this.mVoid(n8, n9);
                         while (true) {
                             ++n9;
-                            if ((i.aIntArrArr[n6][n9] & 0xFF) != 0x13) {
+                            if ((i.crtStageForegrondLayer[n6][n9] & 0xFF) != 0x13) {
                                 break Label_0738;
                             }
-                            i.aIntArrArr[n6][n9] = -1;
+                            i.crtStageForegrondLayer[n6][n9] = -1;
                         }
 //                        break;
                     }
@@ -12055,16 +12147,17 @@ public final class i extends Canvas implements Runnable {
                         break Label_0738;
                     }
                     case 7: {
-                        if ((i.aIntArrArr[n6][n7] >> 8 & 0xF0) >> 4 < 2) {
+                        if ((i.crtStageForegrondLayer[n6][n7] >> 8 & 0xF0) >> 4 < 2) {
                             n10 = 1;
                             break;
                         }
                         break Label_0738;
                     }
+                    // Checkpoint
                     case 4: {
                         final int n11;
-                        if (!b && (n11 = (i.aIntArrArr[n6][n7] & 0xFFFFFF00) >> 8) >= this.aCInt) {
-                            this.wBoolean = true;
+                        if (!b && (n11 = (i.crtStageForegrondLayer[n6][n7] & 0xFFFFFF00) >> 8) >= this.aCInt) {
+                            this.shouldSaveCheckpoint = true;
                             this.aCInt = n11 + 1;
                             this.akInt = i.aSInt + 13;
                         }
@@ -12096,7 +12189,7 @@ public final class i extends Canvas implements Runnable {
                                 int adInt = 0;
                                 Label_0696:
                                 {
-                                    switch (i.aIntArrArr[n6][n7] >> 8) {
+                                    switch (i.crtStageForegrondLayer[n6][n7] >> 8) {
                                         case 0: {
                                             if (i.iByteArr[9] >= 1) {
                                                 this.aDInt = 7;
@@ -12134,7 +12227,7 @@ public final class i extends Canvas implements Runnable {
                         break Label_0738;
                     }
                     case 3: {
-                        if (i.aIntArrArr[n6][n7] >> 8 < 3) {
+                        if (i.crtStageForegrondLayer[n6][n7] >> 8 < 3) {
                             b2 = true;
                             break Label_0738;
                         }
@@ -12147,7 +12240,7 @@ public final class i extends Canvas implements Runnable {
             }
             if (n3 == 0) {
                 final byte b4;
-                switch (b4 = i.aByteArrArr[n6][n7]) {
+                switch (b4 = i.crtStagePlayerLayer[n6][n7]) {
                     case 34:
                     case 35: {
                         b2 = b;
@@ -12207,10 +12300,10 @@ public final class i extends Canvas implements Runnable {
                             }
                         }
                         --axInt;
-                        final int n13 = i.aIntArrArr[n12][n2] & 0xFF;
-                        final int n14 = i.aIntArrArr[n12][n2] >> 8;
-                        final byte b5 = i.aByteArrArr[n6][iInt + 1];
-                        if ((axInt < 0 || b) && n != 0 && eBoolean(n12, n2) && (n13 != 7 || (n14 & 0xF0) != 0x0) && ((b5 != 19 && b5 != 45 && b5 != 49 && b5 != 43) || (i.aIntArrArr[n6][iInt + 1] & 0xFF) == 0x23)) {
+                        final int n13 = i.crtStageForegrondLayer[n12][n2] & 0xFF;
+                        final int n14 = i.crtStageForegrondLayer[n12][n2] >> 8;
+                        final byte b5 = i.crtStagePlayerLayer[n6][iInt + 1];
+                        if ((axInt < 0 || b) && n != 0 && eBoolean(n12, n2) && (n13 != 7 || (n14 & 0xF0) != 0x0) && ((b5 != 19 && b5 != 45 && b5 != 49 && b5 != 43) || (i.crtStageForegrondLayer[n6][iInt + 1] & 0xFF) == 0x23)) {
                             if (!b) {
                                 final int n15 = n6;
                                 final int n16 = n7;
@@ -12221,8 +12314,8 @@ public final class i extends Canvas implements Runnable {
                                 final int n18 = n15;
                                 final int n19 = b8 ? (n18 + 1) : (n18 - 1);
                                 final int n20 = i.bIntArrArr[n18][n17];
-                                i.aByteArrArr[n19][n17] = b7;
-                                i.aByteArrArr[n18][n17] = -1;
+                                i.crtStagePlayerLayer[n19][n17] = b7;
+                                i.crtStagePlayerLayer[n18][n17] = -1;
                                 i.bByteArrArr[n19][n17] = 18;
                                 int n21;
                                 int n22;
@@ -12262,12 +12355,12 @@ public final class i extends Canvas implements Runnable {
                             n25 = 0;
                         }
                         final int n26 = n25;
-                        if ((axInt < 0 || b) && n != 0 && i.aByteArrArr[n23][n2 + n24] < 0 && i.aByteArrArr[n23][n2 + n26] < 0 && i.aByteArrArr[n6][n7 + n26 + 1] >= 0) {
+                        if ((axInt < 0 || b) && n != 0 && i.crtStagePlayerLayer[n23][n2 + n24] < 0 && i.crtStagePlayerLayer[n23][n2 + n26] < 0 && i.crtStagePlayerLayer[n6][n7 + n26 + 1] >= 0) {
                             if (!b) {
-                                i.aByteArrArr[n23][n2 + n24] = b4;
-                                i.aByteArrArr[n23][n2 + n26] = b4;
-                                i.aByteArrArr[n6][n7 + n24] = -1;
-                                i.aByteArrArr[n6][n7 + n26] = -1;
+                                i.crtStagePlayerLayer[n23][n2 + n24] = b4;
+                                i.crtStagePlayerLayer[n23][n2 + n26] = b4;
+                                i.crtStagePlayerLayer[n6][n7 + n24] = -1;
+                                i.crtStagePlayerLayer[n6][n7 + n26] = -1;
                                 i.bIntArrArr[n23][n2 + n24] = i.bIntArrArr[n6][n7 + n24];
                                 i.bIntArrArr[n23][n2 + n26] = ((i.bIntArrArr[n6][n7 + n26] & 0xFFFFFFF0) | ((n > 0) ? 2 : 4));
                                 i.bByteArrArr[n23][n2 + n26] = 18;
@@ -12290,10 +12383,10 @@ public final class i extends Canvas implements Runnable {
                         Label_1991:
                         {
                             boolean b9;
-                            if (n6 == 0 || n7 == 0 || n6 == this.eInt - 1 || n7 == this.fInt - 1) {
+                            if (n6 == 0 || n7 == 0 || n6 == this.crtStageWidth - 1 || n7 == this.crtStageHeight - 1) {
                                 b9 = true;
                             } else {
-                                if (((n != 0 && i.aByteArrArr[n6][iInt + 1] == 0 && (i.bIntArrArr[n6][iInt + 1] & 0x7) == 0x3) || (this.aNInt >= 24 && ((i.aByteArrArr[n6][n7 - 1] == 28 && (i.bIntArrArr[n6][n7 - 1] & 0x8) == 0x0) || (i.aByteArrArr[n6][n7 + 1] == 28 && (i.bIntArrArr[n6][n7 + 1] & 0x8) == 0x0))) || (this.aPInt >= 24 && (i.aByteArrArr[n6][n7 - 1] == 28 || i.aByteArrArr[n6][n7 + 1] == 28))) && !b) {
+                                if (((n != 0 && i.crtStagePlayerLayer[n6][iInt + 1] == 0 && (i.bIntArrArr[n6][iInt + 1] & 0x7) == 0x3) || (this.aNInt >= 24 && ((i.crtStagePlayerLayer[n6][n7 - 1] == 28 && (i.bIntArrArr[n6][n7 - 1] & 0x8) == 0x0) || (i.crtStagePlayerLayer[n6][n7 + 1] == 28 && (i.bIntArrArr[n6][n7 + 1] & 0x8) == 0x0))) || (this.aPInt >= 24 && (i.crtStagePlayerLayer[n6][n7 - 1] == 28 || i.crtStagePlayerLayer[n6][n7 + 1] == 28))) && !b) {
                                     lByte = 0;
                                     break Label_1991;
                                 }
@@ -12339,8 +12432,8 @@ public final class i extends Canvas implements Runnable {
         }
         if (!b) {
             this.kInt = kInt2;
-            this.hInt = hInt;
-            this.iInt = iInt;
+            this.crtPlayerX = hInt;
+            this.crtPlayerY = iInt;
             this.lByte = lByte;
             this.xBoolean = xBoolean;
             this.aXInt = axInt;
@@ -12360,24 +12453,24 @@ public final class i extends Canvas implements Runnable {
         this.aVoid(1);
         this.oBoolean = true;
         if (i.aClassfArr[18] == null) {
-            i.aClassfArr[18] = importTexturesWithPalettes("/ui.f", 3, 0, 0);
+            i.aClassfArr[18] = loadSprite("/ui.f", 3, 0, 0);
         }
     }
 
     public final void cVoid() {
         this.lLong = System.currentTimeMillis() - this.aLong;
         this.afBoolean = true;
-        System.out.println(j.aBoolean());
-        this.aClassj.eVoid();
+        System.out.println(j_SoundManager.isPlayingSound());
+        this.aClassj.freeCrtPlayerResource();
     }
 
-    public final void showNotifyVoid() {
+    public final void showNotify() {
         if (this.afBoolean) {
             this.dVoid();
         }
     }
 
-    public final void hideNotifyVoid() {
+    public final void hideNotify() {
         if (!this.afBoolean) {
             this.cVoid();
         }
@@ -12388,7 +12481,7 @@ public final class i extends Canvas implements Runnable {
         i.VBoolean = true;
         i.WBoolean = true;
         this.dBoolean = true;
-        i.ahInt = 0;
+        i.keysPressed = 0;
         this.dbInt = -1;
         if (this.boInt == 7) {
             this.bqInt = 0;
@@ -12432,7 +12525,7 @@ public final class i extends Canvas implements Runnable {
                 if (this.nByte <= 0) {
                     return;
                 }
-                if (i.aClassbArr[0].dInt == 19) {
+                if (i.aClassbArr[0].crtAnimationI == 19) {
                     return;
                 }
                 if (this.EBoolean) {
@@ -12519,9 +12612,9 @@ public final class i extends Canvas implements Runnable {
         if (!this.lBoolean) {
             return;
         }
-        for (int iInteger = 0; iInteger < this.eInt; ++iInteger) {
-            for (int j = 0; j < this.fInt; ++j) {
-                if (i.aByteArrArr[iInteger][j] == 38) {
+        for (int iInteger = 0; iInteger < this.crtStageWidth; ++iInteger) {
+            for (int j = 0; j < this.crtStageHeight; ++j) {
+                if (i.crtStagePlayerLayer[iInteger][j] == 38) {
                     this.aByte((byte) i.bIntArrArr[iInteger][j], (byte) iInteger, (byte) j, (byte) 0);
                     ++this.duInt;
                 }
@@ -12531,9 +12624,9 @@ public final class i extends Canvas implements Runnable {
 
     private void iVoid(final int n, final int n2) {
         this.cLong |= 0x400000L;
-        final int[] array = i.aIntArrArr[n];
+        final int[] array = i.crtStageForegrondLayer[n];
         array[n2] &= 0xFFFFFF00;
-        final int[] array2 = i.aIntArrArr[n];
+        final int[] array2 = i.crtStageForegrondLayer[n];
         array2[n2] |= 0xE;
     }
 
@@ -12542,13 +12635,13 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void aVoid(int n, int n2, int n3, int n4, final int n5) {
-        while (n + n3 > 0 && n + n3 < this.eInt && n2 + n4 > 0 && n2 + n4 < this.fInt) {
+        while (n + n3 > 0 && n + n3 < this.crtStageWidth && n2 + n4 > 0 && n2 + n4 < this.crtStageHeight) {
             final int n6;
-            switch (n6 = (i.aIntArrArr[n + n3][n2 + n4] & 0xFF)) {
+            switch (n6 = (i.crtStageForegrondLayer[n + n3][n2 + n4] & 0xFF)) {
                 case 8:
                 case 9: {
-                    final int n7 = i.aIntArrArr[n + n3][n2 + n4] >> 8;
-                    i.aIntArrArr[n + n3][n2 + n4] = (((n5 == 1) ? (n7 | 0x200) : (n7 & 0xFFFFFDFF)) << 8 | n6);
+                    final int n7 = i.crtStageForegrondLayer[n + n3][n2 + n4] >> 8;
+                    i.crtStageForegrondLayer[n + n3][n2 + n4] = (((n5 == 1) ? (n7 | 0x200) : (n7 & 0xFFFFFDFF)) << 8 | n6);
                     this.aVoid(n + n3, n2 + n4, n3, n4, n5);
                     final int n8 = n + n3;
                     final int n9 = n2 + n4;
@@ -12565,8 +12658,8 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private boolean cBoolean(final int n, final int n2) {
-        return n == this.hInt && n2 == this.iInt;
+    private boolean isPlayerAtPosition(final int x, final int y) {
+        return x == this.crtPlayerX && y == this.crtPlayerY;
     }
 
     private void kVoid(final int n) {
@@ -12624,8 +12717,8 @@ public final class i extends Canvas implements Runnable {
         {
             if (this.aInt < 0) {
                 this.aInt = 0;
-            } else if (this.aInt > this.eInt * 24 - 240) {
-                this.aInt = this.eInt * 24 - 240;
+            } else if (this.aInt > this.crtStageWidth * 24 - 240) {
+                this.aInt = this.crtStageWidth * 24 - 240;
             } else if (this.aInt != this.ciInt) {
                 break Label_0230;
             }
@@ -12635,8 +12728,8 @@ public final class i extends Canvas implements Runnable {
         {
             if (this.bInt < 0) {
                 this.bInt = 0;
-            } else if (this.bInt > this.fInt * 24 - 320 + 80) {
-                this.bInt = this.fInt * 24 - 320 + 80;
+            } else if (this.bInt > this.crtStageHeight * 24 - 320 + 80) {
+                this.bInt = this.crtStageHeight * 24 - 320 + 80;
             } else if (this.bInt != this.cjInt) {
                 break Label_0300;
             }
@@ -12665,19 +12758,19 @@ public final class i extends Canvas implements Runnable {
             case 2: {
                 --this.dlInt;
                 if (this.dlInt == 30) {
-                    if ((i.aIntArrArr[this.djInt][this.dkInt] >> 8 & 0xF0) != 0x0) {
-                        this.eVoid(this.djInt, this.dkInt);
+                    if ((i.crtStageForegrondLayer[this.djInt][this.dkInt] >> 8 & 0xF0) != 0x0) {
+                        this.doorHeadClose(this.djInt, this.dkInt);
                         return;
                     }
                     break;
                 } else {
                     if (this.dlInt == 0) {
                         this.clInt = 3;
-                        this.ciInt = this.hInt * 24 - 108;
-                        this.cjInt = this.iInt * 24 - 108;
+                        this.ciInt = this.crtPlayerX * 24 - 108;
+                        this.cjInt = this.crtPlayerY * 24 - 108;
                         this.ckInt = 5;
-                        this.eClassString = i.aClassStringArr[i.lByteArr[i.cmInt]];
-                        i.bClassh.aVoid(this.eClassString);
+                        this.eClassString = i.texts[i.lByteArr[i.cmInt]];
+                        i.textSize0.calculateStringSize(this.eClassString);
                         this.diInt = 80;
                         return;
                     }
@@ -12708,26 +12801,26 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void ahVoid() {
-        int n = this.hInt - 8;
-        int n2 = this.hInt + 8;
-        int n3 = this.iInt + 8;
-        int n4 = this.iInt - 8;
+        int n = this.crtPlayerX - 8;
+        int n2 = this.crtPlayerX + 8;
+        int n3 = this.crtPlayerY + 8;
+        int n4 = this.crtPlayerY - 8;
         int n5 = 0;
         if (i.aClassbArr[4] != null) {
             final int eInt;
-            n5 = (((eInt = i.aClassbArr[4].eInt) == 0) ? 0 : ((eInt <= 10) ? 1 : ((eInt <= 20) ? 2 : 3)));
+            n5 = (((eInt = i.aClassbArr[4].crtAnimationFrame) == 0) ? 0 : ((eInt <= 10) ? 1 : ((eInt <= 20) ? 2 : 3)));
         }
         if (n < 1) {
             n = 1;
         }
-        if (n2 > this.eInt - 2) {
-            n2 = this.eInt - 2;
+        if (n2 > this.crtStageWidth - 2) {
+            n2 = this.crtStageWidth - 2;
         }
         if (n4 < 1) {
             n4 = 1;
         }
-        if (n3 > this.fInt - 2) {
-            n3 = this.fInt - 2;
+        if (n3 > this.crtStageHeight - 2) {
+            n3 = this.crtStageHeight - 2;
         }
         i i = this;
         int bfInt = n3;
@@ -12754,19 +12847,19 @@ public final class i extends Canvas implements Runnable {
                         {
                             i m = null;
                             i i2 = null;
-                            switch ((byte) i.aIntArrArr[this.bEInt][this.bFInt]) {
+                            switch ((byte) i.crtStageForegrondLayer[this.bEInt][this.bFInt]) {
                                 case 36: {
-                                    int n6 = i.aIntArrArr[this.bEInt][this.bFInt] >> 8;
+                                    int n6 = i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8;
                                     int[] array2;
                                     int n7;
                                     int n8;
                                     if (++n6 >= 16) {
-                                        array2 = i.aIntArrArr[this.bEInt];
+                                        array2 = i.crtStageForegrondLayer[this.bEInt];
                                         n7 = this.bFInt;
                                         n8 = -1;
                                     } else {
                                         i.cByteArrArr[this.bEInt][this.bFInt] = 24;
-                                        array2 = i.aIntArrArr[this.bEInt];
+                                        array2 = i.crtStageForegrondLayer[this.bEInt];
                                         n7 = this.bFInt;
                                         n8 = (n6 << 8 | 0x24);
                                     }
@@ -12793,8 +12886,8 @@ public final class i extends Canvas implements Runnable {
                                                     int[] array3;
                                                     int n11;
                                                     int n12;
-                                                    if ((b2 = (byte) i.aIntArrArr[beInt2][n9]) == 34 || b2 == 37) {
-                                                        array3 = i.aIntArrArr[beInt2];
+                                                    if ((b2 = (byte) i.crtStageForegrondLayer[beInt2][n9]) == 34 || b2 == 37) {
+                                                        array3 = i.crtStageForegrondLayer[beInt2];
                                                         n11 = n9;
                                                         n12 = 37;
                                                     } else {
@@ -12802,39 +12895,39 @@ public final class i extends Canvas implements Runnable {
                                                             break Label_0660;
                                                         }
                                                         i.bByteArrArr[beInt2][n9] = 18;
-                                                        array3 = i.aIntArrArr[beInt2];
+                                                        array3 = i.crtStageForegrondLayer[beInt2];
                                                         n11 = n9;
                                                         n12 = 35;
                                                     }
                                                     array3[n11] = n12;
                                                 }
-                                                final byte b3 = i.aByteArrArr[beInt2][bfInt3];
-                                                if (i.aByteArrArr[beInt2][n9] < 0 && !this.cBoolean(beInt2, n9) && b2 == 35 && b3 != 32 && b3 != 21 && i.aByteArrArr[beInt2][bfInt3] != -1) {
+                                                final byte b3 = i.crtStagePlayerLayer[beInt2][bfInt3];
+                                                if (i.crtStagePlayerLayer[beInt2][n9] < 0 && !this.isPlayerAtPosition(beInt2, n9) && b2 == 35 && b3 != 32 && b3 != 21 && i.crtStagePlayerLayer[beInt2][bfInt3] != -1) {
                                                     i.bByteArrArr[beInt2][n9] = 18;
-                                                    i.aByteArrArr[beInt2][n9] = i.aByteArrArr[beInt2][bfInt3];
+                                                    i.crtStagePlayerLayer[beInt2][n9] = i.crtStagePlayerLayer[beInt2][bfInt3];
                                                     i.bIntArrArr[beInt2][n9] = ((i.bIntArrArr[beInt2][bfInt3] & 0xFFFFFFF8) | 0x1);
-                                                    i.aByteArrArr[beInt2][bfInt3] = -1;
+                                                    i.crtStagePlayerLayer[beInt2][bfInt3] = -1;
                                                     this.bVoid(beInt2, bfInt3);
                                                 } else {
                                                     this.cVoid(beInt2, bfInt3);
                                                 }
-                                                if ((i.aIntArrArr[beInt2][n10] & 0xFF) != 0x23 && i.aByteArrArr[beInt2][n10] != 47) {
+                                                if ((i.crtStageForegrondLayer[beInt2][n10] & 0xFF) != 0x23 && i.crtStagePlayerLayer[beInt2][n10] != 47) {
                                                     int[] array4;
                                                     int n13;
                                                     int n14;
-                                                    if (i.aIntArrArr[beInt2][bfInt3] == 37) {
-                                                        array4 = i.aIntArrArr[beInt2];
+                                                    if (i.crtStageForegrondLayer[beInt2][bfInt3] == 37) {
+                                                        array4 = i.crtStageForegrondLayer[beInt2];
                                                         n13 = bfInt3;
                                                         n14 = 34;
                                                     } else {
-                                                        array4 = i.aIntArrArr[beInt2];
+                                                        array4 = i.crtStageForegrondLayer[beInt2];
                                                         n13 = bfInt3;
                                                         n14 = -1;
                                                     }
                                                     array4[n13] = n14;
                                                 }
                                                 i.cByteArrArr[beInt2][n9] = 24;
-                                                if (i.aByteArrArr[beInt2][bfInt3] >= 0) {
+                                                if (i.crtStagePlayerLayer[beInt2][bfInt3] >= 0) {
                                                     break Label_0929;
                                                 }
                                                 final byte[] array5 = i.bByteArrArr[beInt2];
@@ -12850,7 +12943,7 @@ public final class i extends Canvas implements Runnable {
                                     break Label_2587;
                                 }
                                 case 32: {
-                                    int n16 = i.aIntArrArr[this.bEInt][this.bFInt] >> 8 & 0xFF;
+                                    int n16 = i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8 & 0xFF;
                                     if ((i.aSInt & 0x1) == 0x0) {
                                         ++n16;
                                     } else if (n16 == 1) {
@@ -12859,12 +12952,12 @@ public final class i extends Canvas implements Runnable {
                                     int[] array7;
                                     int n17;
                                     int n18;
-                                    if (n16 == i.aClassfArr[16].aInt(0)) {
-                                        array7 = i.aIntArrArr[this.bEInt];
+                                    if (n16 == i.aClassfArr[16].getAnimationFrameCount(0)) {
+                                        array7 = i.crtStageForegrondLayer[this.bEInt];
                                         n17 = this.bFInt;
                                         n18 = -1;
                                     } else {
-                                        array7 = i.aIntArrArr[this.bEInt];
+                                        array7 = i.crtStageForegrondLayer[this.bEInt];
                                         n17 = this.bFInt;
                                         n18 = (n16 << 8 | 0x20);
                                     }
@@ -12873,36 +12966,36 @@ public final class i extends Canvas implements Runnable {
                                     break Label_2587;
                                 }
                                 case 26: {
-                                    if (this.jInt <= 6 && this.cBoolean(this.bEInt, this.bFInt)) {
-                                        i.ahInt = 0;
+                                    if (this.jInt <= 6 && this.isPlayerAtPosition(this.bEInt, this.bFInt)) {
+                                        i.keysPressed = 0;
                                         this.aByte = 0;
-                                        i.cmInt = i.aIntArrArr[this.bEInt][this.bFInt] >> 8;
-                                        this.eVoid(this.hInt + i.gByteArr[this.kInt & 0x7], this.iInt);
+                                        i.cmInt = i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8;
+                                        this.doorHeadClose(this.crtPlayerX + i.gByteArr[this.kInt & 0x7], this.crtPlayerY);
                                         if (i.cmInt < 0 || i.cmInt >= i.mByteArr.length) {
                                             i.cmInt = -1;
                                         } else {
-                                            this.pVoid(1);
+                                            this.playSound(1);
                                             this.clInt = 1;
                                             final int cmInt = i.cmInt;
-                                            this.pVoid(1);
-                                            final int n19 = this.eInt - 1;
-                                            for (int n20 = this.fInt - 1, k = 1; k < n20; ++k) {
+                                            this.playSound(1);
+                                            final int n19 = this.crtStageWidth - 1;
+                                            for (int n20 = this.crtStageHeight - 1, k = 1; k < n20; ++k) {
                                                 for (int l = 1; l < n19; ++l) {
-                                                    if ((i.aIntArrArr[l][k] & 0xFF) == 0x11 && i.aIntArrArr[l][k] >> 8 == cmInt) {
+                                                    if ((i.crtStageForegrondLayer[l][k] & 0xFF) == 0x11 && i.crtStageForegrondLayer[l][k] >> 8 == cmInt) {
                                                         int djInt = -1;
                                                         int dkInt = 0;
                                                         Label_1363:
                                                         {
                                                             int n21 = 0;
-                                                            if (i.aByteArrArr[l][k] == 18) {
+                                                            if (i.crtStagePlayerLayer[l][k] == 18) {
                                                                 djInt = l;
                                                                 n21 = k;
                                                             } else {
                                                                 Label_1353:
                                                                 {
-                                                                    switch (i.aIntArrArr[l][k - 1] & 0xFF) {
+                                                                    switch (i.crtStageForegrondLayer[l][k - 1] & 0xFF) {
                                                                         case 7: {
-                                                                            if ((i.aIntArrArr[l][k - 1] >> 8 & 0xF0) != 0x0) {
+                                                                            if ((i.crtStageForegrondLayer[l][k - 1] >> 8 & 0xF0) != 0x0) {
                                                                                 break Label_1353;
                                                                             }
                                                                             break Label_1363;
@@ -12928,25 +13021,25 @@ public final class i extends Canvas implements Runnable {
                                                 }
                                             }
                                         }
-                                        i.aIntArrArr[this.bEInt][this.bFInt] = -1;
+                                        i.crtStageForegrondLayer[this.bEInt][this.bFInt] = -1;
                                     }
                                     break Label_2587;
                                 }
                                 case 6: {
                                     final int beInt3 = this.bEInt;
                                     final int bfInt4 = this.bFInt;
-                                    final int n22 = i.aIntArrArr[beInt3][bfInt4] >> 8;
-                                    int n23 = (iBoolean(beInt3, bfInt4) || i.aByteArrArr[beInt3][bfInt4] == 47 || i.aByteArrArr[beInt3][bfInt4] == 48) ? 1 : 0;
+                                    final int doorI = i.crtStageForegrondLayer[beInt3][bfInt4] >> 8;
+                                    int n23 = (iBoolean(beInt3, bfInt4) || i.crtStagePlayerLayer[beInt3][bfInt4] == 47 || i.crtStagePlayerLayer[beInt3][bfInt4] == 48) ? 1 : 0;
                                     int n24 = i.bByteArrArr[beInt3][bfInt4];
-                                    if (n23 == 0 && this.cBoolean(beInt3, bfInt4)) {
+                                    if (n23 == 0 && this.isPlayerAtPosition(beInt3, bfInt4)) {
                                         n23 = 1;
                                         n24 = (((this.kInt & 0x1000) != 0x0) ? 0 : this.jInt);
                                     }
                                     if (n23 != 0 && n24 < 12) {
-                                        this.hVoid(n22);
+                                        this.hVoid(doorI);
                                         break Label_2587;
                                     }
-                                    this.iVoid(n22);
+                                    this.doorHeadClose(doorI);
                                     break Label_2587;
                                 }
                                 case 33: {
@@ -12958,9 +13051,9 @@ public final class i extends Canvas implements Runnable {
                                     break Label_2587;
                                 }
                                 case 2: {
-                                    switch (i.aIntArrArr[this.bEInt][this.bFInt] >> 8) {
+                                    switch (i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8) {
                                         case 0: {
-                                            if (i.aByteArrArr[this.bEInt - 1][this.bFInt] != 30 && i.aByteArrArr[this.bEInt + 1][this.bFInt] != 30 && i.aByteArrArr[this.bEInt][this.bFInt - 1] != 30 && i.aByteArrArr[this.bEInt][this.bFInt + 1] != 30) {
+                                            if (i.crtStagePlayerLayer[this.bEInt - 1][this.bFInt] != 30 && i.crtStagePlayerLayer[this.bEInt + 1][this.bFInt] != 30 && i.crtStagePlayerLayer[this.bEInt][this.bFInt - 1] != 30 && i.crtStagePlayerLayer[this.bEInt][this.bFInt + 1] != 30) {
                                                 this.aDInt = -1;
                                                 this.bVoid(this.bEInt, this.bFInt, (byte) 2);
                                                 break;
@@ -12974,10 +13067,10 @@ public final class i extends Canvas implements Runnable {
                                     final int beInt4 = this.bEInt;
                                     final int bfInt5 = this.bFInt;
                                     int n25;
-                                    if ((n25 = i.aIntArrArr[beInt4][bfInt5] >> 8) < 6) {
+                                    if ((n25 = i.crtStageForegrondLayer[beInt4][bfInt5] >> 8) < 6) {
                                         switch (n25) {
                                             case -1: {
-                                                if (Math.abs(this.hInt - beInt4) < 4 && Math.abs(this.iInt - bfInt5) < 4) {
+                                                if (Math.abs(this.crtPlayerX - beInt4) < 4 && Math.abs(this.crtPlayerY - bfInt5) < 4) {
                                                     n25 = 3;
                                                     break;
                                                 }
@@ -12992,25 +13085,25 @@ public final class i extends Canvas implements Runnable {
                                                 {
                                                     switch (this.lByte) {
                                                         case 1: {
-                                                            if (this.cBoolean(beInt4, bfInt5 - 1)) {
+                                                            if (this.isPlayerAtPosition(beInt4, bfInt5 - 1)) {
                                                                 break;
                                                             }
                                                             break Label_1948;
                                                         }
                                                         case 2: {
-                                                            if (this.cBoolean(beInt4 + 1, bfInt5)) {
+                                                            if (this.isPlayerAtPosition(beInt4 + 1, bfInt5)) {
                                                                 break;
                                                             }
                                                             break Label_1948;
                                                         }
                                                         case 3: {
-                                                            if (this.cBoolean(beInt4, bfInt5 + 1)) {
+                                                            if (this.isPlayerAtPosition(beInt4, bfInt5 + 1)) {
                                                                 break;
                                                             }
                                                             break Label_1948;
                                                         }
                                                         case 4: {
-                                                            if (this.cBoolean(beInt4 - 1, bfInt5)) {
+                                                            if (this.isPlayerAtPosition(beInt4 - 1, bfInt5)) {
                                                                 break;
                                                             }
                                                             break Label_1948;
@@ -13029,23 +13122,23 @@ public final class i extends Canvas implements Runnable {
                                             }
                                         }
                                         i.cByteArrArr[beInt4][bfInt5] = 24;
-                                        i.aIntArrArr[beInt4][bfInt5] = (n25 << 8 | 0x3);
+                                        i.crtStageForegrondLayer[beInt4][bfInt5] = (n25 << 8 | 0x3);
                                         break Label_2587;
                                     }
                                     i.cByteArrArr[beInt4][bfInt5] = 0;
                                     break Label_2587;
                                 }
                                 case 30: {
-                                    if (this.aClassc == null && this.bmInt == -1 && this.cBoolean(this.bEInt, this.bFInt) && this.jInt <= 0) {
-                                        this.bmInt = i.aIntArrArr[this.bEInt][this.bFInt] >> 8;
-                                        i.aIntArrArr[this.bEInt][this.bFInt] = -1;
+                                    if (this.aClassc == null && this.bmInt == -1 && this.isPlayerAtPosition(this.bEInt, this.bFInt) && this.jInt <= 0) {
+                                        this.bmInt = i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8;
+                                        i.crtStageForegrondLayer[this.bEInt][this.bFInt] = -1;
                                     }
                                     break Label_2587;
                                 }
                                 case 0: {
-                                    if (this.aClassc == null && this.bmInt == -1 && this.cBoolean(this.bEInt, this.bFInt) && this.jInt <= 6) {
-                                        this.bmInt = i.aIntArrArr[this.bEInt][this.bFInt] >> 8;
-                                        i.aIntArrArr[this.bEInt][this.bFInt] = -1;
+                                    if (this.aClassc == null && this.bmInt == -1 && this.isPlayerAtPosition(this.bEInt, this.bFInt) && this.jInt <= 6) {
+                                        this.bmInt = i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8;
+                                        i.crtStageForegrondLayer[this.bEInt][this.bFInt] = -1;
                                     }
                                     break Label_2587;
                                 }
@@ -13054,20 +13147,20 @@ public final class i extends Canvas implements Runnable {
                                     final int bfInt6 = this.bFInt;
                                     int n27;
                                     final int n26;
-                                    if ((n26 = ((n27 = i.aIntArrArr[beInt5][bfInt6] >> 8) & 0xF0) >> 4) != 0) {
+                                    if ((n26 = ((n27 = i.crtStageForegrondLayer[beInt5][bfInt6] >> 8) & 0xF0) >> 4) != 0) {
                                         if (i.aSInt % 3 == 0 && n26 < 3) {
                                             n27 = ((n27 & 0xFFFFFF0F) | n26 + 1 << 4);
                                             if (n26 == 2) {
                                                 final int n28;
-                                                if ((n28 = (i.aIntArrArr[beInt5][bfInt6 - 1] & 0xFF)) == 9 || n28 == 8) {
-                                                    i.aIntArrArr[beInt5][bfInt6 - 1] = ((i.aIntArrArr[beInt5][bfInt6 - 1] >> 8 & 0xFFFFFDFF) << 8 | n28);
+                                                if ((n28 = (i.crtStageForegrondLayer[beInt5][bfInt6 - 1] & 0xFF)) == 9 || n28 == 8) {
+                                                    i.crtStageForegrondLayer[beInt5][bfInt6 - 1] = ((i.crtStageForegrondLayer[beInt5][bfInt6 - 1] >> 8 & 0xFFFFFDFF) << 8 | n28);
                                                 }
                                                 this.aVoid(beInt5, bfInt6 - 1, 1, 0, 0);
                                                 this.aVoid(beInt5, bfInt6 - 1, -1, 0, 0);
                                             }
                                             i.cByteArrArr[beInt5][bfInt6] = 24;
                                         }
-                                        i.aIntArrArr[beInt5][bfInt6] = (n27 << 8 | 0x7);
+                                        i.crtStageForegrondLayer[beInt5][bfInt6] = (n27 << 8 | 0x7);
                                     }
                                     break Label_2587;
                                 }
@@ -13085,10 +13178,10 @@ public final class i extends Canvas implements Runnable {
                             final i i3 = i2;
                             final int beInt6 = m.bEInt;
                             final int bfInt7 = i3.bFInt;
-                            final int n29 = i.aIntArrArr[beInt6][bfInt7] >> 8;
-                            final int n30 = i.aIntArrArr[beInt6][bfInt7] & 0xFF;
+                            final int n29 = i.crtStageForegrondLayer[beInt6][bfInt7] >> 8;
+                            final int n30 = i.crtStageForegrondLayer[beInt6][bfInt7] & 0xFF;
                             final int dInt;
-                            if ((n29 & 0x100) == 0x0 && ((n30 == 9 && i3.aUInt > 0) || (n30 == 8 && i3.aVInt > 0)) && i3.iInt == bfInt7 && (i3.hInt == beInt6 - 1 || i3.hInt == beInt6 + 1) && (dInt = i.aClassbArr[0].dInt) != 18 && dInt != 17 && i3.jInt <= 6) {
+                            if ((n29 & 0x100) == 0x0 && ((n30 == 9 && i3.aUInt > 0) || (n30 == 8 && i3.aVInt > 0)) && i3.crtPlayerY == bfInt7 && (i3.crtPlayerX == beInt6 - 1 || i3.crtPlayerX == beInt6 + 1) && (dInt = i.aClassbArr[0].crtAnimationI) != 18 && dInt != 17 && i3.jInt <= 6) {
                                 final i i4 = i3;
                                 final i i5 = i3;
                                 final byte b5 = 0;
@@ -13096,7 +13189,7 @@ public final class i extends Canvas implements Runnable {
                                 i4.lByte = b5;
                                 i i6;
                                 int n31;
-                                if (i3.hInt == beInt6 - 1) {
+                                if (i3.crtPlayerX == beInt6 - 1) {
                                     i3.kInt = ((i3.kInt & 0xFFFFFFF8) | 0x2);
                                     i6 = i3;
                                     n31 = 18;
@@ -13119,10 +13212,10 @@ public final class i extends Canvas implements Runnable {
                                 i3.aGInt = 0;
                             }
                         }
-                        if ((i.aIntArrArr[this.bEInt][this.bFInt] & 0xF0000000) >> 28 > 0) {
+                        if ((i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xF0000000) >> 28 > 0) {
                             int n32;
-                            if ((n32 = (i.aIntArrArr[this.bEInt][this.bFInt] & 0xF0000000) >> 28) == 0) {
-                                this.pVoid(10);
+                            if ((n32 = (i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xF0000000) >> 28) == 0) {
+                                this.playSound(10);
                             }
                             if ((i.aSInt & 0x1) == 0x0) {
                                 ++n32;
@@ -13130,14 +13223,14 @@ public final class i extends Canvas implements Runnable {
                             int[] array8;
                             int n33;
                             int n34;
-                            if (n32 >= i.aClassfArr[13].aInt(0)) {
-                                array8 = i.aIntArrArr[this.bEInt];
+                            if (n32 >= i.aClassfArr[13].getAnimationFrameCount(0)) {
+                                array8 = i.crtStageForegrondLayer[this.bEInt];
                                 n33 = this.bFInt;
-                                n34 = (i.aIntArrArr[this.bEInt][this.bFInt] & 0xFFFFFFF);
+                                n34 = (i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xFFFFFFF);
                             } else {
-                                array8 = i.aIntArrArr[this.bEInt];
+                                array8 = i.crtStageForegrondLayer[this.bEInt];
                                 n33 = this.bFInt;
-                                n34 = ((i.aIntArrArr[this.bEInt][this.bFInt] & 0xFFFFFFF) | n32 << 28);
+                                n34 = ((i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xFFFFFFF) | n32 << 28);
                             }
                             array8[n33] = n34;
                             kVoid(this.bEInt, this.bFInt);
@@ -13145,21 +13238,21 @@ public final class i extends Canvas implements Runnable {
                         i i10 = null;
                         i i11 = null;
                         int n98 = 0;
-                        switch (i.aByteArrArr[this.bEInt][this.bFInt]) {
+                        switch (i.crtStagePlayerLayer[this.bEInt][this.bFInt]) {
                             case 54: {
                                 final int beInt7 = this.bEInt;
                                 final int bfInt8 = this.bFInt;
                                 int n35 = i.bIntArrArr[beInt7][bfInt8];
-                                final f f = i.aClassfArr[7];
+                                final f_Sprite f = i.aClassfArr[7];
                                 ++n35;
                                 final int aInt = aInt(f, 0);
                                 if (n35 >= aInt) {
-                                    i.aByteArrArr[beInt7][bfInt8] = -1;
+                                    i.crtStagePlayerLayer[beInt7][bfInt8] = -1;
                                     kVoid(beInt7, bfInt8);
                                     break Label_8485;
                                 }
                                 if (n35 == 1) {
-                                    this.pVoid(7);
+                                    this.playSound(7);
                                     kVoid(beInt7, bfInt8);
                                 } else if (n35 == aInt >> 1) {
                                     for (int n36 = -1; n36 < 2; ++n36) {
@@ -13173,7 +13266,7 @@ public final class i extends Canvas implements Runnable {
                                                 boolean b6 = false;
                                                 Label_3216:
                                                 {
-                                                    switch (i.aByteArrArr[n38][n39]) {
+                                                    switch (i.crtStagePlayerLayer[n38][n39]) {
                                                         case 10: {
                                                             if (this.xByte == 3) {
                                                                 break Label_3216;
@@ -13191,13 +13284,13 @@ public final class i extends Canvas implements Runnable {
                                                         case 19:
                                                         case 43:
                                                         case 49: {
-                                                            i.aByteArrArr[n38][n39] = -1;
+                                                            i.crtStagePlayerLayer[n38][n39] = -1;
                                                             this.jVoid(n38, n39);
                                                             i.cByteArrArr[n38][n39] = 24;
                                                             break Label_3288;
                                                         }
                                                         case 8: {
-                                                            i.aByteArrArr[n38][n39] = 54;
+                                                            i.crtStagePlayerLayer[n38][n39] = 54;
                                                             array9 = i.bIntArrArr[n38];
                                                             n40 = n39;
                                                             b6 = false;
@@ -13208,8 +13301,8 @@ public final class i extends Canvas implements Runnable {
                                                 array9[n40] = (b6 ? 1 : 0);
                                                 kVoid(n38, n39);
                                             }
-                                            if (this.cBoolean(n38, n39)) {
-                                                this.aVoid(1, 64, 0);
+                                            if (this.isPlayerAtPosition(n38, n39)) {
+                                                this.hurtHero(1, 64, 0);
                                             }
                                         }
                                     }
@@ -13219,8 +13312,8 @@ public final class i extends Canvas implements Runnable {
                                 break Label_8485;
                             }
                             case 50: {
-                                if (this.jInt < 12 && this.cBoolean(this.bEInt, this.bFInt) && !this.jBoolean) {
-                                    this.aVoid(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
+                                if (this.jInt < 12 && this.isPlayerAtPosition(this.bEInt, this.bFInt) && !this.jBoolean) {
+                                    this.hurtHero(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
                                 }
                                 break Label_8485;
                             }
@@ -13242,14 +13335,14 @@ public final class i extends Canvas implements Runnable {
                                 int n41 = i.bIntArrArr[beInt8][bfInt9] & 0x1F;
                                 int n42 = (i.bIntArrArr[beInt8][bfInt9] & 0x1FE0) >> 5;
                                 final int aInt2 = aInt(i.aClassfArr[29], n41);
-                                if ((i.aIntArrArr[beInt8][bfInt9] & 0xFF) == 0x23) {
+                                if ((i.crtStageForegrondLayer[beInt8][bfInt9] & 0xFF) == 0x23) {
                                     if (++n42 > aInt2) {
                                         n42 = 0;
                                     }
                                     i.bIntArrArr[beInt8][bfInt9] = (0x0 | n42 << 5);
                                     break Label_8485;
                                 }
-                                if (i.aByteArrArr[beInt8][bfInt9 + 1] < 0 && n41 != 8 && n41 != 9) {
+                                if (i.crtStagePlayerLayer[beInt8][bfInt9 + 1] < 0 && n41 != 8 && n41 != 9) {
                                     int n43 = 0;
                                     switch (n41) {
                                         case 0:
@@ -13266,8 +13359,8 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     final int n44 = n43;
                                     i.bByteArrArr[beInt8][bfInt9 + 1] = 18;
-                                    i.aByteArrArr[beInt8][bfInt9 + 1] = 46;
-                                    i.aByteArrArr[beInt8][bfInt9] = -1;
+                                    i.crtStagePlayerLayer[beInt8][bfInt9 + 1] = 46;
+                                    i.crtStagePlayerLayer[beInt8][bfInt9] = -1;
                                     i.bIntArrArr[beInt8][bfInt9 + 1] = n44;
                                     kVoid(beInt8, bfInt9);
                                     break Label_8485;
@@ -13277,36 +13370,36 @@ public final class i extends Canvas implements Runnable {
                                     final int n45 = bfInt9;
                                     array10[n45] -= 6;
                                     if (i.bByteArrArr[beInt8][bfInt9] < 0) {
-                                        if (i.aByteArrArr[beInt8][bfInt9 + 1] < 0) {
+                                        if (i.crtStagePlayerLayer[beInt8][bfInt9 + 1] < 0) {
                                             i.bByteArrArr[beInt8][bfInt9 + 1] = 18;
-                                            i.aByteArrArr[beInt8][bfInt9 + 1] = 46;
-                                            i.aByteArrArr[beInt8][bfInt9] = -1;
+                                            i.crtStagePlayerLayer[beInt8][bfInt9 + 1] = 46;
+                                            i.crtStagePlayerLayer[beInt8][bfInt9] = -1;
                                             i.bIntArrArr[beInt8][bfInt9 + 1] = n41;
                                             kVoid(beInt8, bfInt9);
                                         } else {
                                             i.bIntArrArr[beInt8][bfInt9] = ((n41 == 8) ? 10 : 11);
                                             i.bByteArrArr[beInt8][bfInt9] = 0;
                                         }
-                                    } else if (aBoolean(beInt8, bfInt9, 3, i.bByteArrArr[beInt8][bfInt9], this.hInt, this.iInt, this.kInt & 0x7, this.jInt)) {
-                                        this.aVoid(1, 48, i.bIntArrArr[beInt8][bfInt9] & 0x7);
+                                    } else if (aBoolean(beInt8, bfInt9, 3, i.bByteArrArr[beInt8][bfInt9], this.crtPlayerX, this.crtPlayerY, this.kInt & 0x7, this.jInt)) {
+                                        this.hurtHero(1, 48, i.bIntArrArr[beInt8][bfInt9] & 0x7);
                                     }
                                 } else if (hBoolean(beInt8, bfInt9)) {
-                                    i.aByteArrArr[beInt8][bfInt9] = -1;
+                                    i.crtStagePlayerLayer[beInt8][bfInt9] = -1;
                                     this.jVoid(beInt8, bfInt9);
                                     kVoid(beInt8, bfInt9);
                                 } else {
                                     Label_4803:
                                     {
-                                        if (this.cBoolean(beInt8 - 1, bfInt9) || this.cBoolean(beInt8 + 1, bfInt9) || this.cBoolean(beInt8, bfInt9 - 1)) {
+                                        if (this.isPlayerAtPosition(beInt8 - 1, bfInt9) || this.isPlayerAtPosition(beInt8 + 1, bfInt9) || this.isPlayerAtPosition(beInt8, bfInt9 - 1)) {
                                             Label_4035:
                                             {
                                                 int n46;
-                                                if (this.iInt == bfInt9 - 1) {
+                                                if (this.crtPlayerY == bfInt9 - 1) {
                                                     n46 = 17;
-                                                } else if (this.hInt == beInt8 - 1) {
+                                                } else if (this.crtPlayerX == beInt8 - 1) {
                                                     n46 = 16;
                                                 } else {
-                                                    if (this.hInt != beInt8 + 1) {
+                                                    if (this.crtPlayerX != beInt8 + 1) {
                                                         break Label_4035;
                                                     }
                                                     n46 = 15;
@@ -13316,7 +13409,7 @@ public final class i extends Canvas implements Runnable {
                                             n42 = 0;
                                         } else {
                                             final int n47 = this.kInt & 0x7;
-                                            if (this.hInt == beInt8 && this.jInt == 6 && (n47 == 4 || n47 == 2) && this.iInt < bfInt9 && i.aByteArrArr[beInt8][bfInt9 - 1] < 0 && bfInt9 * 24 <= this.bInt + 320 - 80) {
+                                            if (this.crtPlayerX == beInt8 && this.jInt == 6 && (n47 == 4 || n47 == 2) && this.crtPlayerY < bfInt9 && i.crtStagePlayerLayer[beInt8][bfInt9 - 1] < 0 && bfInt9 * 24 <= this.bInt + 320 - 80) {
                                                 int n48 = 0;
                                                 switch (n41) {
                                                     case 0:
@@ -13335,8 +13428,8 @@ public final class i extends Canvas implements Runnable {
                                                 }
                                                 n41 = n48;
                                                 n42 = 0;
-                                            } else if (this.iInt == bfInt9 && this.jInt == 6 && (n47 == 1 || n47 == 3) && n41 >= 0 && n41 <= 3 && ((this.hInt < beInt8 && i.aByteArrArr[beInt8 - 1][bfInt9] < 0 && beInt8 * 24 < this.aInt + 240) || (this.hInt > beInt8 && i.aByteArrArr[beInt8 + 1][bfInt9] < 0 && (beInt8 + 1) * 24 > this.aInt))) {
-                                                n41 = ((this.hInt < beInt8) ? 4 : 5);
+                                            } else if (this.crtPlayerY == bfInt9 && this.jInt == 6 && (n47 == 1 || n47 == 3) && n41 >= 0 && n41 <= 3 && ((this.crtPlayerX < beInt8 && i.crtStagePlayerLayer[beInt8 - 1][bfInt9] < 0 && beInt8 * 24 < this.aInt + 240) || (this.crtPlayerX > beInt8 && i.crtStagePlayerLayer[beInt8 + 1][bfInt9] < 0 && (beInt8 + 1) * 24 > this.aInt))) {
+                                                n41 = ((this.crtPlayerX < beInt8) ? 4 : 5);
                                                 n42 = 0;
                                             } else {
                                                 ++n42;
@@ -13347,8 +13440,8 @@ public final class i extends Canvas implements Runnable {
                                                     switch (n41) {
                                                         case 4: {
                                                             final int n49 = beInt8 - 1;
-                                                            if (i.aByteArrArr[n49][bfInt9] < 0 && n42 == bInt(i.aClassfArr[29], 4, 1)) {
-                                                                i.aByteArrArr[n49][bfInt9] = 21;
+                                                            if (i.crtStagePlayerLayer[n49][bfInt9] < 0 && n42 == bInt(i.aClassfArr[29], 4, 1)) {
+                                                                i.crtStagePlayerLayer[n49][bfInt9] = 21;
                                                                 i.bIntArrArr[n49][bfInt9] = 4;
                                                                 i.bByteArrArr[n49][bfInt9] = 18;
                                                                 array11 = i.cByteArrArr[n49];
@@ -13359,8 +13452,8 @@ public final class i extends Canvas implements Runnable {
                                                         }
                                                         case 5: {
                                                             final int n51 = beInt8 + 1;
-                                                            if (i.aByteArrArr[n51][bfInt9] < 0 && n42 == bInt(i.aClassfArr[29], 5, 1)) {
-                                                                i.aByteArrArr[n51][bfInt9] = 21;
+                                                            if (i.crtStagePlayerLayer[n51][bfInt9] < 0 && n42 == bInt(i.aClassfArr[29], 5, 1)) {
+                                                                i.crtStagePlayerLayer[n51][bfInt9] = 21;
                                                                 i.bIntArrArr[n51][bfInt9] = 2;
                                                                 i.bByteArrArr[n51][bfInt9] = 18;
                                                                 array11 = i.cByteArrArr[n51];
@@ -13372,8 +13465,8 @@ public final class i extends Canvas implements Runnable {
                                                         case 6:
                                                         case 7: {
                                                             final int n52 = bfInt9 - 1;
-                                                            if (i.aByteArrArr[beInt8][n52] < 0 && n42 == bInt(i.aClassfArr[29], n41, 1)) {
-                                                                i.aByteArrArr[beInt8][n52] = 21;
+                                                            if (i.crtStagePlayerLayer[beInt8][n52] < 0 && n42 == bInt(i.aClassfArr[29], n41, 1)) {
+                                                                i.crtStagePlayerLayer[beInt8][n52] = 21;
                                                                 i.bIntArrArr[beInt8][n52] = 1;
                                                                 i.bByteArrArr[beInt8][n52] = 18;
                                                                 array11 = i.cByteArrArr[beInt8];
@@ -13388,25 +13481,25 @@ public final class i extends Canvas implements Runnable {
                                                 if (n42 > aInt2) {
                                                     n42 = 0;
                                                     int n53 = 0;
-                                                    switch (this.aInt(beInt8, bfInt9, this.hInt, this.iInt, false)) {
+                                                    switch (this.aInt(beInt8, bfInt9, this.crtPlayerX, this.crtPlayerY, false)) {
                                                         case 4: {
-                                                            n53 = ((this.iInt == bfInt9 && n41 != 4 && beInt8 * 24 < this.aInt + 240) ? 4 : 0);
+                                                            n53 = ((this.crtPlayerY == bfInt9 && n41 != 4 && beInt8 * 24 < this.aInt + 240) ? 4 : 0);
                                                             break;
                                                         }
                                                         case 2: {
-                                                            n53 = ((this.iInt == bfInt9 && n41 != 5 && (beInt8 + 1) * 24 > this.aInt) ? 5 : 1);
+                                                            n53 = ((this.crtPlayerY == bfInt9 && n41 != 5 && (beInt8 + 1) * 24 > this.aInt) ? 5 : 1);
                                                             break;
                                                         }
                                                         case 1: {
-                                                            if (this.hInt == beInt8 && n41 != 6 && n41 != 7 && bfInt9 * 24 <= this.bInt + 320 - 80) {
+                                                            if (this.crtPlayerX == beInt8 && n41 != 6 && n41 != 7 && bfInt9 * 24 <= this.bInt + 320 - 80) {
                                                                 n41 = ((n41 == 2) ? 6 : 7);
                                                                 break Label_4803;
                                                             }
-                                                            n41 = ((this.hInt < beInt8) ? 2 : 3);
+                                                            n41 = ((this.crtPlayerX < beInt8) ? 2 : 3);
                                                             break Label_4803;
                                                         }
                                                         default: {
-                                                            n53 = ((this.hInt >= beInt8) ? 1 : 0);
+                                                            n53 = ((this.crtPlayerX >= beInt8) ? 1 : 0);
                                                             break;
                                                         }
                                                     }
@@ -13427,12 +13520,12 @@ public final class i extends Canvas implements Runnable {
                                 final int n54 = (i.bIntArrArr[beInt9][bfInt10] & 0x1C00) >> 10;
                                 final int n55 = i.bIntArrArr[beInt9][bfInt10] & 0xF;
                                 int n56 = 0;
-                                final boolean b7 = (i.aIntArrArr[beInt9][bfInt10] & 0xFF) == 0x23;
+                                final boolean b7 = (i.crtStageForegrondLayer[beInt9][bfInt10] & 0xFF) == 0x23;
                                 if (n55 == 10) {
                                     n56 = 100;
                                 } else {
-                                    for (int a = i.aClassfArr[28].aInt(n55), n57 = 0; n57 < a; ++n57) {
-                                        n56 += i.aClassfArr[28].aInt(n55, n57);
+                                    for (int a = i.aClassfArr[28].getAnimationFrameCount(n55), n57 = 0; n57 < a; ++n57) {
+                                        n56 += i.aClassfArr[28].getAnimationFrameTime(n55, n57);
                                     }
                                 }
                                 int n58 = (i.bIntArrArr[beInt9][bfInt10] & 0x1FE000) >> 13;
@@ -13453,7 +13546,7 @@ public final class i extends Canvas implements Runnable {
                                 array12[n59] = (byte) n60;
                                 if (n58 > n56 >> 1) {
                                     if (!b7) {
-                                        if (this.cBoolean(beInt9, bfInt10) && n55 != 10) {
+                                        if (this.isPlayerAtPosition(beInt9, bfInt10) && n55 != 10) {
                                             int n61 = 0;
                                             switch (n55) {
                                                 case 4:
@@ -13479,17 +13572,17 @@ public final class i extends Canvas implements Runnable {
                                                     break;
                                                 }
                                             }
-                                            this.aVoid(1, 48, n61);
+                                            this.hurtHero(1, 48, n61);
                                         }
                                         if (hBoolean(beInt9, bfInt10)) {
-                                            i.aByteArrArr[beInt9][bfInt10] = -1;
+                                            i.crtStagePlayerLayer[beInt9][bfInt10] = -1;
                                             this.jVoid(beInt9, bfInt10);
                                             break Label_8485;
                                         }
                                     }
                                     if (n58 >= n56) {
                                         kVoid(beInt9, bfInt10);
-                                        final int aInt3 = this.aInt(beInt9, bfInt10, this.hInt, this.iInt, true);
+                                        final int aInt3 = this.aInt(beInt9, bfInt10, this.crtPlayerX, this.crtPlayerY, true);
                                         int n62 = 0;
                                         switch (n55) {
                                             case 0:
@@ -13516,7 +13609,7 @@ public final class i extends Canvas implements Runnable {
                                                 n65 = bfInt10 - i.gByteArr[aInt3 + 8];
                                                 int n66 = 0;
                                                 if (b8) {
-                                                    if (this.cBoolean(n64, n65) && n55 != 0) {
+                                                    if (this.isPlayerAtPosition(n64, n65) && n55 != 0) {
                                                         n63 = 0;
                                                         n64 = beInt9;
                                                         n65 = bfInt10;
@@ -13541,7 +13634,7 @@ public final class i extends Canvas implements Runnable {
                                                         }
                                                     }
                                                 } else {
-                                                    if (this.cBoolean(n64, n65) && n55 != 1) {
+                                                    if (this.isPlayerAtPosition(n64, n65) && n55 != 1) {
                                                         n63 = 1;
                                                         n64 = beInt9;
                                                         n65 = bfInt10;
@@ -13569,24 +13662,24 @@ public final class i extends Canvas implements Runnable {
                                                 n63 = n66;
                                             }
                                         }
-                                        if (i.aByteArrArr[n64][n65] >= 0 || b7) {
+                                        if (i.crtStagePlayerLayer[n64][n65] >= 0 || b7) {
                                             if (n64 != beInt9 || n65 != bfInt10) {
                                                 n63 = 0;
                                             }
                                             n64 = beInt9;
                                             n65 = bfInt10;
                                         }
-                                        i.aByteArrArr[beInt9][bfInt10] = -1;
+                                        i.crtStagePlayerLayer[beInt9][bfInt10] = -1;
                                         i.bByteArrArr[n64][n65] = 0;
                                         i.bIntArrArr[n64][n65] = (n54 << 10 | n63);
                                         i.bIntArrArr[n64][n65] &= 0xFFE01FFF;
-                                        i.aByteArrArr[n64][n65] = 45;
+                                        i.crtStagePlayerLayer[n64][n65] = 45;
                                     }
                                 }
                                 Label_5806:
                                 {
                                     if (b7) {
-                                        if (!this.cBoolean(beInt9, bfInt10) || n55 == 10) {
+                                        if (!this.isPlayerAtPosition(beInt9, bfInt10) || n55 == 10) {
                                             break Label_5806;
                                         }
                                     } else {
@@ -13616,11 +13709,11 @@ public final class i extends Canvas implements Runnable {
                                                 break;
                                             }
                                         }
-                                        if (!this.cBoolean(n67, n68)) {
+                                        if (!this.isPlayerAtPosition(n67, n68)) {
                                             break Label_5806;
                                         }
                                     }
-                                    this.aVoid(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
+                                    this.hurtHero(1, 48, (int) i.hByteArr[this.kInt & 0x7]);
                                 }
                                 break Label_8485;
                             }
@@ -13636,22 +13729,22 @@ public final class i extends Canvas implements Runnable {
                                 final int beInt10 = this.bEInt;
                                 final int bfInt11 = this.bFInt;
                                 if (i.bIntArrArr[beInt10][bfInt11] == 0) {
-                                    if (i.aByteArrArr[beInt10][bfInt11 - 1] == 11) {
+                                    if (i.crtStagePlayerLayer[beInt10][bfInt11 - 1] == 11) {
                                         i.bIntArrArr[beInt10][bfInt11] = 1;
                                         this.alVoid();
                                     }
-                                } else if (this.cBoolean(beInt10, bfInt11 - 1)) {
-                                    this.aVoid(1, 64, 0);
+                                } else if (this.isPlayerAtPosition(beInt10, bfInt11 - 1)) {
+                                    this.hurtHero(1, 64, 0);
                                 }
                                 break Label_8485;
                             }
                             case 28: {
                                 final int n69 = i.bIntArrArr[this.bEInt][this.bFInt];
                                 final int n70 = this.bFInt + ((((n69 & 0x8) == 0x0) ? this.aOInt : this.aQInt) - 1) * (((n69 & 0x7) == 0x3) ? 1 : -1);
-                                if (this.cBoolean(this.bEInt, n70)) {
-                                    this.aVoid(2, 48, (int) i.hByteArr[this.kInt & 0x7]);
+                                if (this.isPlayerAtPosition(this.bEInt, n70)) {
+                                    this.hurtHero(2, 48, (int) i.hByteArr[this.kInt & 0x7]);
                                 }
-                                switch (i.aByteArrArr[this.bEInt][n70]) {
+                                switch (i.crtStagePlayerLayer[this.bEInt][n70]) {
                                     case -1:
                                     case 28:
                                     case 32: {
@@ -13659,7 +13752,7 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     default: {
                                         this.jVoid(this.bEInt, n70);
-                                        i.aByteArrArr[this.bEInt][n70] = -1;
+                                        i.crtStagePlayerLayer[this.bEInt][n70] = -1;
                                         kVoid(this.bEInt, n70);
                                         this.bVoid(this.bEInt, n70);
                                         break;
@@ -13673,7 +13766,7 @@ public final class i extends Canvas implements Runnable {
                                 final int bfInt12 = this.bFInt;
                                 int n71;
                                 int n72;
-                                if (i.aByteArrArr[beInt11][bfInt12 + 1] != 16) {
+                                if (i.crtStagePlayerLayer[beInt11][bfInt12 + 1] != 16) {
                                     n71 = 0;
                                     n72 = -1;
                                 } else {
@@ -13684,7 +13777,7 @@ public final class i extends Canvas implements Runnable {
                                 byte b9 = i.bByteArrArr[beInt11][bfInt12 + n71];
                                 final int n75;
                                 final int n74 = (((n75 = i.bIntArrArr[beInt11][bfInt12 + n71]) & 0x7) == 0x4) ? 4 : 2;
-                                final boolean b10 = this.cBoolean(beInt11 - i.gByteArr[n74], bfInt12 + n71) || this.cBoolean(beInt11 - i.gByteArr[n74], bfInt12 + n73);
+                                final boolean b10 = this.isPlayerAtPosition(beInt11 - i.gByteArr[n74], bfInt12 + n71) || this.isPlayerAtPosition(beInt11 - i.gByteArr[n74], bfInt12 + n73);
                                 if (b9 <= 0 && b10 && this.jInt <= 12) {
                                     b9 = 36;
                                 } else if (b9 > 0) {
@@ -13692,15 +13785,15 @@ public final class i extends Canvas implements Runnable {
                                         --b9;
                                     }
                                     if ((b9 == 11 || (n71 == 0 && b9 < 11)) && b10) {
-                                        this.aVoid(1, 48, n75 & 0x7);
+                                        this.hurtHero(1, 48, n75 & 0x7);
                                     }
                                     i.cByteArrArr[beInt11][bfInt12] = 24;
                                 }
                                 if (hBoolean(beInt11, bfInt12)) {
-                                    this.pVoid(14);
-                                    i.aByteArrArr[beInt11][bfInt12 + n73] = -1;
+                                    this.playSound(14);
+                                    i.crtStagePlayerLayer[beInt11][bfInt12 + n73] = -1;
                                     this.jVoid(beInt11, bfInt12 + n73);
-                                    i.aByteArrArr[beInt11][bfInt12 + n71] = -1;
+                                    i.crtStagePlayerLayer[beInt11][bfInt12 + n71] = -1;
                                     this.jVoid(beInt11, bfInt12 + n71);
                                     break Label_8485;
                                 }
@@ -13721,7 +13814,7 @@ public final class i extends Canvas implements Runnable {
                                 Label_7035:
                                 {
                                     if (n76 >= 20) {
-                                        if (fBoolean(beInt12, bfInt13 + 1) || (n78 == 4 && (i.aByteArrArr[beInt12 - 1][bfInt13] < 0 || i.aByteArrArr[beInt12 - 1][bfInt13] == 16 || i.aByteArrArr[beInt12 - 1][bfInt13] == 19 || i.aByteArrArr[beInt12 - 1][bfInt13] == 43)) || (n78 == 2 && (i.aByteArrArr[beInt12 + 1][bfInt13] < 0 || i.aByteArrArr[beInt12 + 1][bfInt13] == 16 || i.aByteArrArr[beInt12 + 1][bfInt13] == 19 || i.aByteArrArr[beInt12 + 1][bfInt13] == 43))) {
+                                        if (fBoolean(beInt12, bfInt13 + 1) || (n78 == 4 && (i.crtStagePlayerLayer[beInt12 - 1][bfInt13] < 0 || i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 16 || i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 19 || i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 43)) || (n78 == 2 && (i.crtStagePlayerLayer[beInt12 + 1][bfInt13] < 0 || i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 16 || i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 19 || i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 43))) {
                                             i.bIntArrArr[beInt12][bfInt13] = ((n77 & 0xFFFF00FF) | 0x1300);
                                         }
                                     } else {
@@ -13750,7 +13843,7 @@ public final class i extends Canvas implements Runnable {
                                                                 break Label_6947;
                                                             }
                                                             n78 = 0;
-                                                            if (i.aByteArrArr[beInt12 - 1][bfInt13] == 16 || i.aByteArrArr[beInt12 - 1][bfInt13] == 19 || i.aByteArrArr[beInt12 - 1][bfInt13] == 43) {
+                                                            if (i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 16 || i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 19 || i.crtStagePlayerLayer[beInt12 - 1][bfInt13] == 43) {
                                                                 break Label_6947;
                                                             }
                                                         } else {
@@ -13759,7 +13852,7 @@ public final class i extends Canvas implements Runnable {
                                                                 break Label_6947;
                                                             }
                                                             n78 = 0;
-                                                            if (i.aByteArrArr[beInt12 + 1][bfInt13] == 16 || i.aByteArrArr[beInt12 + 1][bfInt13] == 19 || i.aByteArrArr[beInt12 + 1][bfInt13] == 43) {
+                                                            if (i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 16 || i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 19 || i.crtStagePlayerLayer[beInt12 + 1][bfInt13] == 43) {
                                                                 break Label_6947;
                                                             }
                                                         }
@@ -13767,9 +13860,9 @@ public final class i extends Canvas implements Runnable {
                                                     }
                                                 }
                                                 if (n81 != beInt12 || n82 != bfInt13) {
-                                                    i.aByteArrArr[n81][n82] = 14;
+                                                    i.crtStagePlayerLayer[n81][n82] = 14;
                                                     kVoid(n81, n82);
-                                                    i.aByteArrArr[beInt12][bfInt13] = -1;
+                                                    i.crtStagePlayerLayer[beInt12][bfInt13] = -1;
                                                     i.bByteArrArr[n81][n82] = 18;
                                                 }
                                                 i.bIntArrArr[n81][n82] = ((n77 & 0xFFFFFFF8) | n78);
@@ -13782,8 +13875,8 @@ public final class i extends Canvas implements Runnable {
                                         array13[n79] = (byte) n80;
                                     }
                                 }
-                                if (this.cBoolean(beInt12, bfInt13)) {
-                                    this.aVoid(1, 48, n78);
+                                if (this.isPlayerAtPosition(beInt12, bfInt13)) {
+                                    this.hurtHero(1, 48, n78);
                                 }
                                 break Label_8485;
                             }
@@ -13791,8 +13884,8 @@ public final class i extends Canvas implements Runnable {
                                 final int beInt13 = this.bEInt;
                                 final int bfInt14 = this.bFInt;
                                 if (i.bIntArrArr[beInt13][bfInt14] > 0) {
-                                    i.aByteArrArr[beInt13][bfInt14] = -1;
-                                    i.aIntArrArr[beInt13][bfInt14] = 32;
+                                    i.crtStagePlayerLayer[beInt13][bfInt14] = -1;
+                                    i.crtStageForegrondLayer[beInt13][bfInt14] = 32;
                                     kVoid(beInt13, bfInt14);
                                     this.lVoid(beInt13, bfInt14);
                                     i.cByteArrArr[beInt13][bfInt14] = 24;
@@ -13822,8 +13915,8 @@ public final class i extends Canvas implements Runnable {
                                             break;
                                         }
                                     }
-                                    if (i.bByteArrArr[beInt14][bfInt15] >= aInt(i.aClassfArr[29], n84) || (i.aIntArrArr[this.bEInt][this.bFInt] & 0xFF) == 0x23) {
-                                        i.aByteArrArr[beInt14][bfInt15] = -1;
+                                    if (i.bByteArrArr[beInt14][bfInt15] >= aInt(i.aClassfArr[29], n84) || (i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xFF) == 0x23) {
+                                        i.crtStagePlayerLayer[beInt14][bfInt15] = -1;
                                         kVoid(beInt14, bfInt15);
                                     } else {
                                         final byte[] array14 = i.bByteArrArr[beInt14];
@@ -13834,8 +13927,8 @@ public final class i extends Canvas implements Runnable {
                                     n86 = bfInt15;
                                     b12 = 24;
                                 } else {
-                                    if (this.cBoolean(beInt14, bfInt15) || (this.cBoolean(beInt14 + i.gByteArr[n83], bfInt15 + i.gByteArr[n83 + 8]) && i.bByteArrArr[beInt14][bfInt15] <= this.jInt)) {
-                                        this.aVoid(1, 48, 0);
+                                    if (this.isPlayerAtPosition(beInt14, bfInt15) || (this.isPlayerAtPosition(beInt14 + i.gByteArr[n83], bfInt15 + i.gByteArr[n83 + 8]) && i.bByteArrArr[beInt14][bfInt15] <= this.jInt)) {
+                                        this.hurtHero(1, 48, 0);
                                     }
                                     if (i.bByteArrArr[beInt14][bfInt15] <= 0) {
                                         final int n87 = beInt14 - i.gByteArr[n83];
@@ -13847,37 +13940,37 @@ public final class i extends Canvas implements Runnable {
                                         byte[] array16;
                                         byte b14;
                                         int n89;
-                                        if (i.aByteArrArr[n87][n88] < 0) {
-                                            i.aByteArrArr[n87][n88] = 21;
+                                        if (i.crtStagePlayerLayer[n87][n88] < 0) {
+                                            i.crtStagePlayerLayer[n87][n88] = 21;
                                             i.bIntArrArr[n87][n88] = i.bIntArrArr[beInt14][bfInt15];
                                             i.bByteArrArr[n87][n88] = b13;
-                                            array16 = i.aByteArrArr[beInt14];
+                                            array16 = i.crtStagePlayerLayer[beInt14];
                                             b14 = (byte) bfInt15;
                                             n89 = -1;
-                                        } else if (i.aByteArrArr[n87][n88] == 21) {
+                                        } else if (i.crtStagePlayerLayer[n87][n88] == 21) {
                                             final int n90 = i.bIntArrArr[n87][n88] & 0x7;
                                             final int n91 = n87 - i.gByteArr[n90];
                                             final int n92 = n88 - i.gByteArr[n90 + 8];
-                                            i.aByteArrArr[beInt14][bfInt15] = -1;
+                                            i.crtStagePlayerLayer[beInt14][bfInt15] = -1;
                                             kVoid(beInt14, bfInt15);
                                             final int n93 = i.bIntArrArr[beInt14][bfInt15];
-                                            if (i.aByteArrArr[n91][n92] < 0) {
-                                                i.aByteArrArr[n91][n92] = 21;
+                                            if (i.crtStagePlayerLayer[n91][n92] < 0) {
+                                                i.crtStagePlayerLayer[n91][n92] = 21;
                                                 i.bIntArrArr[n91][n92] = i.bIntArrArr[n87][n88];
                                                 i.bByteArrArr[n91][n92] = 18;
                                             }
-                                            i.aByteArrArr[n87][n88] = 21;
+                                            i.crtStagePlayerLayer[n87][n88] = 21;
                                             i.bIntArrArr[n87][n88] = n93;
                                             array16 = i.bByteArrArr[n87];
                                             b14 = (byte) n88;
                                             n89 = 18;
                                         } else {
-                                            switch (i.aByteArrArr[n87][n88]) {
+                                            switch (i.crtStagePlayerLayer[n87][n88]) {
                                                 case 19:
                                                 case 43:
                                                 case 45:
                                                 case 46: {
-                                                    i.aByteArrArr[n87][n88] = -1;
+                                                    i.crtStagePlayerLayer[n87][n88] = -1;
                                                     this.jVoid(n87, n88);
                                                     break;
                                                 }
@@ -13924,7 +14017,7 @@ public final class i extends Canvas implements Runnable {
                                 if ((n94 = i.bIntArrArr[beInt15][bfInt16]) > 0) {
                                     if (n94 >= 8) {
                                         this.lVoid(beInt15, bfInt16);
-                                        i.aByteArrArr[beInt15][bfInt16] = -1;
+                                        i.crtStagePlayerLayer[beInt15][bfInt16] = -1;
                                         kVoid(beInt15, bfInt16);
                                     }
                                     i.bIntArrArr[beInt15][bfInt16] = n94 + 1;
@@ -13941,7 +14034,7 @@ public final class i extends Canvas implements Runnable {
                                         for (int n96 = 1; n96 < 5; ++n96) {
                                             final byte b16 = i.gByteArr[n96];
                                             final byte b17 = i.gByteArr[n96 + 8];
-                                            if (i.aByteArrArr[beInt16 + b16][bfInt17 + b17] == 30) {
+                                            if (i.crtStagePlayerLayer[beInt16 + b16][bfInt17 + b17] == 30) {
                                                 final int[] array19 = i.bIntArrArr[beInt16 + b16];
                                                 final int n97 = bfInt17 + b17;
                                                 ++array19[n97];
@@ -13949,7 +14042,7 @@ public final class i extends Canvas implements Runnable {
                                             }
                                         }
                                     } else if (n95 >= 16) {
-                                        i.aByteArrArr[beInt16][bfInt17] = -1;
+                                        i.crtStagePlayerLayer[beInt16][bfInt17] = -1;
                                         kVoid(beInt16, bfInt17);
                                     }
                                     i.bIntArrArr[beInt16][bfInt17] = n95 + 1;
@@ -14093,10 +14186,10 @@ public final class i extends Canvas implements Runnable {
                         final int bfInt18 = i12.bFInt;
                         final int n101 = (n100 == 23) ? -1 : 1;
                         i.cByteArrArr[beInt17][bfInt18] = 24;
-                        if (i12.iInt == bfInt18) {
+                        if (i12.crtPlayerY == bfInt18) {
                             for (int n102 = 0; n102 <= n99; ++n102) {
-                                if (i12.hInt == beInt17 + n102 * n101) {
-                                    i12.aVoid(1, 64, 0);
+                                if (i12.crtPlayerX == beInt17 + n102 * n101) {
+                                    i12.hurtHero(1, 64, 0);
                                 }
                             }
                         }
@@ -14143,7 +14236,7 @@ public final class i extends Canvas implements Runnable {
         byte[] array;
         int n6;
         int n7;
-        if (i.aByteArrArr[n4][bfInt] < 0) {
+        if (i.crtStagePlayerLayer[n4][bfInt] < 0) {
             i.eByteArr[n5 + 2] = (byte) bfInt;
             i.eByteArr[n5 + 1] = (byte) n4;
             array = i.eByteArr;
@@ -14160,8 +14253,8 @@ public final class i extends Canvas implements Runnable {
     private void dVoid(final byte b) {
         final int beInt = this.bEInt;
         final int bfInt = this.bFInt;
-        if (i.bByteArrArr[beInt][bfInt] == 6 && (i.aIntArrArr[beInt][bfInt] & 0xFF) == 0x6) {
-            this.hVoid(i.aIntArrArr[beInt][bfInt] >> 8);
+        if (i.bByteArrArr[beInt][bfInt] == 6 && (i.crtStageForegrondLayer[beInt][bfInt] & 0xFF) == 0x6) {
+            this.hVoid(i.crtStageForegrondLayer[beInt][bfInt] >> 8);
         }
         if (i.bByteArrArr[beInt][bfInt] <= 0) {
             int n2 = 0;
@@ -14180,9 +14273,9 @@ public final class i extends Canvas implements Runnable {
                 n2 = n3;
             }
             final int n4 = bfInt + 1;
-            if (i.aByteArrArr[beInt][n4] < 0 && (!this.cBoolean(beInt, n4) || this.aWInt != 0)) {
-                i.aByteArrArr[beInt][bfInt - 1] = -1;
-                i.aByteArrArr[beInt][n4] = 48;
+            if (i.crtStagePlayerLayer[beInt][n4] < 0 && (!this.isPlayerAtPosition(beInt, n4) || this.aWInt != 0)) {
+                i.crtStagePlayerLayer[beInt][bfInt - 1] = -1;
+                i.crtStagePlayerLayer[beInt][n4] = 48;
                 i.bIntArrArr[beInt][n4] = ((n2 & 0xFFFFFFF8) | 0x3);
                 i.bIntArrArr[beInt][bfInt] = (i.bIntArrArr[beInt][bfInt - 1] | 0x8);
                 i.bByteArrArr[beInt][n4] = 18;
@@ -14193,8 +14286,8 @@ public final class i extends Canvas implements Runnable {
                 kVoid(beInt, bfInt);
                 this.aiVoid();
             } else {
-                if ((n2 & 0x7) == 0x3 && this.cBoolean(beInt, n4)) {
-                    this.aVoid(2, 48, 0);
+                if ((n2 & 0x7) == 0x3 && this.isPlayerAtPosition(beInt, n4)) {
+                    this.hurtHero(2, 48, 0);
                 }
                 i.bIntArrArr[beInt][bfInt] = (n2 & 0xFFFFFFF8);
             }
@@ -14208,39 +14301,39 @@ public final class i extends Canvas implements Runnable {
     }
 
     private static boolean dBoolean(int n, final int n2) {
-        final byte b = i.aByteArrArr[n][n2];
-        n = (i.aIntArrArr[n][n2] & 0xFF);
+        final byte b = i.crtStagePlayerLayer[n][n2];
+        n = (i.crtStageForegrondLayer[n][n2] & 0xFF);
         return b < 80 && b != 30 && b != 10 && b != 37 && b != 34 && b != 35 && n != 14 && n != 33 && n != 15 && n != 4 && n != 16;
     }
 
     private static boolean eBoolean(int n, final int n2) {
-        final byte b = i.aByteArrArr[n][n2];
-        n = (i.aIntArrArr[n][n2] & 0xFF);
+        final byte b = i.crtStagePlayerLayer[n][n2];
+        n = (i.crtStageForegrondLayer[n][n2] & 0xFF);
         return b == -1 && n != 14 && n != 33 && n != 5 && n != 28;
     }
 
     private static boolean fBoolean(final int n, final int n2) {
-        final byte b = i.aByteArrArr[n][n2];
-        final int n3 = i.aIntArrArr[n][n2] & 0xFF;
-        return b == -1 && n3 != 14 && n3 != 33 && n3 != 4 && n3 != 32 && (n3 != 7 || (i.aIntArrArr[n][n2] >> 8 & 0xF0) != 0x0);
+        final byte b = i.crtStagePlayerLayer[n][n2];
+        final int n3 = i.crtStageForegrondLayer[n][n2] & 0xFF;
+        return b == -1 && n3 != 14 && n3 != 33 && n3 != 4 && n3 != 32 && (n3 != 7 || (i.crtStageForegrondLayer[n][n2] >> 8 & 0xF0) != 0x0);
     }
 
     private void ajVoid() {
         final int n = this.bFInt - 1;
         final boolean b = i.eIntArrArr != null && i.eIntArrArr[this.bEInt][this.bFInt] != 0 && i.eIntArrArr[this.bEInt][this.bFInt - 1] == 0;
-        if ((i.aIntArrArr[this.bEInt][n] & 0xFF) != 0x23 && dBoolean(this.bEInt, n) && ((!this.cBoolean(this.bEInt - 1, this.bFInt) && !this.cBoolean(this.bEInt + 1, this.bFInt)) || (this.kInt & 0x8) == 0x0) && (i.aByteArrArr[this.bEInt][this.bFInt + 1] >= 0 || b)) {
+        if ((i.crtStageForegrondLayer[this.bEInt][n] & 0xFF) != 0x23 && dBoolean(this.bEInt, n) && ((!this.isPlayerAtPosition(this.bEInt - 1, this.bFInt) && !this.isPlayerAtPosition(this.bEInt + 1, this.bFInt)) || (this.kInt & 0x8) == 0x0) && (i.crtStagePlayerLayer[this.bEInt][this.bFInt + 1] >= 0 || b)) {
             System.out.println("In ProcessWindPod condition throw");
-            i.aIntArrArr[this.bEInt][n] = 35;
+            i.crtStageForegrondLayer[this.bEInt][n] = 35;
             i.bByteArrArr[this.bEInt][n] = 18;
             i.cByteArrArr[this.bEInt][n] = 24;
         }
     }
 
-    private static int aInt(final f f, final int n) {
+    private static int aInt(final f_Sprite f, final int n) {
         int n2 = 0;
-        final int n3 = f.bByteArr[n] & 0xFF;
+        final int n3 = f.animationAnimationFrameCounts[n] & 0xFF;
         for (short n4 = 0; n4 < n3; ++n4) {
-            n2 += (f.cByteArr[(f.aShortArr[n] + n4) * 5 + 1] & 0xFF);
+            n2 += (f.animationFrames[(f.animationFirstAnimationFrameIndices[n] + n4) * 5 + 1] & 0xFF);
         }
         return n2;
     }
@@ -14254,18 +14347,18 @@ public final class i extends Canvas implements Runnable {
         int n5 = 0;
         switch ((i.bIntArrArr[beInt][bfInt] & 0x38) >> 3) {
             case 0: {
-                if ((this.hInt != beInt || (bfInt + 1) * 24 <= this.bInt || this.kByte == 3) && (this.kByte != 3 || this.kLong == 0L || i.aSInt < this.kLong + (21 - beInt))) {
+                if ((this.crtPlayerX != beInt || (bfInt + 1) * 24 <= this.bInt || this.kByte == 3) && (this.kByte != 3 || this.kLong == 0L || i.aSInt < this.kLong + (21 - beInt))) {
                     return;
                 }
                 int n = bfInt + 1;
                 while (true) {
-                    final byte b = i.aByteArrArr[beInt][n];
-                    if (this.iInt == n || b >= 80 || b == 30 || b == 34 || b == 35 || b == 0) {
+                    final byte b = i.crtStagePlayerLayer[beInt][n];
+                    if (this.crtPlayerY == n || b >= 80 || b == 30 || b == 34 || b == 35 || b == 0) {
                         break;
                     }
                     ++n;
                 }
-                if (this.iInt == n || this.kByte == 3) {
+                if (this.crtPlayerY == n || this.kByte == 3) {
                     i.bIntArrArr[beInt][bfInt] = ((i.bIntArrArr[beInt][bfInt] & 0xFFFFFFC7) | 0x8);
                     i.bByteArrArr[beInt][bfInt] = 10;
                 }
@@ -14276,7 +14369,7 @@ public final class i extends Canvas implements Runnable {
                 final int n2 = bfInt;
                 --array[n2];
                 if (i.bByteArrArr[beInt][bfInt] <= 0) {
-                    i.aIntArrArr[beInt][bfInt] = 34;
+                    i.crtStageForegrondLayer[beInt][bfInt] = 34;
                     i.bIntArrArr[beInt][bfInt] = ((i.bIntArrArr[beInt][bfInt] & 0xFFFFFFC0) | 0x18 | 0x3);
                     i.bByteArrArr[beInt][bfInt] = 0;
                 }
@@ -14289,17 +14382,17 @@ public final class i extends Canvas implements Runnable {
                     array2[n3] -= 5;
                     return;
                 }
-                final boolean cBoolean = this.cBoolean(beInt, bfInt + 1);
+                final boolean cBoolean = this.isPlayerAtPosition(beInt, bfInt + 1);
                 boolean b2 = false;
-                if (cBoolean || i.aByteArrArr[beInt][bfInt + 1] >= 0 || (this.lBoolean && i.eIntArrArr[beInt][bfInt + 1] != 0)) {
+                if (cBoolean || i.crtStagePlayerLayer[beInt][bfInt + 1] >= 0 || (this.lBoolean && i.eIntArrArr[beInt][bfInt + 1] != 0)) {
                     if (cBoolean) {
-                        this.aVoid(1, 48, 0);
+                        this.hurtHero(1, 48, 0);
                         b2 = true;
                     } else {
                         b2 = true;
-                        switch (i.aByteArrArr[beInt][bfInt + 1]) {
+                        switch (i.crtStagePlayerLayer[beInt][bfInt + 1]) {
                             case 10: {
-                                i.aIntArrArr[beInt][bfInt + 1] = 32;
+                                i.crtStageForegrondLayer[beInt][bfInt + 1] = 32;
                                 this.bVoid(beInt, bfInt + 1);
                                 b2 = false;
                                 break;
@@ -14310,11 +14403,11 @@ public final class i extends Canvas implements Runnable {
                             case 46:
                             case 49: {
                                 this.jVoid(beInt, bfInt + 1);
-                                i.aByteArrArr[beInt][bfInt + 1] = -1;
+                                i.crtStagePlayerLayer[beInt][bfInt + 1] = -1;
                                 break;
                             }
                             case 30: {
-                                this.pVoid(11);
+                                this.playSound(11);
                                 i.bIntArrArr[beInt][bfInt + 1] = 1;
                                 break;
                             }
@@ -14327,7 +14420,7 @@ public final class i extends Canvas implements Runnable {
                                 break;
                             }
                             default: {
-                                this.pVoid(14);
+                                this.playSound(14);
                                 break;
                             }
                         }
@@ -14338,8 +14431,8 @@ public final class i extends Canvas implements Runnable {
                     i.bByteArrArr[beInt][bfInt] = 0;
                     return;
                 }
-                i.aByteArrArr[beInt][bfInt] = -1;
-                i.aByteArrArr[beInt][bfInt + 1] = 44;
+                i.crtStagePlayerLayer[beInt][bfInt] = -1;
+                i.crtStagePlayerLayer[beInt][bfInt + 1] = 44;
                 i.bIntArrArr[beInt][bfInt + 1] = i.bIntArrArr[beInt][bfInt];
                 array3 = i.bByteArrArr[beInt];
                 n4 = bfInt + 1;
@@ -14353,8 +14446,8 @@ public final class i extends Canvas implements Runnable {
                 final byte[] array4 = i.bByteArrArr[beInt];
                 final int n6 = bfInt;
                 ++array4[n6];
-                if (i.bByteArrArr[beInt][bfInt] == i.aClassfArr[27].aInt(4)) {
-                    array3 = i.aByteArrArr[beInt];
+                if (i.bByteArrArr[beInt][bfInt] == i.aClassfArr[27].getAnimationFrameCount(4)) {
+                    array3 = i.crtStagePlayerLayer[beInt];
                     n4 = bfInt;
                     n5 = -1;
                     break;
@@ -14369,11 +14462,11 @@ public final class i extends Canvas implements Runnable {
     private void lVoid(final int aiInt) {
         final int beInt = this.bEInt;
         final int bfInt = this.bFInt;
-        if (this.jInt > 0 || !this.cBoolean(beInt, bfInt)) {
+        if (this.jInt > 0 || !this.isPlayerAtPosition(beInt, bfInt)) {
             return;
         }
         final int n;
-        if (((n = (i.aIntArrArr[beInt][bfInt] & 0xFF)) == 14 || n == 33) && i.aIntArrArr[beInt][bfInt] >> 8 == 255) {
+        if (((n = (i.crtStageForegrondLayer[beInt][bfInt] & 0xFF)) == 14 || n == 33) && i.crtStageForegrondLayer[beInt][bfInt] >> 8 == 255) {
             return;
         }
         Label_0429:
@@ -14384,7 +14477,7 @@ public final class i extends Canvas implements Runnable {
                 case 40: {
                     this.aFInt = 19;
                     this.aGInt = 0;
-                    i.aByteArrArr[this.bEInt][this.bFInt] = -1;
+                    i.crtStagePlayerLayer[this.bEInt][this.bFInt] = -1;
                     this.aIInt = 40;
                     i.iByteArr[10] = 1;
                     break Label_0429;
@@ -14444,14 +14537,14 @@ public final class i extends Canvas implements Runnable {
                         agInt = 0;
                         break;
                     }
-                    i.aByteArrArr[beInt][bfInt] = 7;
+                    i.crtStagePlayerLayer[beInt][bfInt] = 7;
                     i.bIntArrArr[beInt][bfInt] = 0;
                     this.lVoid(7);
                     break Label_0429;
                 }
                 case 7: {
                     if (this.nByte == i.iByteArr[8]) {
-                        i.aByteArrArr[beInt][bfInt] = 41;
+                        i.crtStagePlayerLayer[beInt][bfInt] = 41;
                         i.bIntArrArr[beInt][bfInt] = 10;
                         final i j = this;
                         j.aYInt += 10;
@@ -14466,12 +14559,12 @@ public final class i extends Canvas implements Runnable {
             }
             i.aGInt = agInt;
         }
-        i.aByteArrArr[beInt][bfInt] = -1;
+        i.crtStagePlayerLayer[beInt][bfInt] = -1;
         this.oBoolean = true;
     }
 
     private boolean gBoolean(final int n, final int n2) {
-        return i.aByteArrArr[n][n2] == 28 || (this.aNInt >= 24 && ((i.aByteArrArr[n][n2 - 1] == 28 && (i.bIntArrArr[n][n2 - 1] & 0x8) == 0x0) || (i.aByteArrArr[n][n2 + 1] == 28 && (i.bIntArrArr[n][n2 + 1] & 0x8) == 0x0))) || (this.aPInt >= 24 && (i.aByteArrArr[n][n2 - 1] == 28 || i.aByteArrArr[n][n2 + 1] == 28));
+        return i.crtStagePlayerLayer[n][n2] == 28 || (this.aNInt >= 24 && ((i.crtStagePlayerLayer[n][n2 - 1] == 28 && (i.bIntArrArr[n][n2 - 1] & 0x8) == 0x0) || (i.crtStagePlayerLayer[n][n2 + 1] == 28 && (i.bIntArrArr[n][n2 + 1] & 0x8) == 0x0))) || (this.aPInt >= 24 && (i.crtStagePlayerLayer[n][n2 - 1] == 28 || i.crtStagePlayerLayer[n][n2 + 1] == 28));
     }
 
     private int aInt(final int n, final int n2, int n3, int n4, final boolean b) {
@@ -14528,7 +14621,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     n7 = n10;
                 }
-                if (n7 != 0 && i.aByteArrArr[n - i.gByteArr[n7]][n2] >= 0) {
+                if (n7 != 0 && i.crtStagePlayerLayer[n - i.gByteArr[n7]][n2] >= 0) {
                     n7 = 0;
                 }
             }
@@ -14543,10 +14636,10 @@ public final class i extends Canvas implements Runnable {
         byte b2 = i.bByteArrArr[beInt][bfInt];
         int n2 = 0;
         int n3 = 0;
-        final boolean b3 = (i.aIntArrArr[beInt][bfInt] & 0xFF) == 0x23;
+        final boolean b3 = (i.crtStageForegrondLayer[beInt][bfInt] & 0xFF) == 0x23;
         final boolean b4 = b == 43 && (n & 0xF00) != 0x0;
         if (!b3 && hBoolean(beInt, bfInt)) {
-            i.aByteArrArr[beInt][bfInt] = -1;
+            i.crtStagePlayerLayer[beInt][bfInt] = -1;
             this.jVoid(beInt, bfInt);
             return;
         }
@@ -14567,7 +14660,7 @@ public final class i extends Canvas implements Runnable {
                         kVoid(beInt, bfInt);
                         if (b4) {
                             b2 = 18;
-                            final int aInt = this.aInt(beInt, bfInt, this.hInt, this.iInt, true);
+                            final int aInt = this.aInt(beInt, bfInt, this.crtPlayerX, this.crtPlayerY, true);
                             final int n5 = (n & 0xFFFFFFF8) | aInt;
                             n4 = aInt;
                             n2 = -i.gByteArr[aInt];
@@ -14657,8 +14750,8 @@ public final class i extends Canvas implements Runnable {
                     }
                 }
                 if ((n & 0xF8) == 0x0) {
-                    i.aByteArrArr[beInt][bfInt] = -1;
-                    i.aByteArrArr[beInt + n2][bfInt + n3] = b;
+                    i.crtStagePlayerLayer[beInt][bfInt] = -1;
+                    i.crtStagePlayerLayer[beInt + n2][bfInt + n3] = b;
                     i.cByteArrArr[beInt + n2][bfInt + n3] = 48;
                     i.bByteArrArr[beInt + n2][bfInt + n3] = b2;
                     i.bIntArrArr[beInt + n2][bfInt + n3] = n;
@@ -14684,8 +14777,8 @@ public final class i extends Canvas implements Runnable {
             }
             array[n12] = b5;
         }
-        if ((n & 0xF8) == 0x0 && (i.aClassbArr[0].dInt < 13 || i.aClassbArr[0].dInt > 16) && aBoolean(beInt, bfInt, n4, i.bByteArrArr[beInt][bfInt], this.hInt, this.iInt, ((this.kInt & 0x1000) == 0x0) ? this.lByte : 0, this.jInt)) {
-            this.aVoid(1, 48, n4);
+        if ((n & 0xF8) == 0x0 && (i.aClassbArr[0].crtAnimationI < 13 || i.aClassbArr[0].crtAnimationI > 16) && aBoolean(beInt, bfInt, n4, i.bByteArrArr[beInt][bfInt], this.crtPlayerX, this.crtPlayerY, ((this.kInt & 0x1000) == 0x0) ? this.lByte : 0, this.jInt)) {
+            this.hurtHero(1, 48, n4);
             if (b4) {
                 n &= 0xFFFFF0FF;
             }
@@ -14703,27 +14796,27 @@ public final class i extends Canvas implements Runnable {
             --mByteArr[cmInt];
             if (i.mByteArr[i.cmInt] == 0) {
                 final int cmInt2 = i.cmInt;
-                this.pVoid(8);
-                final int n = this.eInt - 1;
-                for (int n2 = this.fInt - 1, j = 1; j < n2; ++j) {
+                this.playSound(8);
+                final int n = this.crtStageWidth - 1;
+                for (int n2 = this.crtStageHeight - 1, j = 1; j < n2; ++j) {
                     for (int k = 1; k < n; ++k) {
-                        if ((aIntArrArr[k][j] & 0xFF) == 0x11 && aIntArrArr[k][j] >> 8 == cmInt2) {
+                        if ((crtStageForegrondLayer[k][j] & 0xFF) == 0x11 && crtStageForegrondLayer[k][j] >> 8 == cmInt2) {
                             final int n3;
-                            switch (n3 = (aIntArrArr[k][j - 1] & 0xFF)) {
+                            switch (n3 = (crtStageForegrondLayer[k][j - 1] & 0xFF)) {
                                 case 7: {
                                     final int n4 = k;
                                     final int n5 = j - 1;
                                     final int n6 = n4;
                                     final int n7;
-                                    if (((n7 = i.aIntArrArr[n6][n5] >> 8) & 0xF0) == 0x0) {
-                                        i.aIntArrArr[n6][n5] = ((n7 | 0x10) << 8 | 0x7);
+                                    if (((n7 = i.crtStageForegrondLayer[n6][n5] >> 8) & 0xF0) == 0x0) {
+                                        i.crtStageForegrondLayer[n6][n5] = ((n7 | 0x10) << 8 | 0x7);
                                         i.cByteArrArr[n6][n5] = 24;
                                     }
                                     break;
                                 }
                                 case 14:
                                 case 33: {
-                                    i.aIntArrArr[k][j - 1] = (0x0 | n3);
+                                    i.crtStageForegrondLayer[k][j - 1] = (0x0 | n3);
                                     break;
                                 }
                             }
@@ -14735,11 +14828,11 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void mVoid(final int n) {
-        if ((i.aIntArrArr[this.bEInt][this.bFInt] & 0xFF) == 0xE && i.aIntArrArr[this.bEInt][this.bFInt] >> 8 == 255) {
+        if ((i.crtStageForegrondLayer[this.bEInt][this.bFInt] & 0xFF) == 0xE && i.crtStageForegrondLayer[this.bEInt][this.bFInt] >> 8 == 255) {
             return;
         }
-        if (this.cBoolean(this.bEInt, this.bFInt) && (i.aClassbArr[0].dInt == 40 || i.aClassbArr[0].dInt == 48)) {
-            i.aByteArrArr[this.bEInt][this.bFInt] = -1;
+        if (this.isPlayerAtPosition(this.bEInt, this.bFInt) && (i.aClassbArr[0].crtAnimationI == 40 || i.aClassbArr[0].crtAnimationI == 48)) {
+            i.crtStagePlayerLayer[this.bEInt][this.bFInt] = -1;
             while (true) {
                 i i = null;
                 int aiInt = 0;
@@ -14769,7 +14862,7 @@ public final class i extends Canvas implements Runnable {
                         break;
                     }
                     default: {
-                        this.aVoid(this.aAInt, this.aBInt, this.bEInt, this.bFInt);
+                        this.aVoid(this.crtWorldIndex, this.crtStageI, this.bEInt, this.bFInt);
                         return;
                     }
                 }
@@ -14785,7 +14878,7 @@ public final class i extends Canvas implements Runnable {
         final int n;
         if ((n = (i.bIntArrArr[beInt][bfInt] & 0xF00) >> 8) != 0) {
             if (n >= 4) {
-                i.aByteArrArr[beInt][bfInt] = -1;
+                i.crtStagePlayerLayer[beInt][bfInt] = -1;
             } else if ((i.aSInt >> 1 & 0x1) == 0x0) {
                 i.bIntArrArr[beInt][bfInt] += 256;
             }
@@ -14847,24 +14940,24 @@ public final class i extends Canvas implements Runnable {
                     if (fBoolean(beInt + n6, bfInt + n7) && fBoolean(beInt + n4, bfInt + n5) && fBoolean(beInt + n4 - n6, bfInt + n5 - n7)) {
                         if (i.bByteArrArr[beInt][bfInt] <= 0) {
                             i.bIntArrArr[beInt + n6][bfInt + n7] = n2;
-                            i.aByteArrArr[beInt + n6][bfInt + n7] = 11;
-                            i.aByteArrArr[beInt][bfInt] = -1;
+                            i.crtStagePlayerLayer[beInt + n6][bfInt + n7] = 11;
+                            i.crtStagePlayerLayer[beInt][bfInt] = -1;
                             i.bByteArrArr[beInt + n6][bfInt + n7] = 18;
                         }
                         break Label_0803;
                     } else {
                         if (fBoolean(beInt + n4, bfInt + n5)) {
                             i.bIntArrArr[beInt + n4][bfInt + n5] = ((n2 & 0xFFFFFFF8) | n8);
-                            i.aByteArrArr[beInt + n4][bfInt + n5] = 11;
-                            i.aByteArrArr[beInt][bfInt] = -1;
+                            i.crtStagePlayerLayer[beInt + n4][bfInt + n5] = 11;
+                            i.crtStagePlayerLayer[beInt][bfInt] = -1;
                             i.bByteArrArr[beInt + n4][bfInt + n5] = 18;
                             break Label_0803;
                         }
                         if (fBoolean(beInt + n6, bfInt + n7)) {
                             if (i.bByteArrArr[beInt][bfInt] <= 0) {
                                 i.bIntArrArr[beInt + n6][bfInt + n7] = n2;
-                                i.aByteArrArr[beInt + n6][bfInt + n7] = 11;
-                                i.aByteArrArr[beInt][bfInt] = -1;
+                                i.crtStagePlayerLayer[beInt + n6][bfInt + n7] = 11;
+                                i.crtStagePlayerLayer[beInt][bfInt] = -1;
                                 i.bByteArrArr[beInt + n6][bfInt + n7] = 18;
                             }
                             break Label_0803;
@@ -14881,12 +14974,12 @@ public final class i extends Canvas implements Runnable {
                         int[] array2;
                         int n14;
                         int n15;
-                        if (i.aByteArrArr[beInt - 1][bfInt] >= 0) {
+                        if (i.crtStagePlayerLayer[beInt - 1][bfInt] >= 0) {
                             array2 = i.bIntArrArr[beInt];
                             n14 = bfInt;
                             n15 = ((n2 & 0xFFFFFFF8) | (b ? 1 : 3));
                         } else {
-                            if (i.aByteArrArr[beInt][bfInt + 1] < 0) {
+                            if (i.crtStagePlayerLayer[beInt][bfInt + 1] < 0) {
                                 break Label_0735;
                             }
                             array2 = i.bIntArrArr[beInt];
@@ -14895,10 +14988,10 @@ public final class i extends Canvas implements Runnable {
                         }
                         array2[n14] = n15;
                     }
-                    if (i.aByteArrArr[beInt + 1][bfInt] >= 0) {
+                    if (i.crtStagePlayerLayer[beInt + 1][bfInt] >= 0) {
                         i.bIntArrArr[beInt][bfInt] = ((n2 & 0xFFFFFFF8) | (b ? 3 : 1));
                     }
-                    if (i.aByteArrArr[beInt][bfInt + 1] < 0) {
+                    if (i.crtStagePlayerLayer[beInt][bfInt + 1] < 0) {
                         break Label_0803;
                     }
                     array = i.bIntArrArr[beInt];
@@ -14910,8 +15003,8 @@ public final class i extends Canvas implements Runnable {
             }
             kVoid(beInt, bfInt);
         }
-        if (this.cBoolean(beInt, bfInt)) {
-            this.aVoid(1, 64, 0);
+        if (this.isPlayerAtPosition(beInt, bfInt)) {
+            this.hurtHero(1, 64, 0);
         }
         if (i.bByteArrArr[beInt][bfInt] > 0) {
             final byte[] array3 = i.bByteArrArr[beInt];
@@ -14930,8 +15023,8 @@ public final class i extends Canvas implements Runnable {
         if (i.bByteArrArr[beInt][bfInt] == 0) {
             final int n2;
             final int n = (((n2 = i.bIntArrArr[beInt][bfInt]) & 0x1) == 0x0) ? -1 : 1;
-            byte b = i.aByteArrArr[beInt + n][bfInt];
-            final int n3 = i.aIntArrArr[beInt + n][bfInt] & 0xFF;
+            byte b = i.crtStagePlayerLayer[beInt + n][bfInt];
+            final int n3 = i.crtStageForegrondLayer[beInt + n][bfInt] & 0xFF;
             boolean b2 = false;
             Label_0565:
             {
@@ -14971,9 +15064,9 @@ public final class i extends Canvas implements Runnable {
                         case 47:
                         case 48:
                         case 49: {
-                            this.pVoid(12);
+                            this.playSound(12);
                             this.oByte = 0;
-                            this.biInt = this.hInt - (beInt + n) + n5;
+                            this.biInt = this.crtPlayerX - (beInt + n) + n5;
                             this.bgInt = beInt + n;
                             this.bhInt = bfInt;
                             if (this.bfInt == -1) {
@@ -15007,12 +15100,12 @@ public final class i extends Canvas implements Runnable {
             }
             if (b2) {
                 for (int iInteger = 1; iInteger <= 3; ++iInteger) {
-                    if (i.aByteArrArr[this.hInt + n * iInteger][this.iInt] == 32) {
-                        i.aByteArrArr[this.hInt + n * iInteger][this.iInt] = -1;
+                    if (i.crtStagePlayerLayer[this.crtPlayerX + n * iInteger][this.crtPlayerY] == 32) {
+                        i.crtStagePlayerLayer[this.crtPlayerX + n * iInteger][this.crtPlayerY] = -1;
                     }
                 }
             }
-            final byte[] array = i.aByteArrArr[beInt + n];
+            final byte[] array = i.crtStagePlayerLayer[beInt + n];
             n6 = bfInt;
             b3 = b;
         } else {
@@ -15024,20 +15117,20 @@ public final class i extends Canvas implements Runnable {
     }
 
     private void jVoid(final int n, final int n2) {
-        i.aIntArrArr[n][n2] = ((i.aIntArrArr[n][n2] & 0xFFFFFFF) | 0x10000000);
+        i.crtStageForegrondLayer[n][n2] = ((i.crtStageForegrondLayer[n][n2] & 0xFFFFFFF) | 0x10000000);
         this.alVoid();
     }
 
     private void nVoid(final int n) {
         final int beInt = this.bEInt;
         final int bfInt = this.bFInt;
-        final int n2 = i.aIntArrArr[beInt][bfInt] >> 8;
-        i.aIntArrArr[beInt][bfInt] = (n2 << 8 | n);
+        final int n2 = i.crtStageForegrondLayer[beInt][bfInt] >> 8;
+        i.crtStageForegrondLayer[beInt][bfInt] = (n2 << 8 | n);
         if (i.bByteArrArr[beInt][bfInt] <= 0) {
             if (n2 == 0) {
-                if (this.cBoolean(beInt, bfInt) && this.jInt <= 0) {
+                if (this.isPlayerAtPosition(beInt, bfInt) && this.jInt <= 0) {
                     this.kInt &= 0xFFFFF7FF;
-                    i.aIntArrArr[beInt][bfInt] = (0x100 | n);
+                    i.crtStageForegrondLayer[beInt][bfInt] = (0x100 | n);
                     i i;
                     int n3;
                     if (Math.abs(this.iLong - System.currentTimeMillis()) >= 5000L) {
@@ -15048,10 +15141,10 @@ public final class i extends Canvas implements Runnable {
                         n3 = 48;
                     }
                     i.gVoid(n3);
-                    this.pVoid(3);
+                    this.playSound(3);
                 }
-            } else if ((i.aSInt >> 1 & 0x1) == 0x0 && i.aClassfArr[(n == 14) ? 8 : 22] != null && n2 < i.aClassfArr[(n == 14) ? 8 : 22].aInt(0) - 1) {
-                i.aIntArrArr[beInt][bfInt] = (n2 + 1 << 8 | n);
+            } else if ((i.aSInt >> 1 & 0x1) == 0x0 && i.aClassfArr[(n == 14) ? 8 : 22] != null && n2 < i.aClassfArr[(n == 14) ? 8 : 22].getAnimationFrameCount(0) - 1) {
+                i.crtStageForegrondLayer[beInt][bfInt] = (n2 + 1 << 8 | n);
                 i.cByteArrArr[beInt][bfInt] = 24;
             }
         }
@@ -15061,12 +15154,12 @@ public final class i extends Canvas implements Runnable {
         final int n3 = n2 - 1;
         final int n4 = n - 1;
         final int n5 = n + 1;
-        return (i.bByteArrArr[n][n3] <= 6 && ((iBoolean(n, n3) && ((i.bIntArrArr[n][n3] & 0x7) == 0x3 || (i.aByteArrArr[n][n2] != 16 && i.aByteArrArr[n][n3] != 1))) || i.aByteArrArr[n][n3] == 46 || i.aByteArrArr[n][n3] == 14 || i.aByteArrArr[n][n3] == 48)) || (i.bByteArrArr[n5][n2] <= 0 && i.aByteArrArr[n5][n2] == 14 && (i.bIntArrArr[n5][n2] & 0x8) != 0x0 && (i.bIntArrArr[n5][n2] & 0x7) != 0x3) || (i.bByteArrArr[n4][n2] <= 0 && i.aByteArrArr[n4][n2] == 14 && (i.bIntArrArr[n4][n2] & 0x8) == 0x0 && (i.bIntArrArr[n4][n2] & 0x7) != 0x3);
+        return (i.bByteArrArr[n][n3] <= 6 && ((iBoolean(n, n3) && ((i.bIntArrArr[n][n3] & 0x7) == 0x3 || (i.crtStagePlayerLayer[n][n2] != 16 && i.crtStagePlayerLayer[n][n3] != 1))) || i.crtStagePlayerLayer[n][n3] == 46 || i.crtStagePlayerLayer[n][n3] == 14 || i.crtStagePlayerLayer[n][n3] == 48)) || (i.bByteArrArr[n5][n2] <= 0 && i.crtStagePlayerLayer[n5][n2] == 14 && (i.bIntArrArr[n5][n2] & 0x8) != 0x0 && (i.bIntArrArr[n5][n2] & 0x7) != 0x3) || (i.bByteArrArr[n4][n2] <= 0 && i.crtStagePlayerLayer[n4][n2] == 14 && (i.bIntArrArr[n4][n2] & 0x8) == 0x0 && (i.bIntArrArr[n4][n2] & 0x7) != 0x3);
     }
 
     private static boolean iBoolean(final int n, final int n2) {
-        if (i.aByteArrArr[n][n2] >= 0) {
-            switch (i.aByteArrArr[n][n2]) {
+        if (i.crtStagePlayerLayer[n][n2] >= 0) {
+            switch (i.crtStagePlayerLayer[n][n2]) {
                 case 0:
                 case 1:
                 case 8:
@@ -15094,7 +15187,7 @@ public final class i extends Canvas implements Runnable {
         i.cByteArrArr[n4][n6] = 48;
     }
 
-    private void aoVoid() {
+    private void saveCheckpoint() {
         this.jByte = i.iByteArr[10];
         this.chInt = this.cfInt;
         this.cgInt = this.ceInt;
@@ -15102,8 +15195,8 @@ public final class i extends Canvas implements Runnable {
         this.bZInt = this.aCInt;
         this.bXInt = this.aZInt;
         this.bYInt = this.bbInt;
-        this.bSInt = this.hInt;
-        this.bTInt = this.iInt;
+        this.bSInt = this.crtPlayerX;
+        this.bTInt = this.crtPlayerY;
         this.bUInt = this.aUInt;
         this.bVInt = this.aVInt;
         this.bWInt = this.ayInt;
@@ -15114,18 +15207,18 @@ public final class i extends Canvas implements Runnable {
         if (i.mByteArr != null) {
             System.arraycopy(i.mByteArr, 0, i.oByteArr, 0, i.mByteArr.length);
         }
-        for (int iInteger = 0; iInteger < this.eInt; ++iInteger) {
-            System.arraycopy(i.bIntArrArr[iInteger], 0, i.cIntArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.bByteArrArr[iInteger], 0, i.dByteArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.aByteArrArr[iInteger], 0, i.eByteArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.aIntArrArr[iInteger], 0, i.dIntArrArr[iInteger], 0, this.fInt);
+        for (int iInteger = 0; iInteger < this.crtStageWidth; ++iInteger) {
+            System.arraycopy(i.bIntArrArr[iInteger], 0, i.cIntArrArr[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.bByteArrArr[iInteger], 0, i.dByteArrArr[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.crtStagePlayerLayer[iInteger], 0, i.eByteArrArr[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.crtStageForegrondLayer[iInteger], 0, i.dIntArrArr[iInteger], 0, this.crtStageHeight);
         }
         if (this.lBoolean) {
             if (i.fIntArrArr == null) {
-                i.fIntArrArr = new int[this.eInt][this.fInt];
+                i.fIntArrArr = new int[this.crtStageWidth][this.crtStageHeight];
             }
-            for (int j = 0; j < this.eInt; ++j) {
-                System.arraycopy(i.eIntArrArr[j], 0, i.fIntArrArr[j], 0, this.fInt);
+            for (int j = 0; j < this.crtStageWidth; ++j) {
+                System.arraycopy(i.eIntArrArr[j], 0, i.fIntArrArr[j], 0, this.crtStageHeight);
             }
             if (i.cLongArr == null) {
                 i.cLongArr = new long[15];
@@ -15152,7 +15245,7 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private void apVoid() {
+    private void restoreCheckpoint() {
         i.cEInt = -1;
         final int afInt = -1;
         this.aHInt = afInt;
@@ -15195,11 +15288,11 @@ public final class i extends Canvas implements Runnable {
         this.aCInt = this.bZInt;
         this.bbInt = this.bYInt;
         this.aZInt = this.bXInt;
-        i.aClassbArr[0].aVoid(2);
+        i.aClassbArr[0].setAnimation(2);
         this.kInt = 2;
         this.bjInt = 0;
-        this.hInt = this.bSInt;
-        this.iInt = this.bTInt;
+        this.crtPlayerX = this.bSInt;
+        this.crtPlayerY = this.bTInt;
         this.aUInt = this.bUInt;
         this.aVInt = this.bVInt;
         this.aiInt = this.ajInt;
@@ -15229,24 +15322,24 @@ public final class i extends Canvas implements Runnable {
         if (i.mByteArr != null) {
             System.arraycopy(i.oByteArr, 0, i.mByteArr, 0, i.mByteArr.length);
         }
-        for (int iInteger = 0; iInteger < this.eInt; ++iInteger) {
-            System.arraycopy(i.cIntArrArr[iInteger], 0, i.bIntArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.dByteArrArr[iInteger], 0, i.bByteArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.eByteArrArr[iInteger], 0, i.aByteArrArr[iInteger], 0, this.fInt);
-            System.arraycopy(i.dIntArrArr[iInteger], 0, i.aIntArrArr[iInteger], 0, this.fInt);
+        for (int iInteger = 0; iInteger < this.crtStageWidth; ++iInteger) {
+            System.arraycopy(i.cIntArrArr[iInteger], 0, i.bIntArrArr[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.dByteArrArr[iInteger], 0, i.bByteArrArr[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.eByteArrArr[iInteger], 0, i.crtStagePlayerLayer[iInteger], 0, this.crtStageHeight);
+            System.arraycopy(i.dIntArrArr[iInteger], 0, i.crtStageForegrondLayer[iInteger], 0, this.crtStageHeight);
         }
-        for (int n2 = this.fInt - 1, j = 1; j < n2; ++j) {
-            for (int n3 = this.eInt - 1, k = 1; k < n3; ++k) {
-                final byte b = i.aByteArrArr[k][j];
-                final int n4 = i.aIntArrArr[k][j] & 0xFF;
+        for (int n2 = this.crtStageHeight - 1, j = 1; j < n2; ++j) {
+            for (int n3 = this.crtStageWidth - 1, k = 1; k < n3; ++k) {
+                final byte b = i.crtStagePlayerLayer[k][j];
+                final int n4 = i.crtStageForegrondLayer[k][j] & 0xFF;
                 if ((b > -1 && b < 80) || (n4 > -1 && n4 < 80)) {
                     kVoid(k, j);
                 }
             }
         }
         if (i.aClassbArr[2] != null) {
-            i.aClassbArr[2].aVoid(0);
-            i.aByteArrArr[18][63] = -1;
+            i.aClassbArr[2].setAnimation(0);
+            i.crtStagePlayerLayer[18][63] = -1;
         }
         this.ayInt = this.bWInt;
         this.oBoolean = true;
@@ -15254,8 +15347,8 @@ public final class i extends Canvas implements Runnable {
             this.alBoolean = i.amBoolean;
             this.dtInt = this.dIInt;
             this.duInt = this.dJInt;
-            for (int l = 0; l < this.eInt; ++l) {
-                System.arraycopy(i.fIntArrArr[l], 0, i.eIntArrArr[l], 0, this.fInt);
+            for (int l = 0; l < this.crtStageWidth; ++l) {
+                System.arraycopy(i.fIntArrArr[l], 0, i.eIntArrArr[l], 0, this.crtStageHeight);
             }
             System.arraycopy(i.cLongArr, 0, i.aLongArr, 0, i.aLongArr.length);
             System.arraycopy(i.dLongArr, 0, i.bLongArr, 0, i.bLongArr.length);
@@ -15272,9 +15365,9 @@ public final class i extends Canvas implements Runnable {
             this.dzInt = this.dHInt;
         }
         if (i.eByteArr != null) {
-            for (int bfInt = 0; bfInt < this.fInt; ++bfInt) {
-                for (int beInt = 0; beInt < this.eInt; ++beInt) {
-                    if (i.aByteArrArr[beInt][bfInt] == 48) {
+            for (int bfInt = 0; bfInt < this.crtStageHeight; ++bfInt) {
+                for (int beInt = 0; beInt < this.crtStageWidth; ++beInt) {
+                    if (i.crtStagePlayerLayer[beInt][bfInt] == 48) {
                         this.bEInt = beInt;
                         this.bFInt = bfInt;
                         if ((i.bIntArrArr[beInt][bfInt] & 0x8) == 0x0) {
@@ -15289,7 +15382,7 @@ public final class i extends Canvas implements Runnable {
     }
 
     public static void aVoid(final short n, final short n2, final byte b, final int n3) {
-        i.aByteArrArr[n][n2] = b;
+        i.crtStagePlayerLayer[n][n2] = b;
         i.bIntArrArr[n][n2] = n3;
     }
 
@@ -15315,7 +15408,7 @@ public final class i extends Canvas implements Runnable {
         final int bfInt = this.bFInt;
         byte b = i.bByteArrArr[beInt][bfInt];
         int n = i.bIntArrArr[beInt][bfInt];
-        final byte b2 = i.aByteArrArr[beInt][bfInt];
+        final byte b2 = i.crtStagePlayerLayer[beInt][bfInt];
         final boolean b3 = i.eIntArrArr != null && i.eIntArrArr[beInt][bfInt] != 0;
         final int n2 = n & 0x7;
         int n3;
@@ -15331,7 +15424,7 @@ public final class i extends Canvas implements Runnable {
             n5 = bfInt + 1;
         }
         final int iInt = n5;
-        final boolean aBoolean = aBoolean(beInt, bfInt, n2, b, this.hInt, this.iInt, ((this.kInt & 0x1000) == 0x0) ? this.lByte : 0, this.jInt);
+        final boolean aBoolean = aBoolean(beInt, bfInt, n2, b, this.crtPlayerX, this.crtPlayerY, ((this.kInt & 0x1000) == 0x0) ? this.lByte : 0, this.jInt);
         if (b2 == 1 && aBoolean) {
             final int n6 = beInt;
             final int n7 = bfInt;
@@ -15339,61 +15432,61 @@ public final class i extends Canvas implements Runnable {
             this.cVoid(n8, n7, 3);
             final i j = this;
             ++j.aZInt;
-            i.aByteArrArr[n8][n7] = -1;
+            i.crtStagePlayerLayer[n8][n7] = -1;
             final i k = this;
             --k.aaInt;
             this.biInt = 0;
             if (this.aaInt == 0) {
-                i.aByteArrArr[this.abInt][this.acInt] = -1;
+                i.crtStagePlayerLayer[this.abInt][this.acInt] = -1;
             }
-            if (i.aByteArrArr[n8][n7 - 1] == -1) {
+            if (i.crtStagePlayerLayer[n8][n7 - 1] == -1) {
                 this.bVoid(n8, n7 - 1);
             }
             this.bVoid(n8, n7);
             this.oBoolean = true;
             return;
         }
-        final boolean b4 = (i.aIntArrArr[beInt][bfInt] & 0xFF) == 0x23;
-        if (i.aByteArrArr[beInt][iInt] == 9 && b <= 0) {
-            final byte b5 = (byte) i.aIntArrArr[beInt][iInt];
+        final boolean b4 = (i.crtStageForegrondLayer[beInt][bfInt] & 0xFF) == 0x23;
+        if (i.crtStagePlayerLayer[beInt][iInt] == 9 && b <= 0) {
+            final byte b5 = (byte) i.crtStageForegrondLayer[beInt][iInt];
             final int n9;
             if ((n9 = (i.bIntArrArr[beInt][iInt] & 0xFC00000) >> 22) != 34) {
                 if (n9 == 33) {
                     if (b5 == -1) {
-                        i.aIntArrArr[beInt][iInt] = 32;
+                        i.crtStageForegrondLayer[beInt][iInt] = 32;
                     }
-                    this.hInt = beInt;
-                    this.iInt = iInt;
-                    i.aByteArrArr[beInt][iInt] = -1;
+                    this.crtPlayerX = beInt;
+                    this.crtPlayerY = iInt;
+                    i.crtStagePlayerLayer[beInt][iInt] = -1;
                     this.jInt = 0;
-                    this.aVoid(2, 48, this.aTInt = 0);
-                } else if (i.aByteArrArr[beInt][iInt] == 19 || i.aByteArrArr[beInt][iInt] == 43 || i.aByteArrArr[beInt][iInt] == 45 || i.aByteArrArr[beInt][iInt] == 46 || i.aByteArrArr[beInt][iInt] == 49 || i.aByteArrArr[beInt][iInt] == 11) {
-                    i.aByteArrArr[beInt][iInt] = -1;
+                    this.hurtHero(2, 48, this.aTInt = 0);
+                } else if (i.crtStagePlayerLayer[beInt][iInt] == 19 || i.crtStagePlayerLayer[beInt][iInt] == 43 || i.crtStagePlayerLayer[beInt][iInt] == 45 || i.crtStagePlayerLayer[beInt][iInt] == 46 || i.crtStagePlayerLayer[beInt][iInt] == 49 || i.crtStagePlayerLayer[beInt][iInt] == 11) {
+                    i.crtStagePlayerLayer[beInt][iInt] = -1;
                     this.jVoid(beInt, iInt);
                 }
             }
         }
         if (b <= 0 && !b4) {
-            if (n2 == n4 && this.cBoolean(beInt, iInt) && eBoolean(beInt, iInt)) {
+            if (n2 == n4 && this.isPlayerAtPosition(beInt, iInt) && eBoolean(beInt, iInt)) {
                 if ((b2 == 0 || b2 == 9) && n3 > 0) {
-                    this.aVoid(2, 48, 0);
+                    this.hurtHero(2, 48, 0);
                 } else if (b2 == 1) {
                     i.bIntArrArr[beInt][iInt] = ((n & 0xFFFFFFF8) | 0x3);
                     i.bByteArrArr[beInt][iInt] = 18;
-                    i.aByteArrArr[beInt][iInt] = 1;
-                    i.aByteArrArr[beInt][bfInt] = -1;
+                    i.crtStagePlayerLayer[beInt][iInt] = 1;
+                    i.crtStagePlayerLayer[beInt][bfInt] = -1;
                     this.bVoid(beInt, bfInt);
                 } else if (b2 == 8) {
                     n &= 0xFFC1FFFF;
                 }
                 i.bIntArrArr[beInt][bfInt] = (n & 0xFFFFFFF8);
-            } else if ((eBoolean(beInt, iInt) || i.aByteArrArr[beInt][iInt] == 21) && (!this.cBoolean(beInt, bfInt) || this.aTInt > 0) && ((!this.cBoolean(beInt, iInt) && !bBoolean(i.dmInt, i.dnInt, i.doInt, i.dpInt - 1)) || this.aTInt > 0 || this.aWInt != 0 || (b2 != 0 && n2 == n4))) {
+            } else if ((eBoolean(beInt, iInt) || i.crtStagePlayerLayer[beInt][iInt] == 21) && (!this.isPlayerAtPosition(beInt, bfInt) || this.aTInt > 0) && ((!this.isPlayerAtPosition(beInt, iInt) && !bBoolean(i.dmInt, i.dnInt, i.doInt, i.dpInt - 1)) || this.aTInt > 0 || this.aWInt != 0 || (b2 != 0 && n2 == n4))) {
                 if (n3 > 0 || (i.eIntArrArr != null && i.eIntArrArr[beInt][iInt] != 0)) {
                     n = ((n + 131072 & 0xFFFFFFF8) | n4);
                     i.bIntArrArr[beInt][iInt] = (n | Integer.MIN_VALUE);
                     i.bByteArrArr[beInt][iInt] = 18;
-                    i.aByteArrArr[beInt][iInt] = b2;
-                    i.aByteArrArr[beInt][bfInt] = -1;
+                    i.crtStagePlayerLayer[beInt][iInt] = b2;
+                    i.crtStagePlayerLayer[beInt][bfInt] = -1;
                     kVoid(beInt, bfInt);
                     i.cByteArrArr[beInt][bfInt + n3 * 2] = 24;
                     this.bVoid(beInt, bfInt);
@@ -15403,22 +15496,22 @@ public final class i extends Canvas implements Runnable {
                     i.bByteArrArr[beInt][iInt] = 0;
                 }
             } else if (iBoolean(beInt, iInt)) {
-                if (n3 < 0 && (i.eIntArrArr == null || i.eIntArrArr[beInt][iInt] == 0) && i.aByteArrArr[beInt][bfInt + 1] < 0) {
+                if (n3 < 0 && (i.eIntArrArr == null || i.eIntArrArr[beInt][iInt] == 0) && i.crtStagePlayerLayer[beInt][bfInt + 1] < 0) {
                     i.bIntArrArr[beInt][bfInt + 1] = ((n & 0xFFFFFFF8) | 0x3);
                     i.bIntArrArr[beInt][bfInt + 1] |= Integer.MIN_VALUE;
-                    i.aByteArrArr[beInt][bfInt + 1] = b2;
+                    i.crtStagePlayerLayer[beInt][bfInt + 1] = b2;
                     i.bByteArrArr[beInt][bfInt + 1] = 18;
-                    i.aByteArrArr[beInt][bfInt] = -1;
+                    i.crtStagePlayerLayer[beInt][bfInt] = -1;
                 } else if (i.bByteArrArr[beInt][iInt] <= 0) {
                     if ((n & 0x3E0000) >> 17 >= 2) {
                         if (b2 == 8) {
-                            i.aByteArrArr[beInt][bfInt] = 54;
+                            i.crtStagePlayerLayer[beInt][bfInt] = 54;
                             i.bIntArrArr[beInt][bfInt] = 0;
                             kVoid(beInt, bfInt);
                             return;
                         }
-                        if (i.aByteArrArr[beInt][iInt] == 8) {
-                            i.aByteArrArr[beInt][iInt] = 54;
+                        if (i.crtStagePlayerLayer[beInt][iInt] == 8) {
+                            i.crtStagePlayerLayer[beInt][iInt] = 54;
                             i.bIntArrArr[beInt][iInt] = 0;
                             kVoid(beInt, iInt);
                             return;
@@ -15429,13 +15522,13 @@ public final class i extends Canvas implements Runnable {
                     {
                         int n10;
                         int n11;
-                        if (eBoolean(beInt - 1, bfInt) && eBoolean(beInt - 1, iInt) && !this.cBoolean(beInt - 1, bfInt)) {
+                        if (eBoolean(beInt - 1, bfInt) && eBoolean(beInt - 1, iInt) && !this.isPlayerAtPosition(beInt - 1, bfInt)) {
                             i.bByteArrArr[beInt][bfInt] = (byte) (((n & 0x7000) >> 12) + 1);
                             i.cByteArrArr[beInt][bfInt] = 24;
                             n10 = (((n & 0xFFFFFFF8) | 0x4) & 0xFFFFF3FF);
                             n11 = 2048;
                         } else {
-                            if (!eBoolean(beInt + 1, bfInt) || !eBoolean(beInt + 1, iInt) || this.cBoolean(beInt + 1, bfInt)) {
+                            if (!eBoolean(beInt + 1, bfInt) || !eBoolean(beInt + 1, iInt) || this.isPlayerAtPosition(beInt + 1, bfInt)) {
                                 break Label_1240;
                             }
                             i.bByteArrArr[beInt][bfInt] = (byte) (((n & 0x7000) >> 12) + 1);
@@ -15449,7 +15542,7 @@ public final class i extends Canvas implements Runnable {
                 }
             } else if (b2 == 8) {
                 if ((n & 0x3E0000) >> 17 >= 2) {
-                    i.aByteArrArr[beInt][bfInt] = 54;
+                    i.crtStagePlayerLayer[beInt][bfInt] = 54;
                     i.bIntArrArr[beInt][bfInt] = 0;
                     kVoid(beInt, bfInt);
                     return;
@@ -15462,7 +15555,7 @@ public final class i extends Canvas implements Runnable {
         } else if (!b4) {
             if ((n & 0x200) == 0x0) {
                 byte b6;
-                if (n2 != 3 || (i.aIntArrArr[beInt][bfInt] & 0xFF) != 0x6 || b > 12) {
+                if (n2 != 3 || (i.crtStageForegrondLayer[beInt][bfInt] & 0xFF) != 0x6 || b > 12) {
                     b6 = (byte) (b - 6);
                 } else {
                     b6 = (byte) (b - (i.aSInt & 0x1));
@@ -15489,18 +15582,18 @@ public final class i extends Canvas implements Runnable {
                                     if (b6 != 0) {
                                         break Label_1634;
                                     }
-                                    if ((i.aIntArrArr[beInt][bfInt] & 0xFF) == 0x6) {
+                                    if ((i.crtStageForegrondLayer[beInt][bfInt] & 0xFF) == 0x6) {
                                         n &= 0xFFFFFE3F;
                                     }
                                     if (n2 != n4) {
                                         break Label_1634;
                                     }
                                     if ((b2 == 0 || b2 == 9) && n3 > 0 && !eBoolean(beInt, bfInt + 1)) {
-                                        jVoid(200);
-                                        this.pVoid(14);
+                                        vibrate(200);
+                                        this.playSound(14);
                                         this.bjInt = 10;
-                                        if (b2 == 9 && this.aTInt > 0 && this.cBoolean(beInt, bfInt)) {
-                                            this.aVoid(1, 0, 0);
+                                        if (b2 == 9 && this.aTInt > 0 && this.isPlayerAtPosition(beInt, bfInt)) {
+                                            this.hurtHero(1, 0, 0);
                                             this.oBoolean = true;
                                         }
                                         if (!iBoolean(beInt, bfInt + 1)) {
@@ -15508,7 +15601,7 @@ public final class i extends Canvas implements Runnable {
                                         }
                                     }
                                     i.cByteArrArr[beInt][bfInt] = 30;
-                                    if (!this.cBoolean(beInt, iInt)) {
+                                    if (!this.isPlayerAtPosition(beInt, iInt)) {
                                         n &= 0xFFFFFFF8;
                                     }
                                     break Label_1634;
@@ -15537,7 +15630,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     n14 = n16;
                 }
-                if (eBoolean(beInt, iInt) && !this.cBoolean(beInt, iInt)) {
+                if (eBoolean(beInt, iInt) && !this.isPlayerAtPosition(beInt, iInt)) {
                     byte b7;
                     if ((b7 = (byte) (b - 6)) <= 0) {
                         b7 = 0;
@@ -15546,7 +15639,7 @@ public final class i extends Canvas implements Runnable {
                     i.bByteArrArr[beInt][bfInt] = b7;
                     i.bIntArrArr[beInt][bfInt] = n;
                     i.cByteArrArr[beInt][bfInt] = 24;
-                } else if (eBoolean(beInt + n14, bfInt) && !this.cBoolean(beInt + n14, bfInt) && eBoolean(beInt + n14, iInt) && !this.cBoolean(beInt + n14, iInt) && (i.bIntArrArr[beInt][iInt] & 0x200) == 0x0) {
+                } else if (eBoolean(beInt + n14, bfInt) && !this.isPlayerAtPosition(beInt + n14, bfInt) && eBoolean(beInt + n14, iInt) && !this.isPlayerAtPosition(beInt + n14, iInt) && (i.bIntArrArr[beInt][iInt] & 0x200) == 0x0) {
                     if (b >= 6 || (i.aSInt & 0x3) == 0x0) {
                         ++b;
                     }
@@ -15555,7 +15648,7 @@ public final class i extends Canvas implements Runnable {
                         byte b8;
                         if (n14 != 0) {
                             b8 = 6;
-                            i.aByteArrArr[beInt][bfInt] = -1;
+                            i.crtStagePlayerLayer[beInt][bfInt] = -1;
                             if (eBoolean(beInt + n14, iInt)) {
                                 b8 = 12;
                                 n = ((n & 0xFFFFFFF8) | n4);
@@ -15567,7 +15660,7 @@ public final class i extends Canvas implements Runnable {
                         }
                         i.bIntArrArr[beInt + n14][bfInt + n15] = (n | Integer.MIN_VALUE);
                         i.bByteArrArr[beInt + n14][bfInt + n15] = b8;
-                        i.aByteArrArr[beInt + n14][bfInt + n15] = b2;
+                        i.crtStagePlayerLayer[beInt + n14][bfInt + n15] = b2;
                         kVoid(beInt, bfInt);
                         i.cByteArrArr[beInt][bfInt + n3 * 2] = 24;
                     } else {
@@ -15597,17 +15690,17 @@ public final class i extends Canvas implements Runnable {
         if ((n17 != 0 && b10 == 0) || (n18 != 0 && !b3)) {
             this.cVoid(beInt, bfInt);
         }
-        i.bIntArrArr[beInt][bfInt] = ((((((n & 0xDFFFFFFF) | ((b10 != 0) ? 536870912 : 0)) & 0xBFFFFFFF) | (b3 ? 1073741824 : 0)) & Integer.MAX_VALUE) | (((((n & 0x200) != 0x0) ? 1 : ((b10 != 0 || n17 != 0) ? 2 : (b3 ? 3 : ((i.aIntArrArr[beInt][bfInt] > -1 && i.aIntArrArr[beInt][bfInt] < 38) ? 4 : (((eBoolean(beInt - 1, bfInt) || eBoolean(beInt + 1, bfInt)) && iBoolean(beInt, bfInt + 1) && (i.bIntArrArr[beInt][bfInt + 1] & 0x7) == 0x0 && beInt != this.bgInt && bfInt != this.bhInt) ? 6 : 0))))) != 0) ? Integer.MIN_VALUE : 0));
+        i.bIntArrArr[beInt][bfInt] = ((((((n & 0xDFFFFFFF) | ((b10 != 0) ? 536870912 : 0)) & 0xBFFFFFFF) | (b3 ? 1073741824 : 0)) & Integer.MAX_VALUE) | (((((n & 0x200) != 0x0) ? 1 : ((b10 != 0 || n17 != 0) ? 2 : (b3 ? 3 : ((i.crtStageForegrondLayer[beInt][bfInt] > -1 && i.crtStageForegrondLayer[beInt][bfInt] < 38) ? 4 : (((eBoolean(beInt - 1, bfInt) || eBoolean(beInt + 1, bfInt)) && iBoolean(beInt, bfInt + 1) && (i.bIntArrArr[beInt][bfInt + 1] & 0x7) == 0x0 && beInt != this.bgInt && bfInt != this.bhInt) ? 6 : 0))))) != 0) ? Integer.MIN_VALUE : 0));
         final int n19;
         if ((n19 = ((i.bIntArrArr[beInt][bfInt] & 0x1C0) >> 6) - 1) >= 0 && n19 < 5) {
             i.bIntArrArr[beInt][bfInt] = ((i.bIntArrArr[beInt][bfInt] & 0xFFFFFE3F) | (i.bIntArrArr[beInt][bfInt] + 64 & 0x1C0));
         }
     }
 
-    private static f importTexturesWithPalettes(final String fileName, final int chunkI, final int offsetPalettes, final int countPalettes) {
-        f textures = null;
+    private static f_Sprite loadSprite(final String fileName, final int chunkI, final int offsetPalettes, final int countPalettes) {
+        f_Sprite textures = null;
         try {
-            textures = new f();
+            textures = new f_Sprite();
             byte[] chunk = readChunk(fileName, chunkI);
             System.out.print("Get" + ((chunk[0] == (byte) 223 && chunk[1] == (byte) 3) ? "" : " broken") + " textures: ");
             System.out.print(fileName);
@@ -15615,31 +15708,31 @@ public final class i extends Canvas implements Runnable {
             System.out.println(chunkI);
             // DesktopLauncher.printByteArr(chunk, "Chunk data");
             // textures.aVoid(aByteArr(fileName, chunkI), 0);
-            textures.aVoid(chunk, 0);
+            textures.parseSprite(chunk, 0);
             for (int i = offsetPalettes; i <= countPalettes; ++i) {
-                textures.aVoid(i, 0, -1, -1);
+                textures.createImages(i, 0, -1, -1);
             }
-            textures.aInt = offsetPalettes;
-            textures.dByteArr = null;
+            textures.paletteI = offsetPalettes;
+            textures.moduleData = null;
             System.gc();
         } catch (Exception ex) {
         }
         return textures;
     }
 
-    private static f importTexturesWithPalettes(String s, int n) {
-        final String s2 = s;
-        n = n;
-        s = s2;
-        return importTexturesWithPalettes(s2, n, 0, 0);
+    private static f_Sprite loadSprite(String fileName, int chunkI) {
+        final String s2 = fileName;
+        chunkI = chunkI;
+        fileName = s2;
+        return loadSprite(s2, chunkI, 0, 0);
     }
 
-    private static f importTexturesWithPalettes(final String s, final int n, final int n2) {
-        return importTexturesWithPalettes(s, n, 0, 0);
+    private static f_Sprite loadSprite(final String fileName, final int chunkI, final int _unused) {
+        return loadSprite(fileName, chunkI, 0, 0);
     }
 
     private static Image[] importTexturesWithPalette(final String fileName, final int chunkI, final int paletteI) {
-        f textures = null;
+        f_Sprite textures = null;
         try {
             System.out.print("Other get textures with palette: ");
             System.out.print(fileName);
@@ -15647,20 +15740,20 @@ public final class i extends Canvas implements Runnable {
             System.out.println(chunkI);
             System.out.print(", palette #");
             System.out.println(paletteI);
-            textures = new f();
-            textures.aVoid(readChunk(fileName, chunkI), 0);
-            textures.aVoid(paletteI, 0, -1, -1);
+            textures = new f_Sprite();
+            textures.parseSprite(readChunk(fileName, chunkI), 0);
+            textures.createImages(paletteI, 0, -1, -1);
             aVoid(textures, false);
             System.gc();
         } catch (Exception ex) {
         }
-        return textures.aClassImageArrArr[paletteI];
+        return textures.images[paletteI];
     }
 
-    private static Image aClassImage(final String s, final int n) {
+    private static Image readChunkAsImageFile(final String fileName, final int chunkI) {
         Image image = null;
         try {
-            final byte[] aByteArr = readChunk(s, n);
+            final byte[] aByteArr = readChunk(fileName, chunkI);
             image = Image.createImage(aByteArr, 0, aByteArr.length);
             System.gc();
         } catch (Exception ex) {
@@ -15676,10 +15769,11 @@ public final class i extends Canvas implements Runnable {
             array = new byte[file.read() << 3];
             file.read(array);
             // DesktopLauncher.printByteArr(array, "Header: ");
-            final int address = bInt(array, chunkI << 3);
-            chunkI = bInt(array, (chunkI << 3) + 4); // Chunk index is overwritten to store length of the chunk
+            final int address = unpackUint32(array, chunkI << 3);
+            chunkI = unpackUint32(array, (chunkI << 3) + 4); // Chunk index is overwritten to store length of the chunk
             // System.out.println("Skip to " + address + " with length: " + chunkI);
-            file.skipNBytes(address); // Replaced original file.skip(address)
+            //file.skipNBytes(address); // Replaced original file.skip(address) - undone below!
+            file.skip(address);
             // As shown here: https://bugs.openjdk.org/browse/JDK-6204246#:~:text=However%2C%20BufferedInputStream.skip(long)%20can%20decide%20to%20skip%20less%20than%0Athe%20number%0Aof%20bytes%20that%20were%20reported%20as%20being%20available%20to%20skip.
             // It was skipping 8151 instead of 16073 bytes
             array = new byte[chunkI];
@@ -15699,8 +15793,8 @@ public final class i extends Canvas implements Runnable {
         if ((n = s.indexOf(125)) != -1) {
             s = s.substring(0, n);
         }
-        h.aVoid(s);
-        return h.aInt;
+        h.calculateStringSize(s);
+        return h.stringWidth;
     }
 
     private static int aInt(final InputStream inputStream) { // Seems like read low endian int
@@ -15714,74 +15808,32 @@ public final class i extends Canvas implements Runnable {
         return 0;
     }
 
-    private static int gInt(int abs) {
-        if (abs < 0) {
-            abs = Math.abs(abs);
+    private static int getKeyFromKeyCode(int keyCode) {
+        if (keyCode < 0) {
+            keyCode = Math.abs(keyCode);
         }
-        switch (abs) {
-            case 1: {
-                return 1;
-            }
-            case 2: {
-                return 2;
-            }
-            case 3: {
-                return 4;
-            }
-            case 4: {
-                return 8;
-            }
-            case 5: {
-                return 16;
-            }
-            case 6: {
-                return 32;
-            }
-            case 7: {
-                return 64;
-            }
-            case 23: {
-                return 128;
-            }
-            case 42: {
-                return 256;
-            }
-            case 35: {
-                return 512;
-            }
-            case 48: {
-                return 1024;
-            }
-            case 49: {
-                return 2048;
-            }
-            case 50: {
-                return 4096;
-            }
-            case 51: {
-                return 8192;
-            }
-            case 52: {
-                return 16384;
-            }
-            case 53: {
-                return 32768;
-            }
-            case 54: {
-                return 65536;
-            }
-            case 55: {
-                return 131072;
-            }
-            case 56: {
-                return 262144;
-            }
-            case 57: {
-                return 524288;
-            }
-            default: {
-                return 0;
-            }
+        switch (keyCode) {
+            case 1: return SKEY_UP;
+            case 2: return SKEY_DOWN;
+            case 3: return SKEY_LEFT;
+            case 4: return SKEY_RIGHT;
+            case 5: return SKEY_CENTER;
+            case 6: return SKEY_LSH;
+            case 7: return SKEY_RSH;
+            case 23: return SKEY_CENTER_ALT;
+            case 42: return SKEY_STAR;
+            case 35: return SKEY_POUND;
+            case 48: return SKEY_NUM0;
+            case 49: return SKEY_NUM1;
+            case 50: return SKEY_NUM2;
+            case 51: return SKEY_NUM3;
+            case 52: return SKEY_NUM4;
+            case 53: return SKEY_NUM5;
+            case 54: return SKEY_NUM6;
+            case 55: return SKEY_NUM7;
+            case 56: return SKEY_NUM8;
+            case 57: return SKEY_NUM9;
+            default: return 0;
         }
     }
 
@@ -15960,22 +16012,22 @@ public final class i extends Canvas implements Runnable {
                         byte b13 = 0;
                         if (b12 != 0) {
                             if (b12 == 2) {
-                                while (aInt >= this.dvInt && (byte) (i.aByteArrArr[aInt + 1][aInt2] - 80) < 0 && i.aByteArrArr[aInt + 1][aInt2] != 10 && i.aByteArrArr[aInt + 1][aInt2] != 37 && i.aByteArrArr[aInt + 1][aInt2] != 34 && i.aByteArrArr[aInt + 1][aInt2] != 35) {
+                                while (aInt >= this.dvInt && (byte) (i.crtStagePlayerLayer[aInt + 1][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 10 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 37 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 34 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 35) {
                                     ++aInt;
                                 }
                             } else {
-                                while (aInt <= this.dvInt && (byte) (i.aByteArrArr[aInt + 1][aInt2] - 80) < 0 && i.aByteArrArr[aInt + 1][aInt2] != 10 && i.aByteArrArr[aInt + 1][aInt2] != 37 && i.aByteArrArr[aInt + 1][aInt2] != 34 && i.aByteArrArr[aInt + 1][aInt2] != 35) {
+                                while (aInt <= this.dvInt && (byte) (i.crtStagePlayerLayer[aInt + 1][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 10 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 37 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 34 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 35) {
                                     ++aInt;
                                 }
                             }
-                        } else if ((byte) (i.aByteArrArr[aInt + 1][aInt2] - 80) < 0 && i.aByteArrArr[aInt + 1][aInt2] != 10 && i.aByteArrArr[aInt + 1][aInt2] != 37 && i.aByteArrArr[aInt + 1][aInt2] != 34 && i.aByteArrArr[aInt + 1][aInt2] != 35) {
-                            while ((byte) (i.aByteArrArr[aInt + 1][aInt2] - 80) < 0 && i.aByteArrArr[aInt + 1][aInt2] != 10 && i.aByteArrArr[aInt + 1][aInt2] != 37 && i.aByteArrArr[aInt + 1][aInt2] != 34 && i.aByteArrArr[aInt + 1][aInt2] != 35) {
+                        } else if ((byte) (i.crtStagePlayerLayer[aInt + 1][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 10 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 37 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 34 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 35) {
+                            while ((byte) (i.crtStagePlayerLayer[aInt + 1][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 10 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 37 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 34 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 35) {
                                 ++aInt;
                             }
                         } else {
                             while (b13 < b11) {
                                 ++b13;
-                                if ((byte) (i.aByteArrArr[aInt][aInt2] - 80) < 0 && i.aByteArrArr[aInt][aInt2] != 10 && i.aByteArrArr[aInt][aInt2] != 37 && i.aByteArrArr[aInt][aInt2] != 34 && i.aByteArrArr[aInt][aInt2] != 35) {
+                                if ((byte) (i.crtStagePlayerLayer[aInt][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt][aInt2] != 10 && i.crtStagePlayerLayer[aInt][aInt2] != 37 && i.crtStagePlayerLayer[aInt][aInt2] != 34 && i.crtStagePlayerLayer[aInt][aInt2] != 35) {
                                     b13 = b11;
                                 } else {
                                     --aInt;
@@ -15983,7 +16035,7 @@ public final class i extends Canvas implements Runnable {
                             }
                         }
                         if (this.dxInt != 2 && aInt <= this.dvInt) {
-                            while ((byte) (i.aByteArrArr[aInt + 1][aInt2] - 80) < 0 && i.aByteArrArr[aInt + 1][aInt2] != 10 && i.aByteArrArr[aInt + 1][aInt2] != 37 && i.aByteArrArr[aInt + 1][aInt2] != 34 && i.aByteArrArr[aInt + 1][aInt2] != 35) {
+                            while ((byte) (i.crtStagePlayerLayer[aInt + 1][aInt2] - 80) < 0 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 10 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 37 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 34 && i.crtStagePlayerLayer[aInt + 1][aInt2] != 35) {
                                 ++aInt;
                             }
                         }
@@ -15992,7 +16044,7 @@ public final class i extends Canvas implements Runnable {
                         byte b15;
                         while (true) {
                             b15 = b14;
-                            if ((byte) (i.aByteArrArr[aInt - b15][aInt2] - 80) >= 0 || i.aByteArrArr[aInt - b15][aInt2] == 10 || i.aByteArrArr[aInt - b15][aInt2] == 37 || i.aByteArrArr[aInt - b15][aInt2] == 34 || i.aByteArrArr[aInt - b15][aInt2] == 35) {
+                            if ((byte) (i.crtStagePlayerLayer[aInt - b15][aInt2] - 80) >= 0 || i.crtStagePlayerLayer[aInt - b15][aInt2] == 10 || i.crtStagePlayerLayer[aInt - b15][aInt2] == 37 || i.crtStagePlayerLayer[aInt - b15][aInt2] == 34 || i.crtStagePlayerLayer[aInt - b15][aInt2] == 35) {
                                 break;
                             }
                             b14 = (byte) (b15 + 1);
@@ -16075,7 +16127,7 @@ public final class i extends Canvas implements Runnable {
                                                             if (b29 >= b22) {
                                                                 break;
                                                             }
-                                                            if ((byte) (i.aByteArrArr[aInt4 - b31][n2] - 80) < 0 && i.aByteArrArr[aInt4 - b31][n2] != 10 && i.aByteArrArr[aInt4 - b31][n2] != 37 && i.aByteArrArr[aInt4 - b31][n2] != 34 && i.aByteArrArr[aInt4 - b31][n2] != 35) {
+                                                            if ((byte) (i.crtStagePlayerLayer[aInt4 - b31][n2] - 80) < 0 && i.crtStagePlayerLayer[aInt4 - b31][n2] != 10 && i.crtStagePlayerLayer[aInt4 - b31][n2] != 37 && i.crtStagePlayerLayer[aInt4 - b31][n2] != 34 && i.crtStagePlayerLayer[aInt4 - b31][n2] != 35) {
                                                                 aVoid(aInt4 - b31, n2, b28, (byte) 8, (byte) 3, (byte) 4);
                                                             }
                                                             b29 = (b30 = (byte) (b31 + 1));
@@ -16110,12 +16162,12 @@ public final class i extends Canvas implements Runnable {
                                                 aVoid((int) b19, (byte) 1, (byte) 47, (byte) 2);
                                                 --aInt5;
                                                 aVoid((int) b19, (byte) aInt5, (byte) 20, (byte) 6);
-                                                if ((byte) (i.aByteArrArr[aInt4][aInt5] - 80) >= 0 || i.aByteArrArr[aInt4][aInt5] == 10 || i.aByteArrArr[aInt4][aInt5] == 37 || i.aByteArrArr[aInt4][aInt5] == 34 || i.aByteArrArr[aInt4][aInt5] == 35) {
-                                                    while ((byte) (i.aByteArrArr[aInt4][aInt5] - 80) >= 0 || i.aByteArrArr[aInt4][aInt5] == 10 || i.aByteArrArr[aInt4][aInt5] == 37 || i.aByteArrArr[aInt4][aInt5] == 34 || i.aByteArrArr[aInt4][aInt5] == 35) {
+                                                if ((byte) (i.crtStagePlayerLayer[aInt4][aInt5] - 80) >= 0 || i.crtStagePlayerLayer[aInt4][aInt5] == 10 || i.crtStagePlayerLayer[aInt4][aInt5] == 37 || i.crtStagePlayerLayer[aInt4][aInt5] == 34 || i.crtStagePlayerLayer[aInt4][aInt5] == 35) {
+                                                    while ((byte) (i.crtStagePlayerLayer[aInt4][aInt5] - 80) >= 0 || i.crtStagePlayerLayer[aInt4][aInt5] == 10 || i.crtStagePlayerLayer[aInt4][aInt5] == 37 || i.crtStagePlayerLayer[aInt4][aInt5] == 34 || i.crtStagePlayerLayer[aInt4][aInt5] == 35) {
                                                         --aInt4;
                                                     }
                                                 } else {
-                                                    while ((byte) (i.aByteArrArr[aInt4 + 1][aInt5] - 80) < 0 && i.aByteArrArr[aInt4 + 1][aInt5] != 10 && i.aByteArrArr[aInt4 + 1][aInt5] != 37 && i.aByteArrArr[aInt4 + 1][aInt5] != 34 && i.aByteArrArr[aInt4 + 1][aInt5] != 35) {
+                                                    while ((byte) (i.crtStagePlayerLayer[aInt4 + 1][aInt5] - 80) < 0 && i.crtStagePlayerLayer[aInt4 + 1][aInt5] != 10 && i.crtStagePlayerLayer[aInt4 + 1][aInt5] != 37 && i.crtStagePlayerLayer[aInt4 + 1][aInt5] != 34 && i.crtStagePlayerLayer[aInt4 + 1][aInt5] != 35) {
                                                         ++aInt4;
                                                     }
                                                 }
@@ -16124,7 +16176,7 @@ public final class i extends Canvas implements Runnable {
                                                 byte b33;
                                                 while (true) {
                                                     b33 = b32;
-                                                    if ((byte) (i.aByteArrArr[aInt4 - b33][aInt5] - 80) >= 0 || i.aByteArrArr[aInt4 - b33][aInt5] == 10 || i.aByteArrArr[aInt4 - b33][aInt5] == 37 || i.aByteArrArr[aInt4 - b33][aInt5] == 34 || i.aByteArrArr[aInt4 - b33][aInt5] == 35) {
+                                                    if ((byte) (i.crtStagePlayerLayer[aInt4 - b33][aInt5] - 80) >= 0 || i.crtStagePlayerLayer[aInt4 - b33][aInt5] == 10 || i.crtStagePlayerLayer[aInt4 - b33][aInt5] == 37 || i.crtStagePlayerLayer[aInt4 - b33][aInt5] == 34 || i.crtStagePlayerLayer[aInt4 - b33][aInt5] == 35) {
                                                         break;
                                                     }
                                                     b32 = (byte) (b33 + 1);
@@ -16210,7 +16262,7 @@ public final class i extends Canvas implements Runnable {
                                         }
                                     }
                                     if (b37 == 2 && b38 == 0) {
-                                        if ((byte) (i.aByteArrArr[aInt9][aInt10 + 1] - 80) >= 0 || i.aByteArrArr[aInt9][aInt10 + 1] == 10 || i.aByteArrArr[aInt9][aInt10 + 1] == 37 || i.aByteArrArr[aInt9][aInt10 + 1] == 34 || i.aByteArrArr[aInt9][aInt10 + 1] == 35) {
+                                        if ((byte) (i.crtStagePlayerLayer[aInt9][aInt10 + 1] - 80) >= 0 || i.crtStagePlayerLayer[aInt9][aInt10 + 1] == 10 || i.crtStagePlayerLayer[aInt9][aInt10 + 1] == 37 || i.crtStagePlayerLayer[aInt9][aInt10 + 1] == 34 || i.crtStagePlayerLayer[aInt9][aInt10 + 1] == 35) {
                                             Label_2855:
                                             {
                                                 byte b44;
@@ -16233,7 +16285,7 @@ public final class i extends Canvas implements Runnable {
                                                         b46 = b37;
                                                         b47 = -1;
                                                     } else {
-                                                        if ((byte) (i.aByteArrArr[aInt9 - 1][aInt10] - 80) < 0 && i.aByteArrArr[aInt9 - 1][aInt10] != 10 && i.aByteArrArr[aInt9 - 1][aInt10] != 37 && i.aByteArrArr[aInt9 - 1][aInt10] != 34 && i.aByteArrArr[aInt9 - 1][aInt10] != 35) {
+                                                        if ((byte) (i.crtStagePlayerLayer[aInt9 - 1][aInt10] - 80) < 0 && i.crtStagePlayerLayer[aInt9 - 1][aInt10] != 10 && i.crtStagePlayerLayer[aInt9 - 1][aInt10] != 37 && i.crtStagePlayerLayer[aInt9 - 1][aInt10] != 34 && i.crtStagePlayerLayer[aInt9 - 1][aInt10] != 35) {
                                                             this.aByte(aInt9 - 1, aInt10, (byte) (b40 ? 7 : 5), (byte) (-1), (byte) 2, (byte) aInt((int) b36, (byte) 54, (byte) 3));
                                                         }
                                                         break Label_2855;
@@ -16273,17 +16325,17 @@ public final class i extends Canvas implements Runnable {
                                                                 b51 = true;
                                                                 n16 -= b48;
                                                                 if (b48 == 0) {
-                                                                    if ((byte) (i.aByteArrArr[n16 - 1][n15] - 80) >= 0 || i.aByteArrArr[n16 - 1][n15] == 10 || i.aByteArrArr[n16 - 1][n15] == 37 || i.aByteArrArr[n16 - 1][n15] == 34 || (i.aByteArrArr[n16 - 1][n15] == 35 && (byte) (i.aByteArrArr[n16 + 1][n15] - 80) >= 0) || i.aByteArrArr[n16 + 1][n15] == 10 || i.aByteArrArr[n16 + 1][n15] == 37 || i.aByteArrArr[n16 + 1][n15] == 34 || i.aByteArrArr[n16 + 1][n15] == 35) {
+                                                                    if ((byte) (i.crtStagePlayerLayer[n16 - 1][n15] - 80) >= 0 || i.crtStagePlayerLayer[n16 - 1][n15] == 10 || i.crtStagePlayerLayer[n16 - 1][n15] == 37 || i.crtStagePlayerLayer[n16 - 1][n15] == 34 || (i.crtStagePlayerLayer[n16 - 1][n15] == 35 && (byte) (i.crtStagePlayerLayer[n16 + 1][n15] - 80) >= 0) || i.crtStagePlayerLayer[n16 + 1][n15] == 10 || i.crtStagePlayerLayer[n16 + 1][n15] == 37 || i.crtStagePlayerLayer[n16 + 1][n15] == 34 || i.crtStagePlayerLayer[n16 + 1][n15] == 35) {
                                                                         b49 = true;
                                                                         b50 = false;
                                                                         continue Label_3289;
                                                                     }
                                                                     continue;
                                                                 } else {
-                                                                    if ((byte) (i.aByteArrArr[n16][n15 + 1] - 80) < 0 && i.aByteArrArr[n16][n15 + 1] != 10 && i.aByteArrArr[n16][n15 + 1] != 37 && i.aByteArrArr[n16][n15 + 1] != 34 && i.aByteArrArr[n16][n15 + 1] != 35) {
+                                                                    if ((byte) (i.crtStagePlayerLayer[n16][n15 + 1] - 80) < 0 && i.crtStagePlayerLayer[n16][n15 + 1] != 10 && i.crtStagePlayerLayer[n16][n15 + 1] != 37 && i.crtStagePlayerLayer[n16][n15 + 1] != 34 && i.crtStagePlayerLayer[n16][n15 + 1] != 35) {
                                                                         b51 = false;
                                                                     }
-                                                                    if ((byte) (i.aByteArrArr[n16][n15] - 80) >= 0 || i.aByteArrArr[n16][n15] == 10 || i.aByteArrArr[n16][n15] == 37 || i.aByteArrArr[n16][n15] == 34 || i.aByteArrArr[n16][n15] == 35) {
+                                                                    if ((byte) (i.crtStagePlayerLayer[n16][n15] - 80) >= 0 || i.crtStagePlayerLayer[n16][n15] == 10 || i.crtStagePlayerLayer[n16][n15] == 37 || i.crtStagePlayerLayer[n16][n15] == 34 || i.crtStagePlayerLayer[n16][n15] == 35) {
                                                                         b49 = b51;
                                                                         b50 = false;
                                                                         continue Label_3289;
@@ -16506,14 +16558,14 @@ public final class i extends Canvas implements Runnable {
                             Label_4322:
                             while (true) {
                                 int n34 = 0;
-                                while ((i.eIntArrArr[n31 + dxInt2][n30 - 1] != 0 && (byte) (i.aByteArrArr[n31][n30] - 80) >= 0) || i.aByteArrArr[n31][n30] == 10 || i.aByteArrArr[n31][n30] == 37 || i.aByteArrArr[n31][n30] == 34 || i.aByteArrArr[n31][n30] == 35) {
+                                while ((i.eIntArrArr[n31 + dxInt2][n30 - 1] != 0 && (byte) (i.crtStagePlayerLayer[n31][n30] - 80) >= 0) || i.crtStagePlayerLayer[n31][n30] == 10 || i.crtStagePlayerLayer[n31][n30] == 37 || i.crtStagePlayerLayer[n31][n30] == 34 || i.crtStagePlayerLayer[n31][n30] == 35) {
                                     n31 += dxInt2;
                                 }
                                 int n35 = 0;
                                 int a2;
                                 while (true) {
                                     a2 = n35;
-                                    if ((byte) (i.aByteArrArr[n31 + a2][n30] - 80) >= 0 || i.aByteArrArr[n31 + a2][n30] == 10 || i.aByteArrArr[n31 + a2][n30] == 37 || i.aByteArrArr[n31 + a2][n30] == 34 || i.aByteArrArr[n31 + a2][n30] == 35) {
+                                    if ((byte) (i.crtStagePlayerLayer[n31 + a2][n30] - 80) >= 0 || i.crtStagePlayerLayer[n31 + a2][n30] == 10 || i.crtStagePlayerLayer[n31 + a2][n30] == 37 || i.crtStagePlayerLayer[n31 + a2][n30] == 34 || i.crtStagePlayerLayer[n31 + a2][n30] == 35) {
                                         break;
                                     }
                                     if (n32 != 0) {
@@ -16530,7 +16582,7 @@ public final class i extends Canvas implements Runnable {
                                 ++n30;
                                 while (i.eIntArrArr[n31][n30] == 0) {
                                     n31 += dxInt2;
-                                    if (n34 >= abs || n31 < 0 || n31 == this.eInt) {
+                                    if (n34 >= abs || n31 < 0 || n31 == this.crtStageWidth) {
                                         break Label_4322;
                                     }
                                     ++n34;
@@ -16609,7 +16661,7 @@ public final class i extends Canvas implements Runnable {
 
     private byte aByte(final byte b, int n, final int n2, final byte b2, final byte b3, final byte b4, final boolean b5) {
         byte b6;
-        if ((byte) (i.aByteArrArr[n + b4][n2] - 80) >= 0 || i.aByteArrArr[n + b4][n2] == 10 || i.aByteArrArr[n + b4][n2] == 37 || i.aByteArrArr[n + b4][n2] == 34 || i.aByteArrArr[n + b4][n2] == 35) {
+        if ((byte) (i.crtStagePlayerLayer[n + b4][n2] - 80) >= 0 || i.crtStagePlayerLayer[n + b4][n2] == 10 || i.crtStagePlayerLayer[n + b4][n2] == 37 || i.crtStagePlayerLayer[n + b4][n2] == 34 || i.crtStagePlayerLayer[n + b4][n2] == 35) {
             b6 = -2;
         } else {
             if (b2 != (b6 = b4)) {
@@ -16636,7 +16688,7 @@ public final class i extends Canvas implements Runnable {
                 int n5;
                 byte b9;
                 int n6;
-                if ((byte) (i.aByteArrArr[n][n2 + 1] - 80) >= 0 || i.aByteArrArr[n + b4][n2] == 10 || i.aByteArrArr[n + b4][n2] == 37 || i.aByteArrArr[n + b4][n2] == 34 || i.aByteArrArr[n + b4][n2] == 35) {
+                if ((byte) (i.crtStagePlayerLayer[n][n2 + 1] - 80) >= 0 || i.crtStagePlayerLayer[n + b4][n2] == 10 || i.crtStagePlayerLayer[n + b4][n2] == 37 || i.crtStagePlayerLayer[n + b4][n2] == 34 || i.crtStagePlayerLayer[n + b4][n2] == 35) {
                     n4 = n;
                     n5 = n2;
                     b9 = b3;
@@ -16736,7 +16788,7 @@ public final class i extends Canvas implements Runnable {
             }
             if (this.dxInt != 0) {
                 this.xByte = 5;
-                this.pVoid(13);
+                this.playSound(13);
                 this.dvInt = dvInt;
                 this.dwInt = dwInt;
             }
@@ -16753,28 +16805,28 @@ public final class i extends Canvas implements Runnable {
             n3 = -1;
         }
         if (n3 > 0) {
-            i.aByteArrArr[n][n2] = -1;
+            i.crtStagePlayerLayer[n][n2] = -1;
             this.xByte = 1;
             this.aByte(n, n2 + 1, (byte) 0, (byte) 0, (byte) 0, bByte(n, n2));
         }
     }
 
-    private static int bInt(final f f, int n) {
+    private static int bInt(final f_Sprite f, int n) {
         n = (n << 2) + 3;
-        return f.aByteArr[n] & 0xFF;
+        return f.frameBBoxes[n] & 0xFF;
     }
 
-    private static int cInt(final f f, int n) {
+    private static int cInt(final f_Sprite f, int n) {
         n = (n << 2) + 2;
-        return f.aByteArr[n] & 0xFF;
+        return f.frameBBoxes[n] & 0xFF;
     }
 
     private static void oVoid(int n) {
         try {
             n %= 8;
-            i.fClassString = d.aClassString(n + 69);
+            i.fClassString = d.getLocalizedText(n + 69);
             if (n <= 4) {
-                i.aClassf = importTexturesWithPalettes("/tips.f", n);
+                i.aClassf = loadSprite("/tips.f", n);
                 return;
             }
             i.aClassf = null;
@@ -16798,18 +16850,18 @@ public final class i extends Canvas implements Runnable {
         final String[] a2 = c.aClassStringArr(s, '\n');
         final int n = this.agInt % 8;
         for (int j = 0; j < a2.length; ++j) {
-            i.aClassh.aClassFont.getHeight();
+            i.textSize8.font.getHeight();
             int n3;
             final int n2 = ((n == 0 && (j == 1 || j == 4)) || (n > 0 && n < 4 && j == 1)) ? ((n == 0 && j == 1) ? (n3 = 7) : ((n == 0 && j == 4) ? (n3 = 6) : (n3 = 0))) : (n3 = -1);
             final int n4 = n3;
             if (n2 >= 0) {
                 if (i.aClassf == null) {
-                    i.aClassf = importTexturesWithPalettes("/tips.f", this.agInt);
+                    i.aClassf = loadSprite("/tips.f", this.agInt);
                 }
                 if (i.aClassf != null) {
                     try {
-                        i.aClassf.aVoid(graphics2, n4, 120 - cInt(i.aClassf, n4) / 2, a - 5, 0);
-                        a += (i.aClassf.aByteArr[(n4 << 2) + 3] & 0xFF) + 10;
+                        i.aClassf.drawFrame(graphics2, n4, 120 - cInt(i.aClassf, n4) / 2, a - 5, 0);
+                        a += (i.aClassf.frameBBoxes[(n4 << 2) + 3] & 0xFF) + 10;
                     } catch (Exception ex) {
                     }
                 }
@@ -16826,13 +16878,13 @@ public final class i extends Canvas implements Runnable {
         }
         s = aClassString(s, 230);
         aInt = aInt(h, s, b ? -1 : 0);
-        a = h.aInt(s);
+        a = h.calculateTextHeight(s);
         final int n3 = n - (aInt >> 1);
         graphics.setColor(798521);
         graphics.fillRoundRect(n3 - 5, n2 - 5, aInt + 10, a + 10, 10, 10);
         graphics.setColor(13540096);
         graphics.drawRoundRect(n3 - 5, n2 - 5, aInt + 10, a + 10, 10, 10);
-        h.aVoid(graphics, s, n, n2 + 10, 17);
+        h.drawText(graphics, s, n, n2 + 10, 17);
     }
 
     private void auVoid() {
@@ -16862,8 +16914,8 @@ public final class i extends Canvas implements Runnable {
         this.bsInt = 0;
         this.brInt = 14;
         this.dKInt = 100;
-        if (this.aBInt > bInt(this.aAInt)) {
-            this.aBInt = bInt(this.aAInt);
+        if (this.crtStageI > bInt(this.crtWorldIndex)) {
+            this.crtStageI = bInt(this.crtWorldIndex);
         }
         this.awVoid();
     }
@@ -16927,7 +16979,7 @@ public final class i extends Canvas implements Runnable {
                     int j = 0;
                     for (int n4 = this.asBoolean ? (n - 1) : 0, n5 = this.asBoolean ? -1 : 1; j < this.ejInt; ++j, n4 += n5) {
                         final int n6 = n4 << 1;
-                        i.aClassfArr[17].aVoid(this.aClassGraphics, n2, this.cIntArr[n6], this.cIntArr[n6 + 1], 0);
+                        i.aClassfArr[17].drawFrame(this.aClassGraphics, n2, this.cIntArr[n6], this.cIntArr[n6 + 1], 0);
                     }
                     int n7 = 0;
                     int n8 = 0;
@@ -16947,8 +16999,8 @@ public final class i extends Canvas implements Runnable {
                             default: {
                                 final int n10 = this.dVInt * 13 + n8 + 37;
                                 final int n11 = this.dWInt * 13 + n8 + 73;
-                                i.aClassfArr[17].aVoid(this.aClassGraphics, n7, n10, n11, 0);
-                                i.aClassfArr[17].aVoid(this.aClassGraphics, this.aoBoolean ? 7 : 6, n10 + 6, n11 + 6, 0);
+                                i.aClassfArr[17].drawFrame(this.aClassGraphics, n7, n10, n11, 0);
+                                i.aClassfArr[17].drawFrame(this.aClassGraphics, this.aoBoolean ? 7 : 6, n10 + 6, n11 + 6, 0);
                                 boolean b3 = true;
                                 if (j == n) {
                                     i k;
@@ -17008,10 +17060,10 @@ public final class i extends Canvas implements Runnable {
                                 }
                                 final int n14 = this.dXInt * 13 + n8 + 37;
                                 final int n15 = this.dYInt * 13 + n8 + 73;
-                                i.aClassfArr[17].aVoid(this.aClassGraphics, n7, n14, n15, 0);
+                                i.aClassfArr[17].drawFrame(this.aClassGraphics, n7, n14, n15, 0);
                                 if (!b3) {
                                     boolean b4;
-                                    if (this.elInt == i.aClassfArr[9].aInt(0)) {
+                                    if (this.elInt == i.aClassfArr[9].getAnimationFrameCount(0)) {
                                         --this.elInt;
                                         this.arBoolean = true;
                                         b4 = true;
@@ -17020,7 +17072,7 @@ public final class i extends Canvas implements Runnable {
                                     }
                                     b = b4;
                                     if (!this.PBoolean) {
-                                        i.aClassfArr[9].aVoid(this.aClassGraphics, this.elInt, n14, n15, 0);
+                                        i.aClassfArr[9].drawFrame(this.aClassGraphics, this.elInt, n14, n15, 0);
                                     }
                                     ++this.elInt;
                                 }
@@ -17060,7 +17112,7 @@ public final class i extends Canvas implements Runnable {
 
     private void axVoid() {
         this.dLInt = 0;
-        if (((this.aByte(this.aAInt, this.aBInt + 1) & 0x2) != 0x0 && this.aBInt + 1 == i.dZInt) || this.aBInt == i.dZInt) {
+        if (((this.aByte(this.crtWorldIndex, this.crtStageI + 1) & 0x2) != 0x0 && this.crtStageI + 1 == i.dZInt) || this.crtStageI == i.dZInt) {
             this.aqBoolean = false;
             this.arBoolean = true;
         }
@@ -17078,7 +17130,7 @@ public final class i extends Canvas implements Runnable {
                     Label_0278:
                     {
                         if (n2 == 0) {
-                            b = (this.bInt(this.aAInt, aInt2) == this.cInt(this.aAInt, aInt2));
+                            b = (this.bInt(this.crtWorldIndex, aInt2) == this.cInt(this.crtWorldIndex, aInt2));
                             int n6 = 0;
                             switch (aInt) {
                                 case 0: {
@@ -17210,7 +17262,7 @@ public final class i extends Canvas implements Runnable {
                                 this.egInt = this.eeInt << 1;
                                 while (true) {
                                     if (this.ehInt % 8 == 0) {
-                                        i.aClassfArr[17].aVoid(i.cClassGraphics, n24, this.eaInt - 20, this.ebInt - 69, 0);
+                                        i.aClassfArr[17].drawFrame(i.cClassGraphics, n24, this.eaInt - 20, this.ebInt - 69, 0);
                                         if (this.aqBoolean) {
                                             this.nVoid(aInt3, aInt7);
                                         }
@@ -17231,7 +17283,7 @@ public final class i extends Canvas implements Runnable {
                                 this.egInt = 2 * this.edInt;
                                 while (true) {
                                     if (this.ehInt % 8 == 0) {
-                                        i.aClassfArr[17].aVoid(i.cClassGraphics, n24, this.eaInt - 20, this.ebInt - 69, 0);
+                                        i.aClassfArr[17].drawFrame(i.cClassGraphics, n24, this.eaInt - 20, this.ebInt - 69, 0);
                                         if (this.aqBoolean) {
                                             this.nVoid(aInt3, aInt7);
                                         }
@@ -17252,14 +17304,14 @@ public final class i extends Canvas implements Runnable {
                     }
                     if (n5 != -1 && n3 != -1) {
                         if (b && n4 != -1) {
-                            i.aClassfArr[17].aVoid(i.cClassGraphics, n4, iInteger * 13 + n5 + 37 - 20, j * 13 + n5 + 73 - 69, 0);
+                            i.aClassfArr[17].drawFrame(i.cClassGraphics, n4, iInteger * 13 + n5 + 37 - 20, j * 13 + n5 + 73 - 69, 0);
                         }
-                        i.aClassfArr[17].aVoid(i.cClassGraphics, n3, iInteger * 13 + n5 + 37 - 20, j * 13 + n5 + 73 - 69, 0);
+                        i.aClassfArr[17].drawFrame(i.cClassGraphics, n3, iInteger * 13 + n5 + 37 - 20, j * 13 + n5 + 73 - 69, 0);
                         int n27 = -1;
                         Label_1202:
                         {
                             int n28 = 0;
-                            switch (this.aAInt) {
+                            switch (this.crtWorldIndex) {
                                 case 0: {
                                     if (aInt2 == 8) {
                                         n28 = 52;
@@ -17285,7 +17337,7 @@ public final class i extends Canvas implements Runnable {
                             n27 = n28;
                         }
                         if (n27 != -1) {
-                            i.aClassfArr[n27].aVoid(i.cClassGraphics, 0, iInteger * 13 - 8 + 37 - 20, j * 13 - 8 + 73 - 69, 0);
+                            i.aClassfArr[n27].drawFrame(i.cClassGraphics, 0, iInteger * 13 - 8 + 37 - 20, j * 13 - 8 + 73 - 69, 0);
                         }
                     }
                 }
@@ -17380,19 +17432,19 @@ public final class i extends Canvas implements Runnable {
         if (this.avBoolean) {
             this.aVoid(this.aClassGraphics, true);
             this.aClassGraphics.setColor(0);
-            this.aClassGraphics.fillRect(0, 0, 240, a.bInt);
+            this.aClassGraphics.fillRect(0, 0, 240, a_Config.bInt);
             this.aClassGraphics.setColor(16777215);
-            this.aClassGraphics.drawLine(0, a.bInt, 240, a.bInt);
-            i.bClassh.bVoid(this.aClassGraphics, i.aClassStringArr[63], 120, 9, 17);
+            this.aClassGraphics.drawLine(0, a_Config.bInt, 240, a_Config.bInt);
+            i.textSize0.drawTextWithFlags(this.aClassGraphics, i.texts[63], 120, 9, 17);
             aVoid(this.aClassGraphics, 10, 35, 220, 90, 4273165, 0);
             if (this.oInt != -1) {
-                i.aClassh.aVoid(this.aClassGraphics, aClassString(this.aClassString, 200), 120, 280, 17);
+                i.textSize8.drawText(this.aClassGraphics, aClassString(this.aClassString, 200), 120, 280, 17);
             }
             if (this.aaBoolean) {
                 this.aaBoolean = false;
-                i.aClassh.bVoid(this.aClassGraphics, this.aClassString, 120, 191, 1);
+                i.textSize8.drawTextWithFlags(this.aClassGraphics, this.aClassString, 120, 191, 1);
             }
-            i.aClassh.aVoid(this.aClassGraphics, this.gClassString, 120, 260, 17);
+            i.textSize8.drawText(this.aClassGraphics, this.gClassString, 120, 260, 17);
             this.IVoid();
             this.JVoid();
             this.avBoolean = false;
@@ -17401,29 +17453,29 @@ public final class i extends Canvas implements Runnable {
             this.aClassGraphics.setColor(4273165);
             this.aClassGraphics.fillRect(20, 58 + ((this.enInt >= 0) ? this.enInt : this.nInt) * 20 + 2, 7, 9);
         }
-        i.aClassfArr[17].aVoid(this.aClassGraphics, 14, 20, 58 + this.nInt * 20 + 2, 0);
+        i.aClassfArr[17].drawFrame(this.aClassGraphics, 14, 20, 58 + this.nInt * 20 + 2, 0);
         aVoid(this.aClassGraphics, 10, 155, 220, 70, 4273165, 0);
         h h;
         Graphics graphics;
         String aClassString;
         if (this.oInt != -1) {
-            final String string = i.aClassStringArr[47] + " " + this.dClassStringBuffer.toString() + "\n" + i.aClassStringArr[27];
-            h = i.aClassh;
+            final String string = i.texts[47] + " " + this.dClassStringBuffer.toString() + "\n" + i.texts[27];
+            h = i.textSize8;
             graphics = this.aClassGraphics;
             aClassString = string;
         } else {
-            h = i.aClassh;
+            h = i.textSize8;
             graphics = this.aClassGraphics;
             aClassString = this.aClassString;
         }
-        h.aVoid(graphics, aClassString, 120, 210, 1);
+        h.drawText(graphics, aClassString, 120, 210, 1);
         for (int iInteger = 0; iInteger < 4; ++iInteger) {
             final int n = 58 + iInteger * 20;
-            i.aClassfArr[46].aVoid(this.aClassGraphics, iInteger + 0, 27, n, 0);
-            i.aClassh.bVoid(this.aClassGraphics, i.aClassStringArr[iInteger + 120], 53, n + 8, 0);
+            i.aClassfArr[46].drawFrame(this.aClassGraphics, iInteger + 0, 27, n, 0);
+            i.textSize8.drawTextWithFlags(this.aClassGraphics, i.texts[iInteger + 120], 53, n + 8, 0);
         }
         final Image[] array;
-        int width = (array = i.aClassfArr[0].aClassImageArrArr[0])[11].getWidth();
+        int width = (array = i.aClassfArr[0].images[0])[11].getWidth();
         final int width2 = array[15].getWidth();
         this.aClassGraphics.drawImage(array[11], 100, 175, 0);
         for (int j = 0; j < 8; ++j) {
@@ -17443,8 +17495,8 @@ public final class i extends Canvas implements Runnable {
         }
     }
 
-    private void pVoid(final int n) {
-        this.aClassj.bVoid(n);
+    private void playSound(final int soundID) {
+        this.aClassj.playSound(soundID);
     }
 
     private void azVoid() {
@@ -17460,10 +17512,10 @@ public final class i extends Canvas implements Runnable {
         final int n2 = (this.eoInt >= 340) ? (-(this.eoInt % 17)) : (340 - this.eoInt - 17);
         while (epInt < i.sByteArr.length && n < 340) {
             if (i.sByteArr[epInt] == 10) {
-                h.aVoid(16777215);
+                h.setColor(16777215);
                 final Graphics graphics = aClassGraphics;
                 final byte[] sByteArr = i.sByteArr;
-                final h aClassh = i.aClassh;
+                final h aClassh = i.textSize8;
                 final int n3 = epInt2;
                 final int n4 = epInt - epInt2;
                 final int n5 = n + n2;
@@ -17472,11 +17524,11 @@ public final class i extends Canvas implements Runnable {
                 final h h = aClassh;
                 final byte[] array = sByteArr;
                 final Graphics graphics2 = graphics;
-                int n8 = h.aClassFont.getHeight();
+                int n8 = h.font.getHeight();
                 int n9 = 0;
                 int n10 = n5;
                 final boolean b = n5 != -1;
-                final int cInt = h.cInt;
+                final int cInt = h.RGB;
                 int n11 = n7;
                 boolean b2 = true;
                 int n12 = n7;
@@ -17498,7 +17550,7 @@ public final class i extends Canvas implements Runnable {
                             n9 = 0;
                             n11 = i + 1;
                             n10 += n8;
-                            n8 = h.aClassFont.getHeight();
+                            n8 = h.font.getHeight();
                         }
                         if (b) {
                             b2 = !b2;
@@ -17522,7 +17574,7 @@ public final class i extends Canvas implements Runnable {
                                 }
                                 if (n14 == 1) {
                                     ++i;
-                                    h.cInt = array[i];
+                                    h.RGB = array[i];
                                     continue;
                                 }
                                 if (n14 != 2) {
@@ -17534,21 +17586,21 @@ public final class i extends Canvas implements Runnable {
                             final int n18 = n16;
                             if (n15 >= 89) {
                                 if (!b2 && b) {
-                                    h.bVoid(graphics2, "" + (char) n18, n9, n10 + 10, 0);
+                                    h.drawTextWithFlags(graphics2, "" + (char) n18, n9, n10 + 10, 0);
                                 }
                                 n17 = n9;
                             } else {
                                 if (!b2 && b) {
-                                    h.bVoid(graphics2, "" + (char) n18, n9, n10 + 10, 0);
+                                    h.drawTextWithFlags(graphics2, "" + (char) n18, n9, n10 + 10, 0);
                                 }
                                 n17 = n9;
                             }
-                            charWidth = h.aClassFont.charWidth((char) n18);
+                            charWidth = h.font.charWidth((char) n18);
                         }
                         n9 = n17 + charWidth;
                     }
                 }
-                h.cInt = cInt;
+                h.RGB = cInt;
                 n += 17;
                 epInt2 = epInt + 1;
             }
@@ -17564,49 +17616,41 @@ public final class i extends Canvas implements Runnable {
         this.IVoid();
     }
 
-    private static String[] bClassStringArr() {
-        final String[] array = new String[16];
-        int iInteger = 1;
-        for (int j = 0; j < 15; ++j) {
-            if (j < 11) {
+    private static String[] generateStageTitles() {
+        final String[] titles = new String[16];
+        int secretStageI = 1;
+        for (int titleI = 0; titleI < 15; ++titleI) {
+            if (titleI < 11) {
                 try {
-                    final String s;
-                    if ((s = i.aClassStringArr[66]).indexOf("%U") == -1 || s.length() == 1) {
-                        array[j] = s;
+                    final String stageTitle = i.texts[66]; // "Stage %U"
+                    if (stageTitle.indexOf("%U") == -1 || stageTitle.length() == 1) {
+                        titles[titleI] = stageTitle;
                     } else {
-                        array[j] = d.aClassString(s, "%U", "" + (j + 1));
+                        titles[titleI] = d.replaceAll(stageTitle, "%U", "" + (titleI + 1));
                     }
                 } catch (Exception ex) {
-                    array[j] = "E";
+                    titles[titleI] = "E";
                 }
             } else {
                 try {
-                    final String s2;
-                    String[] array2;
-                    int n;
-                    String a;
-                    if ((s2 = i.aClassStringArr[62]).indexOf("%U") == -1 || s2.length() == 1) {
-                        array2 = array;
-                        n = j;
-                        a = s2;
+                    final String secretStageTitle = i.texts[62]; // "Secret stage %U"
+                    if (secretStageTitle.indexOf("%U") == -1 || secretStageTitle.length() == 1) {
+                        titles[titleI] = secretStageTitle;
                     } else {
-                        array2 = array;
-                        n = j;
-                        a = d.aClassString(s2, "%U", "" + iInteger);
+                        titles[titleI] = d.replaceAll(secretStageTitle, "%U", "" + secretStageI);
                     }
-                    array2[n] = a;
-                    ++iInteger;
+                    ++secretStageI;
                 } catch (Exception ex2) {
-                    array[j] = "E";
+                    titles[titleI] = "E";
                 }
             }
         }
         try {
-            array[15] = i.aClassStringArr[31];
+            titles[15] = i.texts[31]; // "Intro stage"
         } catch (Exception ex3) {
-            array[15] = " ";
+            titles[15] = " ";
         }
-        return array;
+        return titles;
     }
 
     private void aVoid(final String s, final int n, final int n2, final int n3, final int etInt, final int n4) {
@@ -17655,7 +17699,7 @@ public final class i extends Canvas implements Runnable {
                     }
                     index = i;
                     n3 = n2;
-                    n6 = n2 + (h.aInt() + (h.aInt() << 1));
+                    n6 = n2 + (h.getFontSize() + (h.getFontSize() << 1));
                 }
                 n2 = n6;
             }
@@ -17664,8 +17708,8 @@ public final class i extends Canvas implements Runnable {
     }
 
     private static void aAVoid() {
-        i.bClassh = new h(0);
-        i.aClassh = new h(8);
+        i.textSize0 = new h(0);
+        i.textSize8 = new h(8);
     }
 
     static {
@@ -17682,7 +17726,7 @@ public final class i extends Canvas implements Runnable {
         i.aClasscArr = null;
         i.pByteArr = null;
         i.aBoolean = false;
-        i.dClassString = "more_games_url";
+        i.moreGamesUrl = "more_games_url";
         i.dClassImage = null;
         i.bClassGraphics = null;
         i.cCInt = 0;
@@ -17697,13 +17741,13 @@ public final class i extends Canvas implements Runnable {
         i.cOInt = 0;
         i.VBoolean = false;
         i.WBoolean = true;
-        i.sByte = 0;
-        i.bIntArr = new int[]{512, 16384, 131072, 131072, 4096};
+        i.crtCheatPageKeyCodeIndex = 0;
+        i.cheatPageKeyCode = new int[]{SKEY_POUND, SKEY_NUM4, SKEY_NUM7, SKEY_NUM7, SKEY_NUM2};
         i.deInt = 0;
         i.dfInt = 0;
         i.dgInt = 0;
-        i.qByteArr = new byte[16];
-        i.rByteArr = new byte[16];
+        i.crtStageDoorXs = new byte[16];
+        i.crtStageDoorYs = new byte[16];
         i.akBoolean = false;
         i.aLongArr = new long[15];
         i.bLongArr = new long[15];
@@ -17712,7 +17756,7 @@ public final class i extends Canvas implements Runnable {
         i.gIntArrArr = new int[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
         i.bBoolean = false;
         i.sByteArr = null;
-        i.dClassStringArr = new String[]{"/w0.bin", "/w1.bin", "/w2.bin"};
+        i.worldFiles = new String[]{"/w0.bin", "/w1.bin", "/w2.bin"};
         i.eqInt = 0;
     }
 }

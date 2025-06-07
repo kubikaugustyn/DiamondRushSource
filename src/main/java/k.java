@@ -4,30 +4,30 @@
 
 public final class k extends Thread
 {
-    private final String aClassString;
+    private final String url;
     
-    public k(final String aClassString) {
-        this.aClassString = aClassString;
+    public k(final String url) {
+        this.url = url;
     }
     
-    public final void runVoid() {
-        boolean equals;
+    public final void run() {
+        boolean runningOnPlatformRequest;
         try {
-            equals = i.aClassGloftDIRU.getAppProperty("APP-RUNNING-ON-PLATFORMREQUEST").trim().equals("0");
+            runningOnPlatformRequest = i.aClassGloftDIRU.getAppProperty("APP-RUNNING-ON-PLATFORMREQUEST").trim().equals("0");
         }
         catch (Exception ex) {
-            equals = false;
+            runningOnPlatformRequest = false;
         }
         try {
-            if (equals) {
-                GloftDIRU.aClassString = this.aClassString;
+            if (runningOnPlatformRequest) {
+                GloftDIRU.url = this.url;
                 i.bByte = 3;
                 return;
             }
-            i.aClassGloftDIRU.platformRequest(this.aClassString);
+            i.aClassGloftDIRU.platformRequest(this.url);
         }
         catch (Exception ex2) {
-            GloftDIRU.aClassString = this.aClassString;
+            GloftDIRU.url = this.url;
         }
     }
 }
